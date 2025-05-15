@@ -1,0 +1,30 @@
+/* src/HomePage.css */
+.home {
+    text-align: center;
+    padding: 50px;
+    background-color: #f0f0f0;
+}
+
+.header {
+    background-color: #282c34;
+    color: white;
+    padding: 20px;
+}
+
+.main-content {
+    margin-top: 20px;
+}
+
+.cta-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background-color: #0056b3;
+}

@@ -3,7 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "Users")
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,6 +25,18 @@ public class UserEntity {
 
     @Column(unique = true, length = 20)
     private String phoneNumber;
+
+     @Column(unique = true, length = 20)
+    private String City;
+
+    @Column(unique = true, length = 20)
+    private String subCity;
+
+    @Column(unique = true, length = 20)
+    private String passWord;
+
+  @Column(nullable = false, unique = true, length = 50)
+private String email;
 
      @Enumerated(EnumType.STRING)
     @Builder.Default
