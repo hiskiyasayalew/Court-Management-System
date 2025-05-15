@@ -104,7 +104,7 @@ const translations = {
     idCardUploadHelp: " የፋይል አይነት  PDF, JPG, PNG",
     additionalFilesLabel: "ሌላ ጠቃሚ መረጃ ካለ ያስገቡ",
     additionalFilesHelp: "የተቀበለ ፋይል፣ PDF, JPG, PNG",
-    agreementText: "እባኮትን ወደ ወረዳዎች ይላኩ",
+    agreementText: "መረጃዬ ደህንነቱን በጠበቀ መልኩ ለ ፖሊስ እና ፍርድ ቤት እንደሚላክ ተስማምቻለው",
     logout: "ውጣ",
     logoutConfirmation: "መውጣት ይፈልጋሉ?",
 logoutSuccess: "በተሳካ ሁኔታ ወተዋል",

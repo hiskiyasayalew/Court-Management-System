@@ -2,23 +2,25 @@ import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import homeimage from '../assets/lawsymbol2.webp';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0b3954] to-[#087e8b] text-gray-100 font-sans">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#03314b] shadow-md flex justify-between items-center py-5 px-8 select-none">
-        <div aria-label="Digital Court Management System description" className="text-white font-bold text-lg max-w-[180px]">
+      <header className="sticky top-0 z-50 bg-[#03314b] shadow-md flex flex-col md:flex-row justify-between items-center py-5 px-4 md:px-8 select-none">
+        <div aria-label="Digital Court Management System description" className="text-white font-bold text-lg max-w-[180px] text-center md:text-left">
           {t.title}
         </div>
         <LanguageSwitcher /> {/* Add LanguageSwitcher here */}
-        <div aria-label="Court logo" className="cursor-pointer transition-transform hover:rotate-15 hover:scale-105 duration-300">
+        <div aria-label="Court logo" className="cursor-pointer transition-transform hover:rotate-15 hover:scale-105 duration-300 mb-2 md:mb-0">
           <img
             src={homeimage}
             alt="Court Logo"
-            className="h-20 w-20 rounded-lg"
+            className="h-16 w-16 md:h-20 md:w-20 rounded-lg"
             draggable={false}
           />
         </div>
@@ -30,7 +32,7 @@ const HomePage = () => {
             onClick={() => {
               if (window.confirm(t.logoutConfirmation)) {
                 alert(t.logoutSuccess);
-                // Redirect or real logout logic here
+                navigate("/login");
               }
             }}
           >
@@ -40,26 +42,26 @@ const HomePage = () => {
       </header>
 
       {/* Main Section */}
-      <main className="bg-[#f6f9fa] max-w-4xl mx-auto mt-11 mb-12 rounded-3xl p-14 text-gray-900 flex-grow shadow-xl">
-        <h1 className="text-4xl font-extrabold mb-6 leading-tight">
+      <main className="bg-[#f6f9fa] max-w-4xl mx-auto mt-6 md:mt-11 mb-12 rounded-3xl p-6 md:p-14 text-gray-900 flex-grow shadow-xl">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight text-center">
           {t.welcomeMessage}
         </h1>
 
-        <p className="text-lg text-gray-600 mb-12 leading-relaxed">
+        <p className="text-base md:text-lg text-gray-600 mb-12 leading-relaxed text-center">
           {t.introText}
         </p>
 
         {/* Benefits Section */}
-        <section aria-label="Benefits of Digital Court System" className="flex flex-wrap gap-8 mb-12">
+        <section aria-label="Benefits of Digital Court System" className="flex flex-wrap gap-6 md:gap-8 mb-12">
           {t.benefits.map((text, idx) => (
             <article
               key={idx}
               tabIndex={0}
               aria-describedby={`benefit${idx + 1}desc`}
-              className="flex items-start gap-4 bg-blue-100 rounded-2xl p-6 shadow-md text-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer flex-1 min-w-[280px]"
+              className="flex items-start gap-4 bg-blue-100 rounded-2xl p-6 shadow-md text-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer flex-1 min-w-[250px] md:min-w-[280px]"
             >
               <svg
-                className="h-9 w-9 flex-shrink-0"
+                className="h-8 w-8 flex-shrink-0"
                 fill="#0369a1"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
@@ -74,12 +76,12 @@ const HomePage = () => {
         </section>
 
         {/* Form Section */}
-        <h2 className="text-2xl font-extrabold mb-6">{t.submitCaseTitle}</h2>
+        <h2 className="text-xl md:text-2xl font-extrabold mb-6 text-center">{t.submitCaseTitle}</h2>
         <form noValidate aria-live="polite" aria-describedby="formInstructions">
-          <p id="formInstructions" className="text-gray-500 mb-6 font-semibold">
+          <p id="formInstructions" className="text-gray-500 mb-6 font-semibold text-center">
             {t.formInstructions}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
             <div className="flex flex-col">
               <label htmlFor="fullName" className="font-semibold text-gray-800 mb-2">
                 {t.fullNameLabel} <span className="text-red-600">*</span>
