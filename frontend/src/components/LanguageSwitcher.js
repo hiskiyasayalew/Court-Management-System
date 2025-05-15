@@ -1,4 +1,3 @@
-// src/components/LanguageSwitcher.jsx
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -8,7 +7,7 @@ const LanguageSwitcher = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="absolute top-4 right-4 text-sm bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+      className="absolute top-0 right-4 text-sm bg-black-200 px-3 py-1 rounded hover:bg-blue-300 pb-2" // Added mb-2 for margin bottom
     >
       {language === 'en' ? 'አማ' : 'EN'}
     </button>
