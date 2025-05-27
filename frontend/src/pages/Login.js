@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import loginimage from '../assets/lawsymbol2.webp';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { login, register } from '../api';  // Adjust path to api.js accordingly
+
 
 const Login = () => {
   const { t } = useLanguage();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    // Navigate to the home page immediately
-    navigate('/home'); // Navigate to home page
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const user = await login(username, password); // send both
+
+    alert("Login successful!");
+    navigate('/Home');
+  } catch (error) {
+    console.error("Login failed:", error);
+    alert("Incorrect username or password.");
+  }
+};
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-4 relative">
@@ -30,13 +42,17 @@ const Login = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <input
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder={t.usernameOrEmail}
-              className="w-full border-b border-gray-300 text-gray-400 pb-2"
+              className="w-full border-b border-gray-300 pb-2"
             />
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder={t.password}
-              className="w-full border-b border-gray-300 text-gray-400 pb-2"
+              className="w-full border-b border-gray-300 pb-2"
             />
             <div className="flex justify-between text-sm text-blue-500">
               <label className="flex items-center gap-2">

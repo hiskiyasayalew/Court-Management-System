@@ -24,4 +24,20 @@ public class UserController {
         UserDTO userDTO = userService.getUserByUserName(username);
         return ResponseEntity.ok(userDTO);
     }
+    
+    @PostMapping("/login")
+public ResponseEntity<?> loginUser(@RequestBody UserDTO loginRequest) {
+    UserDTO userDTO = userService.getUserByUserName(loginRequest.getUserName());
+    if (userDTO == null) {
+        return ResponseEntity.status(401).body("User not found");
+    }
+    // Replace this with proper password hashing & verification
+    if (!userDTO.getPassWord().equals(loginRequest.getPassWord())) {
+        return ResponseEntity.status(401).body("Invalid password");
+    }
+    // Login successful
+    // You can return user info or JWT token here
+    return ResponseEntity.ok(userDTO);
+}
+
 }

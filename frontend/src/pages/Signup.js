@@ -1,12 +1,47 @@
-// src/pages/Signup.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import signupimage from '../assets/lawsymbol2.webp';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { register } from '../api';
 
 const Signup = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    userName: '',
+    email: '',
+    passWord: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    city: '',
+    subCity: ''
+  });
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.passWord !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      await register(formData);
+      alert("Signup successful!");
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+      alert("Signup failed.");
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-4 relative">
@@ -20,18 +55,23 @@ const Signup = () => {
           <h1 className="text-3xl font-extrabold text-gray-900 leading-tight mb-6">
             {t.signupTitle}
           </h1>
-          <form className="space-y-4">
-            <input type="text" placeholder={t.username} className="w-full border-b border-gray-300 text-gray-400 placeholder-gray-400 pb-2" />
-            <input type="email" placeholder={t.email} className="w-full border-b border-gray-300 text-gray-400 placeholder-gray-400 pb-2" />
-            <input type="password" placeholder={t.password} className="w-full border-b border-gray-300 text-gray-400 placeholder-gray-400 pb-2" />
-            <input type="password" placeholder={t.confirmPassword} className="w-full border-b border-gray-300 text-gray-400 placeholder-gray-400 pb-2" />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <input type="text" name="userName" value={formData.userName} onChange={handleChange} placeholder={t.username} className="w-full border-b pb-2" />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={t.email} className="w-full border-b pb-2" />
+            <input type="password" name="passWord" value={formData.passWord} onChange={handleChange} placeholder={t.password} className="w-full border-b pb-2" />
+            <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder={t.confirmPassword} className="w-full border-b pb-2" />
+            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" className="w-full border-b pb-2" />
+            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" className="w-full border-b pb-2" />
+            <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className="w-full border-b pb-2" />
+            <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="City" className="w-full border-b pb-2" />
+            <input type="text" name="subCity" value={formData.subCity} onChange={handleChange} placeholder="Sub-City" className="w-full border-b pb-2" />
             <button type="submit" className="w-full bg-blue-400 text-white font-semibold py-2 rounded mt-4 hover:bg-blue-500 transition">
               {t.signup}
             </button>
           </form>
           <p className="text-xs text-gray-700 mt-6">
             {t.alreadyHaveAccount}{' '}
-            <Link to="/" className="text-blue-500 font-semibold hover:underline">{t.login}</Link>
+            <Link to="/login" className="text-blue-500 font-semibold hover:underline">{t.login}</Link>
           </p>
         </section>
       </main>
