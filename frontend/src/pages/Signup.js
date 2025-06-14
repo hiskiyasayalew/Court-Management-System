@@ -12,7 +12,7 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     userName: '',
     email: '',
-    passWord: '',
+    password: '',
     confirmPassword: '',
     firstName: '',
     lastName: '',
@@ -28,7 +28,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.passWord !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
@@ -58,7 +58,7 @@ const Signup = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <input type="text" name="userName" value={formData.userName} onChange={handleChange} placeholder={t.username} className="w-full border-b pb-2" />
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={t.email} className="w-full border-b pb-2" />
-            <input type="password" name="passWord" value={formData.passWord} onChange={handleChange} placeholder={t.password} className="w-full border-b pb-2" />
+            <input type="password" name="password" value={formData.passWord} onChange={handleChange} placeholder={t.password} className="w-full border-b pb-2" />
             <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder={t.confirmPassword} className="w-full border-b pb-2" />
             <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" className="w-full border-b pb-2" />
             <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" className="w-full border-b pb-2" />

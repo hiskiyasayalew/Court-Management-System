@@ -9,9 +9,11 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private String passWord;
+    private String password;
     private String city;
     private String subCity;
     private String email;
     private String status; // Use String for Status
+
+
 }

@@ -16,28 +16,40 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
         String message = userService.registerUser(userDTO);
+        if (message.contains("exists")) {
+            return ResponseEntity.badRequest().body(message);
+        }
         return ResponseEntity.ok(message);
     }
 
     @GetMapping("/login/{username}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
+    public ResponseEntity<?> getUser(@PathVariable String username) {
         UserDTO userDTO = userService.getUserByUserName(username);
+        if (userDTO == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
         return ResponseEntity.ok(userDTO);
     }
-    
-    @PostMapping("/login")
+
+   @PostMapping("/login")
 public ResponseEntity<?> loginUser(@RequestBody UserDTO loginRequest) {
     UserDTO userDTO = userService.getUserByUserName(loginRequest.getUserName());
+
     if (userDTO == null) {
         return ResponseEntity.status(401).body("User not found");
     }
-    // Replace this with proper password hashing & verification
-    if (!userDTO.getPassWord().equals(loginRequest.getPassWord())) {
+
+    // Debug print
+    System.out.println("Stored password: " + userDTO.getPassword());
+    System.out.println("Received password: " + loginRequest.getPassword());
+
+    if (loginRequest.getPassword() == null || userDTO.getPassword() == null ||
+        !loginRequest.getPassword().equals(userDTO.getPassword())) {
         return ResponseEntity.status(401).body("Invalid password");
     }
-    // Login successful
-    // You can return user info or JWT token here
+
     return ResponseEntity.ok(userDTO);
 }
+
 
 }

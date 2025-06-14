@@ -13,14 +13,22 @@ public class UserService {
     private UserRepository userRepository;
 
     public String registerUser(UserDTO userDTO) {
+        // Check for existing user with same username or email
+        if (userRepository.findByUserName(userDTO.getUserName()) != null) {
+            return "Username already exists!";
+        }
+        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
+            return "Email already exists!";
+        }
+
         UserEntity userEntity = new UserEntity();
         userEntity.setUserName(userDTO.getUserName());
         userEntity.setFirstName(userDTO.getFirstName());
         userEntity.setLastName(userDTO.getLastName());
         userEntity.setPhoneNumber(userDTO.getPhoneNumber());
-        userEntity.setCity(userDTO.getCity()); // Ensure this matches the entity field
-        userEntity.setSubCity(userDTO.getSubCity()); // Ensure this matches the entity field
-        userEntity.setPassWord(userDTO.getPassWord());
+        userEntity.setCity(userDTO.getCity());
+        userEntity.setSubCity(userDTO.getSubCity());
+        userEntity.setPassword(userDTO.getPassword());
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setStatus(UserEntity.Status.ACTIVE);
 
@@ -30,6 +38,7 @@ public class UserService {
 
     public UserDTO getUserByUserName(String userName) {
         UserEntity userEntity = userRepository.findByUserName(userName);
+        if (userEntity == null) return null;
         return convertToDTO(userEntity);
     }
 
@@ -40,9 +49,10 @@ public class UserService {
         userDTO.setFirstName(userEntity.getFirstName());
         userDTO.setLastName(userEntity.getLastName());
         userDTO.setPhoneNumber(userEntity.getPhoneNumber());
-        userDTO.setCity(userEntity.getCity()); // Ensure this matches the DTO field
-        userDTO.setSubCity(userEntity.getSubCity()); // Ensure this matches the DTO field
+        userDTO.setCity(userEntity.getCity());
+        userDTO.setSubCity(userEntity.getSubCity());
         userDTO.setEmail(userEntity.getEmail());
+        userDTO.setPassword(userEntity.getPassword()); // Fix: include password
         userDTO.setStatus(userEntity.getStatus().name());
         return userDTO;
     }
