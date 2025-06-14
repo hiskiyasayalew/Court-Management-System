@@ -29,17 +29,17 @@ const Signup = () => {
     e.preventDefault();
 
     if (formData.passWord !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      alert(t.passwordMismatch);
       return;
     }
 
     try {
       await register(formData);
-      alert("Signup successful!");
+      alert(t.signupSuccess);
       navigate('/login');
     } catch (err) {
       console.error(err);
-      alert("Signup failed.");
+      alert(t.signupFail);
     }
   };
 
@@ -60,11 +60,11 @@ const Signup = () => {
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={t.email} className="w-full border-b pb-2" />
             <input type="password" name="passWord" value={formData.passWord} onChange={handleChange} placeholder={t.password} className="w-full border-b pb-2" />
             <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder={t.confirmPassword} className="w-full border-b pb-2" />
-            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" className="w-full border-b pb-2" />
-            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" className="w-full border-b pb-2" />
-            <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className="w-full border-b pb-2" />
-            <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="City" className="w-full border-b pb-2" />
-            <input type="text" name="subCity" value={formData.subCity} onChange={handleChange} placeholder="Sub-City" className="w-full border-b pb-2" />
+            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder={t.firstName} className="w-full border-b pb-2" />
+            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder={t.lastName} className="w-full border-b pb-2" />
+            <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder={t.phoneNumber} className="w-full border-b pb-2" />
+            <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder={t.city} className="w-full border-b pb-2" />
+            <input type="text" name="subCity" value={formData.subCity} onChange={handleChange} placeholder={t.subCity} className="w-full border-b pb-2" />
             <button type="submit" className="w-full bg-blue-400 text-white font-semibold py-2 rounded mt-4 hover:bg-blue-500 transition">
               {t.signup}
             </button>

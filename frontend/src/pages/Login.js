@@ -19,11 +19,11 @@ const Login = () => {
   try {
     const user = await login(username, password); // send both
 
-    alert("Login successful!");
+    alert(t.loginsucess);
     navigate('/Home');
   } catch (error) {
     console.error("Login failed:", error);
-    alert("Incorrect username or password.");
+    alert(t.invalidlogin);
   }
 };
 

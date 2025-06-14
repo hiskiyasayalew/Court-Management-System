@@ -4,16 +4,33 @@ import { LanguageProvider } from './context/LanguageContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import HomePage from './pages/HomePage';
-
+import LandingPage from './pages/LandingPage';
+import ProsecutorLogin from './pages/ProsecutorLogin';
+import PoliceLogin from './pages/PoliceLogin';
+import JudgeLogin from './pages/JudgeLogin';
+import ApplyForm from './pages/ApplyForm';
+import AdminLogin from './pages/AdminLogin';
+import Admin from './pages/Admin'
 const App = () => {
+  
   return (
     <LanguageProvider>
       <Router>
         <Routes>
+          <Route path="/landingpage" element={<LandingPage/>}/>
+                    <Route path="/applyform" element={<ApplyForm/>}/>
+
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<HomePage />} />
-          <Route path="/" element={<Navigate to="/login" />} /> {/* Redirect to login */}
+           <Route path="/login/judge" element={<JudgeLogin />} />
+           <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
+           <Route path="/login/police" element={<PoliceLogin />} />
+           <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
+           <Route path="/adminlogin" element={<AdminLogin />} />
+           <Route path="/admin" element={<Admin />} />
+
+          <Route path="/" element={<Navigate to="/landingpage" />} /> {/* Redirect to login */}
         </Routes>
       </Router>
     </LanguageProvider>
