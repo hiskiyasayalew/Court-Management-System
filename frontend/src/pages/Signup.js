@@ -12,7 +12,7 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     userName: '',
     email: '',
-    passWord: '',
+    password: '',
     confirmPassword: '',
     firstName: '',
     lastName: '',
@@ -22,13 +22,13 @@ const Signup = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.passWord !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       alert(t.passwordMismatch);
       return;
     }
@@ -56,22 +56,90 @@ const Signup = () => {
             {t.signupTitle}
           </h1>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <input type="text" name="userName" value={formData.userName} onChange={handleChange} placeholder={t.username} className="w-full border-b pb-2" />
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={t.email} className="w-full border-b pb-2" />
-            <input type="password" name="passWord" value={formData.passWord} onChange={handleChange} placeholder={t.password} className="w-full border-b pb-2" />
-            <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder={t.confirmPassword} className="w-full border-b pb-2" />
-            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder={t.firstName} className="w-full border-b pb-2" />
-            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder={t.lastName} className="w-full border-b pb-2" />
-            <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder={t.phoneNumber} className="w-full border-b pb-2" />
-            <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder={t.city} className="w-full border-b pb-2" />
-            <input type="text" name="subCity" value={formData.subCity} onChange={handleChange} placeholder={t.subCity} className="w-full border-b pb-2" />
-            <button type="submit" className="w-full bg-blue-400 text-white font-semibold py-2 rounded mt-4 hover:bg-blue-500 transition">
+            <input
+              type="text"
+              name="userName"
+              value={formData.userName}
+              onChange={handleChange}
+              placeholder={t.username}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder={t.email}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder={t.password}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder={t.confirmPassword}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder={t.firstName}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder={t.lastName}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="text"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              placeholder={t.phoneNumber}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              placeholder={t.city}
+              className="w-full border-b pb-2"
+            />
+            <input
+              type="text"
+              name="subCity"
+              value={formData.subCity}
+              onChange={handleChange}
+              placeholder={t.subCity}
+              className="w-full border-b pb-2"
+            />
+            <button
+              type="submit"
+              className="w-full bg-blue-400 text-white font-semibold py-2 rounded mt-4 hover:bg-blue-500 transition"
+            >
               {t.signup}
             </button>
           </form>
           <p className="text-xs text-gray-700 mt-6">
             {t.alreadyHaveAccount}{' '}
-            <Link to="/login" className="text-blue-500 font-semibold hover:underline">{t.login}</Link>
+            <Link to="/login" className="text-blue-500 font-semibold hover:underline">
+              {t.login}
+            </Link>
           </p>
         </section>
       </main>

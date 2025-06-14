@@ -23,17 +23,17 @@ public class UserEntity {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-    @Column(unique = true, length = 20)
+    @Column( length = 20)
     private String phoneNumber;
 
      @Column(unique = true, length = 20)
-    private String City;
+    private String city;
 
-    @Column(unique = true, length = 20)
+    @Column( length = 20)
     private String subCity;
 
     @Column(unique = true, length = 20)
-    private String passWord;
+    private String Password;
 
   @Column(nullable = false, unique = true, length = 50)
 private String email;
