@@ -37,32 +37,69 @@ const HomePage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { fullName, email, caseType, caseDescription, idCardUpload, agreement } = formData;
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!fullName.trim() || !email.trim() || !caseType || !caseDescription.trim() || !idCardUpload || !agreement) {
-      setSubmissionStatus(t.validationError || 'Please fill all required fields and agree to terms.');
-      return;
-    }
+  const {
+    fullName,
+    email,
+    phone,
+    dateOfIncident,
+    caseType,
+    caseDescription,
+    idCardUpload,
+    fileUpload,
+    agreement
+  } = formData;
 
-    const newCase = {
-      id: Date.now().toString(),
-      fullName: formData.fullName.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-      dateOfIncident: formData.dateOfIncident,
-      caseType: formData.caseType,
-      caseDescription: formData.caseDescription.trim(),
-      idCardUploadName: formData.idCardUpload?.name || '',
-      additionalFileNames: formData.fileUpload ? formData.fileUpload.map((f) => f.name) : [],
-      agreement: formData.agreement,
-      status: t.submittedToProcess || 'Submitted to Process',
-      submittedAt: new Date().toISOString(),
+  if (!fullName.trim() || !email.trim() || !caseType || !caseDescription.trim() || !idCardUpload || !agreement) {
+    setSubmissionStatus(t.validationError || 'Please fill all required fields and agree to terms.');
+    return;
+  }
+
+  try {
+    const data = new FormData();
+
+    // 👇 Prepare the JSON part
+    const caseData = {
+      fullName: fullName.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      dateOfIncident,
+      caseType,
+      caseDescription: caseDescription.trim(),
+      agreement
     };
 
-    setCases((prev) => [newCase, ...prev]);
+    // Append the JSON string under the key "caseData" (backend expects this)
+    data.append('caseData', JSON.stringify(caseData));
+
+    // Append single ID card file
+    data.append('files', idCardUpload);
+
+    // Append other uploaded files (if multiple)
+    if (fileUpload && fileUpload.length > 0) {
+      fileUpload.forEach((file) => {
+        data.append('files', file); // Must use same name: "files"
+      });
+    }
+
+    // 🛰 Submit using fetch
+    const response = await fetch('http://localhost:8080/api/cases/submit', {
+      method: 'POST',
+      body: data
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to submit case: ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    setCases((prev) => [result, ...prev]);
     setSubmissionStatus(t.caseSubmittedSuccess || 'Case submitted successfully!');
+
     setFormData({
       fullName: '',
       email: '',
@@ -71,10 +108,16 @@ const HomePage = () => {
       caseType: '',
       caseDescription: '',
       idCardUpload: null,
-      fileUpload: null,
-      agreement: false,
+      fileUpload: [],
+      agreement: false
     });
-  };
+  } catch (error) {
+    console.error(error);
+    setSubmissionStatus(error.message || 'Submission failed.');
+  }
+};
+
+
 
   const onLogout = () => {
     if (window.confirm(t.logoutConfirmation)) {
@@ -403,4 +446,3 @@ const CheckboxField = ({ label, name, checked, onChange, required }) => (
 );
 
 export default HomePage;
-
