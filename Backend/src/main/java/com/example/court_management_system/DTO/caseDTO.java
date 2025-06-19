@@ -23,4 +23,5 @@ public class caseDTO {
     private String agreement;
     private com.example.court_management_system.Entity.caseStatus status;
     private LocalDateTime submittedAt;
+    private String userName;
 }

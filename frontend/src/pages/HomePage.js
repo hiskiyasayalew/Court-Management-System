@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import homeimage from '../assets/lawsymbol2.webp';
@@ -17,16 +17,35 @@ const HomePage = () => {
     caseType: '',
     caseDescription: '',
     idCardUpload: null,
-    fileUpload: null,
+    fileUpload: [],
     agreement: false,
   });
   const [submissionStatus, setSubmissionStatus] = useState('');
+
+  useEffect(() => {
+    const fetchUserCases = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.userName) return;
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/cases/by-user?userName=${user.userName}`);
+        if (!response.ok) throw new Error("Failed to fetch user cases");
+
+        const userCases = await response.json();
+        setCases(userCases);
+      } catch (error) {
+        console.error("Error loading cases:", error);
+      }
+    };
+
+    fetchUserCases();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === 'file') {
       if (name === 'fileUpload') {
-        setFormData((prev) => ({ ...prev, [name]: files ? Array.from(files) : null }));
+        setFormData((prev) => ({ ...prev, [name]: files ? Array.from(files) : [] }));
       } else {
         setFormData((prev) => ({ ...prev, [name]: files ? files[0] : null }));
       }
@@ -37,90 +56,89 @@ const HomePage = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const {
-    fullName,
-    email,
-    phone,
-    dateOfIncident,
-    caseType,
-    caseDescription,
-    idCardUpload,
-    fileUpload,
-    agreement
-  } = formData;
-
-  if (!fullName.trim() || !email.trim() || !caseType || !caseDescription.trim() || !idCardUpload || !agreement) {
-    setSubmissionStatus(t.validationError || 'Please fill all required fields and agree to terms.');
-    return;
-  }
-
-  try {
-    const data = new FormData();
-
-    // 👇 Prepare the JSON part
-    const caseData = {
-      fullName: fullName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
+    const {
+      fullName,
+      email,
+      phone,
       dateOfIncident,
       caseType,
-      caseDescription: caseDescription.trim(),
-      agreement
-    };
+      caseDescription,
+      idCardUpload,
+      fileUpload,
+      agreement,
+    } = formData;
 
-    // Append the JSON string under the key "caseData" (backend expects this)
-    data.append('caseData', JSON.stringify(caseData));
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.userName) {
+      alert("User not logged in.");
+      return;
+    }
 
-    // Append single ID card file
-    data.append('files', idCardUpload);
+    if (!fullName.trim() || !email.trim() || !caseType || !caseDescription.trim() || !idCardUpload || !agreement) {
+      setSubmissionStatus(t.validationError || 'Please fill all required fields and agree to terms.');
+      return;
+    }
 
-    // Append other uploaded files (if multiple)
-    if (fileUpload && fileUpload.length > 0) {
-      fileUpload.forEach((file) => {
-        data.append('files', file); // Must use same name: "files"
+    try {
+      const data = new FormData();
+
+      const caseData = {
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        dateOfIncident,
+        caseType,
+        caseDescription: caseDescription.trim(),
+        agreement,
+        userName: user.userName
+      };
+
+      data.append('caseData', JSON.stringify(caseData));
+      data.append('files', idCardUpload);
+      if (fileUpload && fileUpload.length > 0) {
+        fileUpload.forEach((file) => {
+          data.append('files', file);
+        });
+      }
+
+      const response = await fetch('http://localhost:8080/api/cases/submit', {
+        method: 'POST',
+        body: data
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to submit case: ${errorText}`);
+      }
+
+      const result = await response.json();
+
+      setCases((prev) => [result, ...prev]);
+      setSubmissionStatus(t.caseSubmittedSuccess || 'Case submitted successfully!');
+
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        dateOfIncident: '',
+        caseType: '',
+        caseDescription: '',
+        idCardUpload: null,
+        fileUpload: [],
+        agreement: false
+      });
+    } catch (error) {
+      console.error(error);
+      setSubmissionStatus(error.message || 'Submission failed.');
     }
-
-    // 🛰 Submit using fetch
-    const response = await fetch('http://localhost:8080/api/cases/submit', {
-      method: 'POST',
-      body: data
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to submit case: ${errorText}`);
-    }
-
-    const result = await response.json();
-
-    setCases((prev) => [result, ...prev]);
-    setSubmissionStatus(t.caseSubmittedSuccess || 'Case submitted successfully!');
-
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      dateOfIncident: '',
-      caseType: '',
-      caseDescription: '',
-      idCardUpload: null,
-      fileUpload: [],
-      agreement: false
-    });
-  } catch (error) {
-    console.error(error);
-    setSubmissionStatus(error.message || 'Submission failed.');
-  }
-};
-
-
+  };
 
   const onLogout = () => {
     if (window.confirm(t.logoutConfirmation)) {
+      localStorage.removeItem("user");
       navigate('/login');
     }
   };

@@ -1,7 +1,12 @@
 package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.UserDTO;
+import com.example.court_management_system.DTO.caseDTO;
 import com.example.court_management_system.Service.UserService;
+import com.example.court_management_system.Service.CaseService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +17,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CaseService caseService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
@@ -31,25 +39,28 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-   @PostMapping("/login")
-public ResponseEntity<?> loginUser(@RequestBody UserDTO loginRequest) {
-    UserDTO userDTO = userService.getUserByUserName(loginRequest.getUserName());
-
-    if (userDTO == null) {
-        return ResponseEntity.status(401).body("User not found");
+    @GetMapping("/by-user")
+    public List<caseDTO> getCasesByUserName(@RequestParam String userName) {
+        return caseService.getCasesByUserName(userName);
     }
 
-    // Debug print
-    System.out.println("Stored password: " + userDTO.getPassword());
-    System.out.println("Received password: " + loginRequest.getPassword());
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserDTO loginRequest) {
+        UserDTO userDTO = userService.getUserByUserName(loginRequest.getUserName());
 
-    if (loginRequest.getPassword() == null || userDTO.getPassword() == null ||
-        !loginRequest.getPassword().equals(userDTO.getPassword())) {
-        return ResponseEntity.status(401).body("Invalid password");
+        if (userDTO == null) {
+            return ResponseEntity.status(401).body("User not found");
+        }
+
+        // Debug print
+        System.out.println("Stored password: " + userDTO.getPassword());
+        System.out.println("Received password: " + loginRequest.getPassword());
+
+        if (loginRequest.getPassword() == null || userDTO.getPassword() == null ||
+            !loginRequest.getPassword().equals(loginRequest.getPassword())) {
+            return ResponseEntity.status(401).body("Invalid password");
+        }
+
+        return ResponseEntity.ok(userDTO);
     }
-
-    return ResponseEntity.ok(userDTO);
-}
-
-
 }

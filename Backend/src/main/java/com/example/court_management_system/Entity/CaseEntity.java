@@ -38,4 +38,9 @@ public class CaseEntity {
     private caseStatus status;
 
     private LocalDateTime submittedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
 }
