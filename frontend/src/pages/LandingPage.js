@@ -385,7 +385,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 text-center py-6 text-xs sm:text-sm">
-        &copy; 2024 Ethiopia CourtCaseSys. All rights reserved.
+        &copy; 2024 Ethiopia CourtCaseSystem. All rights reserved.
       </footer>
     </div>
   );

@@ -11,6 +11,7 @@ import JudgeLogin from './pages/JudgeLogin';
 import ApplyForm from './pages/ApplyForm';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin'
+import MyCases from './pages/MyCases'
 const App = () => {
   
   return (
@@ -19,7 +20,7 @@ const App = () => {
         <Routes>
           <Route path="/landingpage" element={<LandingPage/>}/>
                     <Route path="/applyform" element={<ApplyForm/>}/>
-
+   <Route path="/mycases" element={<MyCases/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<HomePage />} />

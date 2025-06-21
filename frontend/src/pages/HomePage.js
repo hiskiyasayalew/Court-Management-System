@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import homeimage from '../assets/lawsymbol2.webp';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
 
 const HomePage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-
-  const [cases, setCases] = useState([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -21,24 +33,17 @@ const HomePage = () => {
     agreement: false,
   });
   const [submissionStatus, setSubmissionStatus] = useState('');
+  const [showNav, setShowNav] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const fetchUserCases = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user || !user.userName) return;
-
-      try {
-        const response = await fetch(`http://localhost:8080/api/cases/by-user?userName=${user.userName}`);
-        if (!response.ok) throw new Error("Failed to fetch user cases");
-
-        const userCases = await response.json();
-        setCases(userCases);
-      } catch (error) {
-        console.error("Error loading cases:", error);
-      }
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      setShowNav(currentY < lastScrollY.current || currentY < 10);
+      lastScrollY.current = currentY;
     };
-
-    fetchUserCases();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleChange = (e) => {
@@ -58,24 +63,16 @@ const HomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const {
-      fullName,
-      email,
-      phone,
-      dateOfIncident,
-      caseType,
-      caseDescription,
-      idCardUpload,
-      fileUpload,
-      agreement,
-    } = formData;
-
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.userName) {
       alert("User not logged in.");
       return;
     }
+    const {
+      fullName, email, phone, dateOfIncident,
+      caseType, caseDescription, idCardUpload,
+      fileUpload, agreement,
+    } = formData;
 
     if (!fullName.trim() || !email.trim() || !caseType || !caseDescription.trim() || !idCardUpload || !agreement) {
       setSubmissionStatus(t.validationError || 'Please fill all required fields and agree to terms.');
@@ -84,7 +81,6 @@ const HomePage = () => {
 
     try {
       const data = new FormData();
-
       const caseData = {
         fullName: fullName.trim(),
         email: email.trim(),
@@ -95,7 +91,6 @@ const HomePage = () => {
         agreement,
         userName: user.userName
       };
-
       data.append('caseData', JSON.stringify(caseData));
       data.append('files', idCardUpload);
       if (fileUpload && fileUpload.length > 0) {
@@ -108,359 +103,137 @@ const HomePage = () => {
         method: 'POST',
         body: data
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to submit case: ${errorText}`);
-      }
-
-      const result = await response.json();
-
-      setCases((prev) => [result, ...prev]);
+      if (!response.ok) throw new Error(await response.text());
       setSubmissionStatus(t.caseSubmittedSuccess || 'Case submitted successfully!');
-
-      setFormData({
-        fullName: '',
-        email: '',
-        phone: '',
-        dateOfIncident: '',
-        caseType: '',
-        caseDescription: '',
-        idCardUpload: null,
-        fileUpload: [],
-        agreement: false
-      });
+      setFormData({ fullName: '', email: '', phone: '', dateOfIncident: '', caseType: '', caseDescription: '', idCardUpload: null, fileUpload: [], agreement: false });
     } catch (error) {
       console.error(error);
       setSubmissionStatus(error.message || 'Submission failed.');
     }
   };
 
-  const onLogout = () => {
-    if (window.confirm(t.logoutConfirmation)) {
-      localStorage.removeItem("user");
-      navigate('/login');
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0b3954] to-[#087e8b] text-gray-100 font-sans">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#03314b] shadow-md flex flex-col md:flex-row justify-between items-center py-5 px-6 md:px-12 select-none">
-        <div aria-label={t.title} className="text-white font-bold text-xl max-w-[220px] text-center md:text-left">
-          {t.title}
+    <div className="min-h-screen flex flex-col bg-gray-200 text-gray-900 font-sans">
+      <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-gray-300 border-b border-gray-400`}>
+        <div className="max-w-screen-xl mx-auto flex justify-between items-center px-4 py-3">
+          <div className="text-gray-900 font-bold text-xl">{t.title}</div>
+          <LanguageSwitcher />
+          <div className="flex gap-4 items-center">
+            <button onClick={() => navigate('/mycases')} className="bg-gray-300 text-gray-900 font-semibold px-4 py-2 rounded-full hover:bg-gray-400 shadow-md">
+              {t.myCases || 'My Cases'}
+            </button>
+            <button 
+              type="button" 
+              onClick={() => {
+                if (window.confirm(t.logoutConfirmation || "Are you sure you want to logout?")) {
+                  localStorage.removeItem("user"); // Remove user from local storage
+                  navigate('/login'); // Navigate to the login page
+                }
+              }} 
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-6 py-2 rounded-full shadow-lg shadow-[#f25c05]/50 transition-colors"
+            >
+              {t.logout}
+            </button>
+          </div>
         </div>
-        <LanguageSwitcher />
-        <div aria-label="Court logo" className="cursor-pointer transition-transform hover:rotate-12 hover:scale-110 duration-300 mb-3 md:mb-0">
-          <img src={homeimage} alt="Court Logo" className="h-16 w-16 md:h-20 md:w-20 rounded-lg" draggable={false} />
-        </div>
-        <button
-          type="button"
-          className="bg-[#f25c05] hover:bg-[#d14e00] focus:outline-none focus:ring-2 focus:ring-[#d14e00] text-white font-semibold px-6 py-2 rounded-full shadow-lg shadow-[#f25c05]/50 transition-colors"
-          aria-label={t.logout}
-          onClick={onLogout}
-        >
-          {t.logout}
-        </button>
       </header>
 
-      {/* Main Content */}
-      <main className="bg-[#f6f9fa] max-w-7xl mx-auto mt-8 mb-12 rounded-3xl p-8 md:p-14 text-gray-900 flex-grow shadow-xl">
-        {/* Hero */}
-        <section className="mb-12 text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
-            {t.welcomeMessage}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
-            {t.introText}
-          </p>
-        </section>
+      <main className="bg-gray-200 max-w-7xl mx-auto mt-8 mb-12 rounded-3xl p-8 md:p-14 flex-grow shadow-xl z-0">
+        <motion.section className="mb-12 text-center max-w-4xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp}>
+          <motion.h1 variants={fadeInUp} className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">{t.welcomeMessage}</motion.h1>
+          <motion.p variants={fadeInUp} className="text-lg md:text-xl text-gray-700 leading-relaxed">{t.introText}</motion.p>
+        </motion.section>
 
-        {/* Benefits Section */}
-        <section aria-label="Benefits of Digital Court System" className="flex flex-wrap justify-center gap-8 mb-14 max-w-6xl mx-auto">
+        <motion.section aria-label="Benefits of Digital Court System" className="flex flex-wrap justify-center gap-8 mb-14 max-w-6xl mx-auto" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
           {(t.benefits || []).map((text, idx) => (
-            <article
-              key={idx}
-              tabIndex={0}
-              aria-describedby={`benefit${idx + 1}desc`}
-              className="flex items-center gap-4 bg-blue-100 rounded-3xl p-5 shadow-md text-blue-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer min-w-[250px]"
-            >
-              <svg
-                className="h-8 w-8 flex-shrink-0"
-                fill="none"
-                stroke="#0369a1"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M5 13l4 4L19 7" />
-              </svg>
-              <p id={`benefit${idx + 1}desc`} className="font-semibold text-lg">
-                {text}
-              </p>
-            </article>
+            <motion.article key={idx} variants={fadeInUp} tabIndex={0} className="flex items-center gap-4 bg-gray-300 rounded-3xl p-5 shadow-md text-gray-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer min-w-[250px]">
+              <svg className="h-8 w-8" fill="none" stroke="#0369a1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
+              <p className="font-semibold text-lg">{text}</p>
+            </motion.article>
           ))}
+        </motion.section>
+
+        {/* Parallax banner */}
+        <section className="h-[50vh] bg-fixed bg-center bg-cover rounded-3xl shadow-md mb-16" style={{ backgroundImage: "url('https://images.pexels.com/photos/6077326/pexels-photo-6077326.jpeg')" }}>
+          <div className="w-full h-full bg-black/40 flex justify-center items-center">
+            <h2 className="text-white text-4xl font-bold">{t.justiceForAll || 'Justice for All'}</h2>
+          </div>
         </section>
 
-        {/* Case Submission Form */}
-        <section aria-label="Case Submission Form" className="max-w-4xl mx-auto mb-14">
-          <h2 className="text-3xl font-extrabold mb-6 text-center">{t.submitCaseTitle}</h2>
-          <form noValidate onSubmit={handleSubmit} aria-live="polite" aria-describedby="formInstructions" className="space-y-6">
-            <p id="formInstructions" className="text-gray-600 font-semibold text-center mb-6">
-              {t.formInstructions}
-            </p>
+        {/* Form section */}
+        <motion.section className="bg-gray-300 p-8 rounded-3xl shadow-xl mb-16 max-w-4xl mx-auto" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={staggerContainer}>
+          <motion.h2 variants={fadeInUp} className="text-3xl font-bold mb-6 text-center text-gray-900">
+            {t.submitCase || 'Submit a New Case'}
+          </motion.h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                label={t.fullNameLabel}
-                name="fullName"
-                type="text"
-                placeholder={t.fullNamePlaceholder}
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-              />
-              <InputField
-                label={t.emailLabel}
-                name="email"
-                type="email"
-                placeholder={t.emailPlaceholder}
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <InputField
-                label={t.phoneLabel}
-                name="phone"
-                type="text"
-                placeholder={t.phonePlaceholder}
-                value={formData.phone}
-                onChange={handleChange}
-                pattern="^\\+?\\d{7,15}$"
-                helpText={t.phoneHelp}
-              />
-              <InputField
-                label={t.dateOfIncidentLabel}
-                name="dateOfIncident"
-                type="date"
-                value={formData.dateOfIncident}
-                onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
-                helpText={t.dateHelp}
-              />
-              <SelectField
-                label={t.caseTypeLabel}
-                name="caseType"
-                value={formData.caseType}
-                onChange={handleChange}
-                options={t.caseTypes}
-                required
-              />
-              <TextAreaField
-                label={t.caseDescriptionLabel}
-                name="caseDescription"
-                value={formData.caseDescription}
-                onChange={handleChange}
-                placeholder={t.caseDescriptionPlaceholder}
-                required
-                rows={4}
-              />
-              <FileInputField
-                label={t.idCardUploadLabel}
-                name="idCardUpload"
-                onChange={handleChange}
-                required
-                accept="image/*,application/pdf"
-                currentFile={formData.idCardUpload}
-                helpText={t.idCardHelp}
-              />
-              <FileInputField
-                label={t.fileUploadLabel}
-                name="fileUpload"
-                onChange={handleChange}
-                multiple
-                accept="image/*,application/pdf"
-                currentFile={formData.fileUpload}
-                helpText={t.fileUploadHelp}
-              />
-              <CheckboxField
-                label={t.agreementLabel}
-                name="agreement"
-                checked={formData.agreement}
-                onChange={handleChange}
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6 text-gray-800">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-semibold">{t.fullName || 'Full Name'}</label>
+                <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required className="w-full px-4 py-2 rounded border border-gray-400" />
+              </div>
+              <div>
+                <label className="block font-semibold">{t.email || 'Email'}</label>
+                <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-2 rounded border border-gray-400" />
+              </div>
+              <div>
+                <label className="block font-semibold">{t.phone || 'Phone Number'}</label>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 rounded border border-gray-400" />
+              </div>
+              <div>
+                <label className="block font-semibold">{t.dateOfIncident || 'Date of Incident'}</label>
+                <input type="date" name="dateOfIncident" value={formData.dateOfIncident} onChange={handleChange} className="w-full px-4 py-2 rounded border border-gray-400" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-semibold">{t.caseType || 'Case Type'}</label>
+              <select name="caseType" value={formData.caseType} onChange={handleChange} required className="w-full px-4 py-2 rounded border border-gray-400">
+                <option value="">{t.selectOption || '-- Select a Case Type --'}</option>
+                <option value="Criminal">{t.criminal || 'Criminal'}</option>
+                <option value="Civil">{t.civil || 'Civil'}</option>
+                <option value="Family">{t.family || 'Family'}</option>
+                <option value="Land Dispute">{t.landDispute || 'Land Dispute'}</option>
+                <option value="Other">{t.other || 'Other'}</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold">{t.caseDescription || 'Case Description'}</label>
+              <textarea name="caseDescription" value={formData.caseDescription} onChange={handleChange} rows={4} required className="w-full px-4 py-2 rounded border border-gray-400"></textarea>
+            </div>
+
+            <div>
+              <label className="block font-semibold">{t.idUpload || 'Upload ID (PDF/Image)'}</label>
+              <input type="file" name="idCardUpload" accept=".pdf,image/*" onChange={handleChange} required className="w-full px-4 py-2 rounded border border-gray-400" />
+            </div>
+
+            <div>
+              <label className="block font-semibold">{t.additionalFiles || 'Additional Files (optional)'}</label>
+              <input type="file" name="fileUpload" multiple accept=".pdf,image/*" onChange={handleChange} className="w-full px-4 py-2 rounded border border-gray-400" />
+            </div>
+
+            <div className="flex items-center">
+              <input type="checkbox" name="agreement" checked={formData.agreement} onChange={handleChange} required className="mr-2" />
+              <label className="text-sm">{t.agreeTerms || 'I agree to the terms and conditions.'}</label>
             </div>
 
             {submissionStatus && (
-              <p
-                className={
-                  submissionStatus.toLowerCase().includes('success') ? 'text-center font-semibold text-green-600' : 'text-center font-semibold text-red-600'
-                }
-                role="alert"
-              >
-                {submissionStatus}
-              </p>
+              <div className="text-center font-semibold text-red-600">{submissionStatus}</div>
             )}
 
-            <button
-              type="submit"
-              className="w-full md:w-auto bg-[#f25c05] hover:bg-[#d14e00] text-white font-bold py-3 px-8 rounded-full shadow-md shadow-[#f25c05]/60 transition-colors focus:outline-none focus:ring-2 focus:ring-[#d14e00]"
-            >
-              {t.submitButton}
+            <button type="submit" className="bg-[#03314b] hover:bg-[#022534] text-white font-bold px-6 py-3 rounded-full shadow-md mx-auto block">
+              {t.submit || 'Submit Case'}
             </button>
           </form>
-        </section>
-
-        {/* Submitted Cases Section */}
-        <section aria-label="Submitted Cases" className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-extrabold mb-6 text-center">{t.submittedCasesTitle}</h2>
-          {cases.length === 0 ? (
-            <p className="text-center text-gray-700 italic">{t.noCases}</p>
-          ) : (
-            <ul className="space-y-4 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-xl shadow-inner border border-gray-300">
-              {cases.map(({ id, fullName, caseType, submittedAt, status }) => (
-                <li
-                  key={id}
-                  tabIndex={0}
-                  className="bg-white p-4 rounded-xl shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] transition"
-                  aria-label={`Case submitted by ${fullName}, type ${caseType}, status ${status}`}
-                >
-                  <p className="font-semibold text-lg">{fullName}</p>
-                  <p className="text-sm text-gray-600">{caseType}</p>
-                  <p className="text-sm text-gray-500">{new Date(submittedAt).toLocaleString()}</p>
-                  <p
-                    className={`mt-1 font-semibold ${
-                      status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-700'
-                    }`}
-                  >
-                    {status}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        </motion.section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#03314b] text-gray-300 text-center py-6 select-none">
-        <p>
-          &copy; {new Date().getFullYear()} {t.title}. {t.footerNote}
-        </p>
+      <footer className="bg-gray-300 text-gray-900 text-center py-6 select-none">
+        <p>&copy; {new Date().getFullYear()} {t.title}. {t.footerNote}</p>
       </footer>
     </div>
   );
 };
-
-const InputField = ({ label, name, type = 'text', placeholder, value, onChange, required, pattern, helpText }) => (
-  <div className="flex flex-col">
-    <label htmlFor={name} className="mb-1 font-semibold text-gray-800">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-    <input
-      id={name}
-      name={name}
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      required={required}
-      pattern={pattern}
-      className="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-[#f25c05]"
-    />
-    {helpText && <small className="text-gray-500 mt-1">{helpText}</small>}
-  </div>
-);
-
-const SelectField = ({ label, name, value, onChange, options, required }) => (
-  <div className="flex flex-col">
-    <label htmlFor={name} className="mb-1 font-semibold text-gray-800">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-    <select
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-[#f25c05]"
-    >
-      <option value="">{/* Empty option for placeholder */}</option>
-      {options.map((opt, i) => (
-        <option key={i} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-  </div>
-);
-
-const TextAreaField = ({ label, name, value, onChange, placeholder, required, rows }) => (
-  <div className="flex flex-col col-span-full">
-    <label htmlFor={name} className="mb-1 font-semibold text-gray-800">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-    <textarea
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      required={required}
-      rows={rows || 3}
-      className="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-[#f25c05] resize-y"
-    />
-  </div>
-);
-
-const FileInputField = ({ label, name, onChange, required, accept, multiple, currentFile, helpText }) => (
-  <div className="flex flex-col">
-    <label htmlFor={name} className="mb-1 font-semibold text-gray-800">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-    <input
-      id={name}
-      name={name}
-      type="file"
-      onChange={onChange}
-      required={required}
-      accept={accept}
-      multiple={multiple}
-      className="rounded-lg border border-gray-300 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-[#f25c05]"
-      aria-describedby={`${name}Help`}
-    />
-    {currentFile && !multiple && (
-      <small id={`${name}Help`} className="text-gray-600 mt-1">
-        Current file: {currentFile.name}
-      </small>
-    )}
-    {currentFile && multiple && Array.isArray(currentFile) && currentFile.length > 0 && (
-      <small id={`${name}Help`} className="text-gray-600 mt-1">
-        {currentFile.length} file(s) selected
-      </small>
-    )}
-    {helpText && <small className="text-gray-500 mt-1">{helpText}</small>}
-  </div>
-);
-
-const CheckboxField = ({ label, name, checked, onChange, required }) => (
-  <div className="flex items-center gap-3">
-    <input
-      id={name}
-      name={name}
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      required={required}
-      className="h-5 w-5 rounded border-gray-300 text-[#f25c05] focus:ring-[#f25c05]"
-    />
-    <label htmlFor={name} className="font-semibold text-gray-800 select-none cursor-pointer">
-      {label} {required && <span className="text-red-600">*</span>}
-    </label>
-  </div>
-);
 
 export default HomePage;

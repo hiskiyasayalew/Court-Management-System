@@ -92,6 +92,50 @@ const translations = {
     deleteCaseButton: 'Delete Case',
     fileUploadedLabel: 'Uploaded Files',
     allRightsReserved: 'All rights reserved.',
+    /*lanague context for home*/
+ title: "Ethiopia CourtCase",
+    welcomeMessage: "Welcome to the Digital Court System",
+    introText: "Streamlining the judicial process with transparency and security.",
+    myCases: "My Cases",
+    logout: "Logout",
+    submitCase: "Submit a New Case",
+    fullName: "Full Name",
+    email: "Email",
+    phone: "Phone Number",
+    dateOfIncident: "Date of Incident",
+    caseType: "Case Type",
+    caseDescription: "Case Description",
+    idUpload: "Upload ID (PDF/Image)",
+    additionalFiles: "Additional Files (optional)",
+    agreeTerms: "I agree to the terms and conditions.",
+    submit: "Submit Case",
+    validationError: "Please fill all required fields and agree to terms.",
+    caseSubmittedSuccess: "Case submitted successfully!",
+    submissionFailed: "Submission failed. Please try again.",
+    logoutConfirmation: "Are you sure you want to logout?",
+    submittedCasesTitle: "Submitted Cases",
+    noCases: "No cases submitted yet.",
+    selectOption: "-- Select a Case Type --",
+    criminal: "Criminal",
+    civil: "Civil",
+    family: "Family",
+    landDispute: "Land Dispute",
+    other: "Other",
+    submittedToProcess: "Submitted to Process",
+    footerNote: "All rights reserved.",
+    benefits: [
+      "Access your cases anytime, anywhere.",
+      "Get real-time updates on your case status.",
+      "Easily upload documents securely.",
+      "Communicate directly with your attorney."
+    ],
+    justiceForAll: "Justice for All",
+    userNotLoggedIn: "User not logged in. Please login to continue.",
+    fetchCasesError: "Error fetching user cases.",
+    caseLoadingError: "Error loading cases.",
+  
+  /**mycases page */
+  backToHome: "back to home"
   },
   am: {
     signupTitle: "መለያ ፍጠሩ ፣ ዛሬ ተቀላቅሉ",
@@ -184,6 +228,47 @@ const translations = {
     deleteCaseButton: 'ክስ አስወግድ',
     fileUploadedLabel: 'የተሰቀለ ፋይሎች',
     allRightsReserved: 'መሥሪያ መብቶች በሙሉ የተጠበቁ ናቸው。',
+
+    /*  home page  */
+    title: "ኢትዮጵያ ፍትሕ ጉዳይ",
+    welcomeMessage: "ወደ ዲጂታል ፍርድ ስርዓት እንኳን ወደ ተወዳዳሪ በሚል ገቢ ይቀበሉ",
+    introText: "የፍርድ ሂደትን በጥምር እና እውነተኛ ይይዙ.",
+    myCases: "የእኔ ጉዳዮች",
+    logout: "ውጣ",
+    submitCase: "አዲስ ጉዳይ ይላኩ",
+    fullName: "ሙሉ ስም",
+    email: "ኢሜይል",
+    phone: "የስልክ ቁጥር",
+    dateOfIncident: "የክስ ቀን",
+    caseType: "የጉዳይ ዓይነት",
+    caseDescription: "የጉዳይ መግለጫ",
+    idUpload: "የመለያ ማውጣት (PDF/ምስል)",
+    additionalFiles: "አማራጭ ፋይሎች (እባኮት)",
+    agreeTerms: "ወደ ምንጭ ሂደቶች እንደ እኔ ተስማሚ እንደ ሆነ.",
+    submit: "ጉዳይ ይላኩ",
+    validationError: "እባኮት የተገለጸውን ቦታ ይሙሉ እና እንደ ወይን ይፈቅዱ.",
+    caseSubmittedSuccess: "ጉዳይ በተሳካ ሁኔታ ተላክሏል!",
+    logoutConfirmation: "እባኮት ውጣ የምትፈልጉ ነው?",
+    submittedCasesTitle: "የተላኩ ጉዳዮች",
+    noCases: "አንደኛ ጉዳይ ይላኩ አልቻልኩም.",
+    selectOption: "-- የጉዳይ ዓይነት ይምረጡ --",
+    criminal: "ወንጀል",
+    civil: "ዱክ",
+    family: "ቤተሰብ",
+    landDispute: "የመሬት ውርጭ",
+    other: "ሌላ",
+    submittedToProcess: "ወደ ሂደት ተላክሏል",
+    footerNote: "ሁሉም መብት ይወዳድር.",
+    benefits: [
+      "ጉዳይዎች ማየት ይችሉ.",
+      "በሂደት እውነታ ይይዙ.",
+      "ሰነዶች በደህንነት ይላኩ.",
+      "ከአባል ጋር በቀላሉ ይወዳድሩ."
+    ],
+    justiceForAll: "ለሁሉም ፍትሕ",
+   /**mycases page */
+   backToHome: "ወደ ዋናው ገጽ ይመለሱ"
+    
   }
 };
 
