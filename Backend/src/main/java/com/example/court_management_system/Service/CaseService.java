@@ -39,7 +39,7 @@ public class CaseService {
                 .agreement(dto.getAgreement())
                 .status(caseStatus.SUBMITTED_TO_PROCESS)
                 .submittedAt(LocalDateTime.now())
-                .user(user) // ✅ associate case with user
+                .user(user) // associate case with user
                 .build();
 
         return toDTO(caseRepository.save(entity));
@@ -52,12 +52,19 @@ public class CaseService {
                 .collect(Collectors.toList());
     }
 
-    public caseDTO updateStatus(Long id, caseStatus newStatus) {
-        CaseEntity caseEntity = caseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Case not found with id: " + id));
-        caseEntity.setStatus(newStatus);
-        return toDTO(caseRepository.save(caseEntity));
-    }
+    public caseDTO updateStatusWithDescription(Long id, caseStatus newStatus, String policeDescription) {
+    CaseEntity caseEntity = caseRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Case not found with id: " + id));
+
+    caseEntity.setStatus(newStatus);
+
+    String existingDesc = caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "";
+    String appendedDesc = existingDesc + "\n\n[Police Feedback]: " + policeDescription;
+    caseEntity.setCaseDescription(appendedDesc);
+
+    return toDTO(caseRepository.save(caseEntity));
+}
+
 
     public caseDTO getCaseById(Long id) {
         return toDTO(caseRepository.findById(id)

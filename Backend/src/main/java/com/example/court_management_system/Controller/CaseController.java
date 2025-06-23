@@ -65,10 +65,14 @@ public caseDTO submitCase(
         return caseService.getCasesByPhone(phone);
     }
 
-    @PatchMapping("/{id}")
-    public caseDTO updateStatus(@PathVariable Long id, @RequestParam caseStatus status) {
-        return caseService.updateStatus(id, status);
+        @PatchMapping("/{id}")
+    public caseDTO updateStatusWithDescription(
+            @PathVariable Long id,
+            @RequestParam caseStatus newStatus,
+            @RequestParam String policeDescription) {
+        return caseService.updateStatusWithDescription(id, newStatus, policeDescription);
     }
+
         @GetMapping("/by-user")
     public List<caseDTO> getCasesByUser(@RequestParam String userName) {
         return caseService.getCasesByUserName(userName);

@@ -31,12 +31,28 @@ const MyCases = () => {
         <p className="text-center text-gray-700 italic">{t.noCases}</p>
       ) : (
         <ul className="space-y-4 max-h-96 overflow-y-auto p-4 bg-gray-300 rounded-xl shadow-inner border border-gray-400">
-          {cases.map(({ id, fullName, caseType, submittedAt, status }) => (
-            <li key={id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] transition">
+          {cases.map(({ id, fullName, caseType, submittedAt, status, caseDescription }) => (
+            <li
+              key={id}
+              className="bg-white p-4 rounded-xl shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] transition"
+              tabIndex={0}
+            >
               <p className="font-semibold text-lg">{fullName}</p>
               <p className="text-sm text-gray-600">{caseType}</p>
               <p className="text-sm text-gray-500">{new Date(submittedAt).toLocaleString()}</p>
-              <p className={`mt-1 font-semibold ${status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-700'}`}>{status}</p>
+              <p
+                className={`mt-1 font-semibold ${
+                  status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-700'
+                }`}
+              >
+                {status}
+              </p>
+              {/* Show police feedback description */}
+              {caseDescription && (
+                <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
+                  {caseDescription}
+                </p>
+              )}
             </li>
           ))}
         </ul>
