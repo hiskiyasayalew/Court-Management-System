@@ -13,7 +13,7 @@ const PoliceHome = () => {
       .catch(err => console.error("Error loading cases:", err));
   }, []);
 
-  const handleAction = async (action) => {
+  const handleAction = async (action) => {  
     const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}?${action === "approve" ? "description" : "reason"}=${encodeURIComponent(description)}`;
     const response = await fetch(url, { method: "POST" });
     if (response.ok) {
@@ -57,7 +57,50 @@ const PoliceHome = () => {
         >
           <div className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-2">{selectedCase.fullName}</h2>
-            <p className="text-gray-700 mb-2">{selectedCase.caseDescription}</p>
+            <div className="text-sm text-gray-800 space-y-1">
+  <p><strong>Full Name:</strong> {selectedCase.fullName}</p>
+  <p><strong>Email:</strong> {selectedCase.email}</p>
+  <p><strong>Phone:</strong> {selectedCase.phone}</p>
+  <p><strong>Incident Date:</strong> {selectedCase.dateOfIncident}</p>
+  <p><strong>Case Type:</strong> {selectedCase.caseType}</p>
+  <p><strong>Submitted At:</strong> {new Date(selectedCase.submittedAt).toLocaleString()}</p>
+  <p className="whitespace-pre-wrap"><strong>Description:</strong> {selectedCase.caseDescription}</p>
+
+  {selectedCase.idCardUploadName && (
+  <p>
+    <strong>ID Card:</strong>{" "}
+    <a
+      href={`http://localhost:8080/uploads/${encodeURIComponent(selectedCase.idCardUploadName)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 underline"
+    >
+      {selectedCase.idCardUploadName}
+    </a>
+  </p>
+)}
+
+  {selectedCase.additionalFileNames?.length > 0 && (
+    <div>
+      <strong>Additional Files:</strong>
+      <ul className="list-disc list-inside ml-4">
+        {selectedCase.additionalFileNames.map((file, index) => (
+          <li key={index}>
+            <a
+              href={`http://localhost:8080/uploads/${file}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              {file}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
             <textarea
               className="w-full h-24 p-2 border mt-2 rounded"
               placeholder="Write your review/feedback..."

@@ -58,23 +58,24 @@ public class PoliceService {
         return toDTO(caseRepository.save(caseEntity));
     }
 
-    private caseDTO toDTO(CaseEntity entity) {
-        return caseDTO.builder()
-                .id(entity.getId())
-                .fullName(entity.getFullName())
-                .email(entity.getEmail())
-                .phone(entity.getPhone())
-                .dateOfIncident(entity.getDateOfIncident())
-                .caseType(entity.getCaseType())
-                .caseDescription(entity.getCaseDescription())
-                .idCardUploadName(entity.getIdCardUploadName())
-                .additionalFileNames(entity.getAdditionalFileNames())
-                .agreement(entity.getAgreement())
-                .status(entity.getStatus())
-                .submittedAt(entity.getSubmittedAt())
-                .userName(entity.getUser().getUserName())
-                .build();
-    }
+   private caseDTO toDTO(CaseEntity entity) {
+    return caseDTO.builder()
+            .id(entity.getId())
+            .fullName(entity.getFullName())
+            .email(entity.getEmail())
+            .phone(entity.getPhone())
+            .dateOfIncident(entity.getDateOfIncident())
+            .caseType(entity.getCaseType())
+            .caseDescription(entity.getCaseDescription())
+            .idCardUploadName(entity.getIdCardUploadName())
+            .additionalFileNames(entity.getAdditionalFileNames())
+            .agreement(entity.getAgreement())
+            .status(entity.getStatus())
+            .submittedAt(entity.getSubmittedAt())
+            .userName(entity.getUser() != null ? entity.getUser().getUserName() : null) // ← fix here
+            .build();
+}
+
 
     public PoliceDTO registerPolice(PoliceDTO dto) {
     if (policeRepository.findByUsername(dto.getUsername()) != null) {

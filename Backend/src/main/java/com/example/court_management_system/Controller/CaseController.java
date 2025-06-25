@@ -4,11 +4,11 @@ import com.example.court_management_system.DTO.caseDTO;
 import com.example.court_management_system.Entity.caseStatus;
 import com.example.court_management_system.Service.CaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,33 +21,47 @@ public class CaseController {
 
     private final CaseService caseService;
 
-   @PostMapping(value = "/submit", consumes = {"multipart/form-data"})
+@PostMapping(value = "/submit", consumes = {"multipart/form-data"})
 public caseDTO submitCase(
         @RequestPart("caseData") String caseData,
         @RequestPart("files") List<MultipartFile> files
 ) {
     try {
-        // Convert caseData (JSON string) to DTO
         ObjectMapper mapper = new ObjectMapper();
         caseDTO dto = mapper.readValue(caseData, caseDTO.class);
 
-        // Handle files (store or just names)
-        List<String> fileNames = new ArrayList<>();
-        for (MultipartFile file : files) {
-            fileNames.add(file.getOriginalFilename());
-            // You can also save the file to disk or cloud here
-        }
+        // Ensure the uploads directory exists
+      File uploadDir = new File(System.getProperty("user.dir"), "uploads");
+if (!uploadDir.exists()) {
+    uploadDir.mkdirs();
+}
 
-        // Assign file names to dto
-        dto.setIdCardUploadName(fileNames.size() > 0 ? fileNames.get(0) : null); // assume 1st is ID card
+List<String> fileNames = new ArrayList<>();
+for (MultipartFile file : files) {
+    String fileName = file.getOriginalFilename();
+    if (fileName != null && !fileName.isBlank()) {
+        // Optional sanitization
+        // fileName = fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+        File destination = new File(uploadDir, fileName);
+        file.transferTo(destination);
+        fileNames.add(fileName);
+    }
+}
+
+
+        dto.setIdCardUploadName(fileNames.size() > 0 ? fileNames.get(0) : null);
         dto.setAdditionalFileNames(fileNames.size() > 1 ? fileNames.subList(1, fileNames.size()) : List.of());
 
         return caseService.submitCase(dto);
 
     } catch (IOException e) {
+        e.printStackTrace(); // For debugging
         throw new RuntimeException("Failed to parse or save case", e);
     }
 }
+
+
 
 
     @GetMapping("/get-all")
@@ -65,7 +79,7 @@ public caseDTO submitCase(
         return caseService.getCasesByPhone(phone);
     }
 
-        @PatchMapping("/{id}")
+    @PatchMapping("/{id}")
     public caseDTO updateStatusWithDescription(
             @PathVariable Long id,
             @RequestParam caseStatus newStatus,
@@ -73,7 +87,7 @@ public caseDTO submitCase(
         return caseService.updateStatusWithDescription(id, newStatus, policeDescription);
     }
 
-        @GetMapping("/by-user")
+    @GetMapping("/by-user")
     public List<caseDTO> getCasesByUser(@RequestParam String userName) {
         return caseService.getCasesByUserName(userName);
     }

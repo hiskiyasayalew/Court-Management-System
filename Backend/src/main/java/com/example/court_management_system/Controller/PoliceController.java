@@ -46,21 +46,34 @@ public ResponseEntity<?> loginPolice(@RequestBody PoliceDTO loginDTO) {
         return policeService.approveCase(caseId, description);
     }
 
-    @PostMapping("/reject/{caseId}")
-public ResponseEntity<?> rejectCase(@PathVariable Long caseId, @RequestParam String reason) {
-    try {
-        caseDTO updatedCase = policeService.rejectCase(caseId, reason);
-        return ResponseEntity.ok(updatedCase);
-    } catch (Exception e) {
-        e.printStackTrace(); // Log the error stack trace
-        return ResponseEntity.status(500).body("Error: " + e.getMessage());
-    }
-}
+//     @PostMapping("/reject/{caseId}")
+// public ResponseEntity<?> rejectCase(@PathVariable Long caseId, @RequestParam String reason) {
+//     try {
+//         caseDTO updatedCase = policeService.rejectCase(caseId, reason);
+//         return ResponseEntity.ok(updatedCase);
+//     } catch (Exception e) {
+//         e.printStackTrace(); // Log the error stack trace
+//         return ResponseEntity.status(500).body("Error: " + e.getMessage());
+//     }
+// }
 
 
     @PostMapping("/forward/{caseId}")
     public caseDTO forwardToProsecutor(@PathVariable Long caseId, @RequestParam String note) {
         return policeService.forwardToProsecutor(caseId, note);
     }
+
+    @PostMapping("/reject/{id}")
+public ResponseEntity<?> rejectCase(@PathVariable Long id, @RequestParam String reason) {
+    try {
+        caseDTO updatedCase = policeService.rejectCase(id, reason);
+        return ResponseEntity.ok(updatedCase);
+    } catch (Exception e) {
+        e.printStackTrace(); // Print full stack trace in backend logs
+        return ResponseEntity.status(500).body("Reject failed: " + e.getMessage());
+    }
+}
+
+
     
 }
