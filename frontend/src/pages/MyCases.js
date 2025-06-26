@@ -24,9 +24,37 @@ const MyCases = () => {
     fetchUserCases();
   }, []);
 
+  const deleteCase = async (caseId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/cases/${caseId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error("Failed to delete case");
+      setCases(cases.filter(c => c.id !== caseId));
+    } catch (error) {
+      console.error("Error deleting case:", error);
+    }
+  };
+
+  const clearAllCases = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.userName) return;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/cases/clear?userName=${user.userName}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error("Failed to clear cases");
+      setCases([]);
+    } catch (error) {
+      console.error("Error clearing cases:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-200 text-gray-900 font-sans p-8">
       <h2 className="text-3xl font-extrabold mb-6 text-center">{t.submittedCasesTitle}</h2>
+
       {cases.length === 0 ? (
         <p className="text-center text-gray-700 italic">{t.noCases}</p>
       ) : (
@@ -47,17 +75,29 @@ const MyCases = () => {
               >
                 {status}
               </p>
-              {/* Show police feedback description */}
               {caseDescription && (
                 <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
                   {caseDescription}
                 </p>
               )}
+              <button 
+                onClick={() => deleteCase(id)} 
+                className="mt-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+              >
+                {t.delete || 'Delete'}
+              </button>
             </li>
           ))}
         </ul>
       )}
-      <div className="flex justify-center mt-4">
+
+      <div className="flex justify-between mt-4">
+        <button 
+          onClick={clearAllCases} 
+          className="bg-red-600 text-white font-bold px-3 py-1 rounded-full shadow-md text-sm"
+        >
+          {t.clearAll || 'Clear All'}
+        </button>
         <button 
           onClick={() => navigate('/home')} 
           className="bg-[#03314b] text-white font-bold px-3 py-1 rounded-full shadow-md text-sm"

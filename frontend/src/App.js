@@ -14,9 +14,10 @@ import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
 import MyCases from './pages/MyCases';
 import PoliceHome from './pages/PoliceHomePage'; // <-- NEW IMPORT
-
+import AppliedRejectedPage from './pages/AppliedRejectedPage';
+import PoliceForm from './pages/PoliceForm'
 const App = () => {
-  return (
+  return (  
     <LanguageProvider>
       <Router>
         <Routes>
@@ -32,7 +33,8 @@ const App = () => {
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/police-home" element={<PoliceHome />} /> {/* <-- NEW ROUTE */}
-
+          <Route path="/appliedandrejected" element={<AppliedRejectedPage/>}/>
+<Route path="/policeform" element={<PoliceForm/>}/>
           <Route path="/" element={<Navigate to="/landingpage" />} />
         </Routes>
       </Router>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const PoliceHome = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [cases, setCases] = useState([]);
   const [selectedCase, setSelectedCase] = useState(null);
   const [description, setDescription] = useState('');
@@ -24,9 +26,32 @@ const PoliceHome = () => {
     }
   };
 
+  const handleLogout = () => {
+    navigate('/login/police'); // Navigate to login page
+  };
+
+  const handleAppliedRejected = () => {
+    navigate('/appliedandrejected'); // Navigate to applied and rejected cases
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">Police Dashboard</h1>
+
+      <div className="flex justify-between mb-4">
+        <button
+          onClick={handleAppliedRejected}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Applied & Rejected Cases
+        </button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </div>
 
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -58,48 +83,48 @@ const PoliceHome = () => {
           <div className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-2">{selectedCase.fullName}</h2>
             <div className="text-sm text-gray-800 space-y-1">
-  <p><strong>Full Name:</strong> {selectedCase.fullName}</p>
-  <p><strong>Email:</strong> {selectedCase.email}</p>
-  <p><strong>Phone:</strong> {selectedCase.phone}</p>
-  <p><strong>Incident Date:</strong> {selectedCase.dateOfIncident}</p>
-  <p><strong>Case Type:</strong> {selectedCase.caseType}</p>
-  <p><strong>Submitted At:</strong> {new Date(selectedCase.submittedAt).toLocaleString()}</p>
-  <p className="whitespace-pre-wrap"><strong>Description:</strong> {selectedCase.caseDescription}</p>
+              <p><strong>Full Name:</strong> {selectedCase.fullName}</p>
+              <p><strong>Email:</strong> {selectedCase.email}</p>
+              <p><strong>Phone:</strong> {selectedCase.phone}</p>
+              <p><strong>Incident Date:</strong> {selectedCase.dateOfIncident}</p>
+              <p><strong>Case Type:</strong> {selectedCase.caseType}</p>
+              <p><strong>Submitted At:</strong> {new Date(selectedCase.submittedAt).toLocaleString()}</p>
+              <p className="whitespace-pre-wrap"><strong>Description:</strong> {selectedCase.caseDescription}</p>
 
-  {selectedCase.idCardUploadName && (
-  <p>
-    <strong>ID Card:</strong>{" "}
-    <a
-      href={`http://localhost:8080/uploads/${encodeURIComponent(selectedCase.idCardUploadName)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-blue-600 underline"
-    >
-      {selectedCase.idCardUploadName}
-    </a>
-  </p>
-)}
+              {selectedCase.idCardUploadName && (
+                <p>
+                  <strong>ID Card:</strong>{" "}
+                  <a
+                    href={`http://localhost:8080/uploads/${encodeURIComponent(selectedCase.idCardUploadName)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {selectedCase.idCardUploadName}
+                  </a>
+                </p>
+              )}
 
-  {selectedCase.additionalFileNames?.length > 0 && (
-    <div>
-      <strong>Additional Files:</strong>
-      <ul className="list-disc list-inside ml-4">
-        {selectedCase.additionalFileNames.map((file, index) => (
-          <li key={index}>
-            <a
-              href={`http://localhost:8080/uploads/${file}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline"
-            >
-              {file}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
-</div>
+              {selectedCase.additionalFileNames?.length > 0 && (
+                <div>
+                  <strong>Additional Files:</strong>
+                  <ul className="list-disc list-inside ml-4">
+                    {selectedCase.additionalFileNames.map((file, index) => (
+                      <li key={index}>
+                        <a
+                          href={`http://localhost:8080/uploads/${file}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          {file}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <textarea
               className="w-full h-24 p-2 border mt-2 rounded"
