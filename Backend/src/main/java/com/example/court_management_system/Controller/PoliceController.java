@@ -46,17 +46,6 @@ public ResponseEntity<?> loginPolice(@RequestBody PoliceDTO loginDTO) {
         return policeService.approveCase(caseId, description);
     }
 
-//     @PostMapping("/reject/{caseId}")
-// public ResponseEntity<?> rejectCase(@PathVariable Long caseId, @RequestParam String reason) {
-//     try {
-//         caseDTO updatedCase = policeService.rejectCase(caseId, reason);
-//         return ResponseEntity.ok(updatedCase);
-//     } catch (Exception e) {
-//         e.printStackTrace(); // Log the error stack trace
-//         return ResponseEntity.status(500).body("Error: " + e.getMessage());
-//     }
-// }
-
 
     @PostMapping("/forward/{caseId}")
     public caseDTO forwardToProsecutor(@PathVariable Long caseId, @RequestParam String note) {

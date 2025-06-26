@@ -6,11 +6,32 @@ const ProsecutorLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Implement login logic or API call here
-    alert(`Username: ${username}, Password: ${password}`);
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('http://localhost:8080/api/prosecutor/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem('prosecutor', JSON.stringify(data));
+      window.location.href = '/prosecutor/home'; // Navigate to home page
+    } else {
+      const errorText = await response.text();
+      alert(`Login failed: ${errorText}`);
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Something went wrong during login');
+  }
+};
+
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-4 relative">

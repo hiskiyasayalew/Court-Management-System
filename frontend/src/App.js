@@ -14,25 +14,25 @@ import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
 import MyCases from './pages/MyCases';
 import PoliceHome from './pages/PoliceHomePage'; // <-- NEW IMPORT
-
+import ProsecutorHome from './pages/ProsecutorHomePage';
 const App = () => {
   return (
     <LanguageProvider>
       <Router>
         <Routes>
-          <Route path="/landingpage" element={<LandingPage />} />
-          <Route path="/applyform" element={<ApplyForm />} />
-          <Route path="/mycases" element={<MyCases />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/login/judge" element={<JudgeLogin />} />
-          <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
-          <Route path="/login/police" element={<PoliceLogin />} />
-          <Route path="/adminlogin" element={<AdminLogin />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/police-home" element={<PoliceHome />} /> {/* <-- NEW ROUTE */}
-
+            <Route path="/landingpage" element={<LandingPage />} />
+            <Route path="/applyform" element={<ApplyForm />} />
+            <Route path="/mycases" element={<MyCases />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/login/judge" element={<JudgeLogin />} />
+            <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
+            <Route path="/login/police" element={<PoliceLogin />} />
+            <Route path="/adminlogin" element={<AdminLogin />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/police-home" element={<PoliceHome />} /> {/* <-- NEW ROUTE */}
+            <Route path="/prosecutor/home" element={<ProsecutorHome />} />
           <Route path="/" element={<Navigate to="/landingpage" />} />
         </Routes>
       </Router>
