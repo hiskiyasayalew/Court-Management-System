@@ -41,9 +41,28 @@ const PoliceLogin = () => {
         <section className="w-full max-w-sm">
           <h1 className="text-3xl font-extrabold text-gray-900 leading-tight mb-6">Police Login</h1>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" className="w-full border-b border-gray-300 pb-2" required />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full border-b border-gray-300 pb-2" required />
-            <button type="submit" className="w-full bg-blue-400 text-white py-2 rounded mt-4 hover:bg-blue-500 transition">Sign in</button>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              className="w-full border-b border-gray-300 pb-2"
+              required
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full border-b border-gray-300 pb-2"
+              required
+            />
+            <button
+              type="submit"
+              className="w-full bg-[#f25c05] hover:bg-[#d14e00] text-white py-2 rounded mt-4 font-semibold transition"
+            >
+              Sign in
+            </button>
           </form>
           {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
         </section>

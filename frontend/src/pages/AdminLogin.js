@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AdminLogin= () => {
+const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -26,7 +26,7 @@ const AdminLogin= () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
               required
             />
           </div>
@@ -42,16 +42,16 @@ const AdminLogin= () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-indigo-700 transition"
+            className="w-full bg-[#f25c05] text-white py-2 rounded-md text-lg font-semibold hover:bg-[#d14e00] transition"
           >
-           Log In
+            Log In
           </button>
         </form>
       </main>

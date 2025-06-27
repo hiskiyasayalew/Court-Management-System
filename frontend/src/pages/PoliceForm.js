@@ -60,7 +60,6 @@ const PoliceForm = () => {
     try {
       const res = await axios.post('http://localhost:8080/api/police/send-to-prosecutor', formData);
       setMessage('✅ Case successfully forwarded to prosecutor.');
-      // Optionally, reset the form
       setDetails('');
       setEvidence('');
       setWitnesses('');
@@ -156,9 +155,10 @@ const PoliceForm = () => {
             />
           </div>
 
+          {/* ✅ Consistent button styling */}
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
           >
             Send to Prosecutor
           </button>

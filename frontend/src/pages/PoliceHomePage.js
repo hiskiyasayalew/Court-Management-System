@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const PoliceHome = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [selectedCase, setSelectedCase] = useState(null);
   const [description, setDescription] = useState('');
+  const [police, setPolice] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/police/cases")
@@ -15,58 +16,48 @@ const PoliceHome = () => {
       .catch(err => console.error("Error loading cases:", err));
   }, []);
 
- const handleAction = async (action) => {
-  const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}?${action === "approve" ? "description" : "reason"}=${encodeURIComponent(description)}`;
-  const response = await fetch(url, { method: "POST" });
-
-  if (response.ok) {
-    alert(`Case ${action}d successfully.`);
-
-    if (action === "approve") {
-      navigate('/send-to-prosecutor', { state: { caseData: selectedCase } }); // Pass selected case
-    } else {
-      setCases(prev => prev.filter(c => c.id !== selectedCase.id));
-      setSelectedCase(null);
-      setDescription('');
+  useEffect(() => {
+    const storedPolice = JSON.parse(localStorage.getItem("police"));
+    if (storedPolice) {
+      setPolice(storedPolice);
     }
-  }
-};
+  }, []);
 
+  const handleAction = async (action) => {
+    const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}?${action === "approve" ? "description" : "reason"}=${encodeURIComponent(description)}`;
+    const response = await fetch(url, { method: "POST" });
 
-  const handleLogout = () => {
-    navigate('/login/police'); // Navigate to login page
+    if (response.ok) {
+      alert(`Case ${action}d successfully.`);
+      if (action === "approve") {
+        navigate('/send-to-prosecutor', { state: { caseData: selectedCase } });
+      } else {
+        setCases(prev => prev.filter(c => c.id !== selectedCase.id));
+        setSelectedCase(null);
+        setDescription('');
+      }
+    }
   };
 
-  const handleAppliedRejected = () => {
-    navigate('/appliedandrejected'); // Navigate to applied and rejected cases
-  };
-const [police, setPolice] = useState(null);
-
-useEffect(() => {
-  const storedPolice = JSON.parse(localStorage.getItem("police"));
-  if (storedPolice) {
-    setPolice(storedPolice);
-  }
-}, []);
+  const handleLogout = () => navigate('/login/police');
+  const handleAppliedRejected = () => navigate('/appliedandrejected');
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-
-     <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">
-     {police ? `Welcome, Officer ${police.officerName}` : "Police Dashboard"}
-    </h1>
-      <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">Police Dashboard</h1>
+      <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">
+        {police ? `Welcome, Officer ${police.officerName}` : "Police Dashboard"}
+      </h1>
 
       <div className="flex justify-between mb-4">
         <button
           onClick={handleAppliedRejected}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
         >
           Applied & Rejected Cases
         </button>
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
         >
           Logout
         </button>
@@ -151,16 +142,17 @@ useEffect(() => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+
             <div className="flex justify-end mt-4 gap-3">
               <button
                 onClick={() => handleAction('approve')}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
               >
                 Approve
               </button>
               <button
                 onClick={() => handleAction('reject')}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
               >
                 Reject
               </button>
@@ -169,7 +161,7 @@ useEffect(() => {
                   setSelectedCase(null);
                   setDescription('');
                 }}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition"
               >
                 Cancel
               </button>

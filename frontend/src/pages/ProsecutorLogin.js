@@ -13,9 +13,7 @@ const ProsecutorLogin = () => {
     try {
       const response = await fetch('http://localhost:8080/api/prosecutor/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
 
@@ -64,7 +62,7 @@ const ProsecutorLogin = () => {
             />
             <button
               type="submit"
-              className="w-full bg-blue-400 text-white py-2 rounded mt-4 hover:bg-blue-500 transition"
+              className="w-full bg-[#f25c05] hover:bg-[#d14e00] text-white py-2 rounded mt-4 transition"
             >
               Sign in
             </button>
@@ -82,3 +80,4 @@ const ProsecutorLogin = () => {
 };
 
 export default ProsecutorLogin;
+

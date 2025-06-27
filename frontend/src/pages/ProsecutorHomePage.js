@@ -21,12 +21,13 @@ const ProsecutorHomePage = () => {
         console.error("Failed to load cases:", error);
       });
   }, []);
-  
-    const deleteCase = async (caseId) => {
+
+  const deleteCase = async (caseId) => {
     try {
       const res = await fetch(`http://localhost:8080/api/cases/${caseId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete case");
       setCases(cases.filter((c) => c.id !== caseId));
+      setSelectedCase(null);
     } catch (err) {
       console.error("Error deleting case:", err);
     }
@@ -98,12 +99,18 @@ const ProsecutorHomePage = () => {
             </div>
           )}
 
-          <div className="mt-4">
+          <div className="mt-6 flex justify-between">
             <button
               onClick={() => setSelectedCase(null)}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
             >
               Back
+            </button>
+            <button
+              onClick={() => deleteCase(selectedCase.id)}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
+            >
+              Delete Case
             </button>
           </div>
         </div>

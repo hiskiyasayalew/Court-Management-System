@@ -29,7 +29,7 @@ const JudgeLogin = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
-              className="w-full border-b border-gray-300 pb-2"
+              className="w-full border-b border-gray-300 pb-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
               required
             />
             <input
@@ -37,12 +37,12 @@ const JudgeLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full border-b border-gray-300 pb-2"
+              className="w-full border-b border-gray-300 pb-2 focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
               required
             />
             <button
               type="submit"
-              className="w-full bg-blue-400 text-white py-2 rounded mt-4 hover:bg-blue-500 transition"
+              className="w-full bg-[#f25c05] text-white py-2 rounded mt-4 hover:bg-[#d14e00] transition"
             >
               Sign in
             </button>

@@ -82,7 +82,7 @@ const MyCases = () => {
               )}
               <button 
                 onClick={() => deleteCase(id)} 
-                className="mt-2 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                className="mt-2 bg-[#f25c05] hover:bg-[#d14e00] text-white px-3 py-1 rounded text-sm font-semibold transition"
               >
                 {t.delete || 'Delete'}
               </button>
@@ -91,16 +91,16 @@ const MyCases = () => {
         </ul>
       )}
 
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-6">
         <button 
           onClick={clearAllCases} 
-          className="bg-red-600 text-white font-bold px-3 py-1 rounded-full shadow-md text-sm"
+          className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-4 py-2 rounded-full shadow transition text-sm"
         >
           {t.clearAll || 'Clear All'}
         </button>
         <button 
           onClick={() => navigate('/home')} 
-          className="bg-[#03314b] text-white font-bold px-3 py-1 rounded-full shadow-md text-sm"
+          className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-4 py-2 rounded-full shadow transition text-sm"
         >
           {t.backToHome || 'Back to Home'}
         </button>

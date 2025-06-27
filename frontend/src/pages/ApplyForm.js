@@ -82,7 +82,7 @@ const ApplyForm = ({ onSubmit }) => {
           </p>
           <button
             onClick={() => setSubmitted(false)}
-            className="mt-8 bg-indigo-600 text-white py-2 px-6 rounded-md hover:bg-indigo-700 transition"
+            className="mt-8 bg-[#f25c05] text-white py-2 px-6 rounded-md hover:bg-[#d14e00] transition"
             type="button"
           >
             Submit another application
@@ -112,7 +112,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Enter your full name"
               className={`w-full border rounded-md px-3 py-2 ${
                 errors.fullName ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.fullName && <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>}
@@ -131,7 +131,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Enter your email address"
               className={`w-full border rounded-md px-3 py-2 ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
@@ -150,7 +150,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Enter your phone number"
               className={`w-full border rounded-md px-3 py-2 ${
                 errors.phone ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
@@ -169,7 +169,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Enter your address"
               className={`w-full border rounded-md px-3 py-2 resize-y ${
                 errors.address ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address}</p>}
@@ -186,7 +186,7 @@ const ApplyForm = ({ onSubmit }) => {
               onChange={(e) => setRole(e.target.value)}
               className={`w-full border rounded-md px-3 py-2 ${
                 errors.role ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             >
               <option value="">-- Select Role --</option>
@@ -210,7 +210,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Explain your motivation"
               className={`w-full border rounded-md px-3 py-2 resize-y ${
                 errors.reason ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.reason && <p className="text-red-600 text-sm mt-1">{errors.reason}</p>}
@@ -229,7 +229,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="List your degrees, certifications, institutions, etc."
               className={`w-full border rounded-md px-3 py-2 resize-y ${
                 errors.education ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.education && <p className="text-red-600 text-sm mt-1">{errors.education}</p>}
@@ -248,7 +248,7 @@ const ApplyForm = ({ onSubmit }) => {
               multiple
               className={`w-full border rounded-md px-3 py-2 ${
                 errors.educationFiles ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.educationFiles && (
@@ -269,7 +269,7 @@ const ApplyForm = ({ onSubmit }) => {
               placeholder="Describe your relevant work history"
               className={`w-full border rounded-md px-3 py-2 resize-y ${
                 errors.workExperience ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+              } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.workExperience && <p className="text-red-600 text-sm mt-1">{errors.workExperience}</p>}
@@ -286,14 +286,14 @@ const ApplyForm = ({ onSubmit }) => {
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
               placeholder="Any other details you want to provide"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
             />
           </div>
 
           <div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-2 rounded-md text-lg font-semibold hover:bg-indigo-700 transition"
+              className="w-full bg-[#f25c05] text-white py-2 rounded-md text-lg font-semibold hover:bg-[#d14e00] transition"
             >
               Submit Application
             </button>

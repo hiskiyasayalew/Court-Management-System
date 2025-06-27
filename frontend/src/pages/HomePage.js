@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useNavigate } from 'react-router-dom';
@@ -222,7 +222,7 @@ const HomePage = () => {
               <div className="text-center font-semibold text-red-600">{submissionStatus}</div>
             )}
 
-            <button type="submit" className="bg-[#03314b] hover:bg-[#022534] text-white font-bold px-6 py-3 rounded-full shadow-md mx-auto block">
+            <button type="submit" className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-bold px-6 py-3 rounded-full mx-auto block">
               {t.submit || 'Submit Case'}
             </button>
           </form>

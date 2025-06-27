@@ -63,6 +63,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.username}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="email"
@@ -71,6 +72,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.email}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="password"
@@ -79,6 +81,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.password}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="password"
@@ -87,6 +90,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.confirmPassword}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="text"
@@ -95,6 +99,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.firstName}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="text"
@@ -103,6 +108,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.lastName}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="text"
@@ -111,6 +117,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.phoneNumber}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="text"
@@ -119,6 +126,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.city}
               className="w-full border-b pb-2"
+              required
             />
             <input
               type="text"
@@ -127,10 +135,11 @@ const Signup = () => {
               onChange={handleChange}
               placeholder={t.subCity}
               className="w-full border-b pb-2"
+              required
             />
             <button
               type="submit"
-              className="w-full bg-blue-400 text-white font-semibold py-2 rounded mt-4 hover:bg-blue-500 transition"
+              className="w-full bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold py-2 rounded mt-4 transition"
             >
               {t.signup}
             </button>

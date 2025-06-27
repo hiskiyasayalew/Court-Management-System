@@ -29,13 +29,13 @@ const AppliedRejectedPage = () => {
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setView('approved')}
-          className={`mr-2 ${view === 'approved' ? 'bg-blue-500' : 'bg-gray-300'} text-white px-4 py-2 rounded transition duration-300`}
+          className={`mr-2 ${view === 'approved' ? 'bg-[#f25c05]' : 'bg-gray-300'} text-white px-4 py-2 rounded transition duration-300`}
         >
           Approved
         </button>
         <button
           onClick={() => setView('rejected')}
-          className={`${view === 'rejected' ? 'bg-blue-500' : 'bg-gray-300'} text-white px-4 py-2 rounded transition duration-300`}
+          className={`${view === 'rejected' ? 'bg-[#f25c05]' : 'bg-gray-300'} text-white px-4 py-2 rounded transition duration-300`}
         >
           Rejected
         </button>
