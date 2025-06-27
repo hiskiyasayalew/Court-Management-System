@@ -13,33 +13,17 @@ import ApplyForm from './pages/ApplyForm';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
 import MyCases from './pages/MyCases';
-import PoliceHome from './pages/PoliceHomePage'; // <-- NEW IMPORT
-<<<<<<< HEAD
+import PoliceHome from './pages/PoliceHomePage';
 import ProsecutorHome from './pages/ProsecutorHomePage';
-=======
-import AppliedRejectedPage from './pages/AppliedRejectedPage';
-import PoliceForm from './pages/PoliceForm'
->>>>>>> f983d9ec434b288625167bf6aba361d7a9f89a7d
+import PoliceForm from './pages/PoliceForm'; // ✅ Add this import
+import AppliedRejected from './pages/AppliedRejectedPage'; // ✅ Add this import
+
 const App = () => {
-  return (  
+  return (
     <LanguageProvider>
       <Router>
         <Routes>
-<<<<<<< HEAD
-            <Route path="/landingpage" element={<LandingPage />} />
-            <Route path="/applyform" element={<ApplyForm />} />
-            <Route path="/mycases" element={<MyCases />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/login/judge" element={<JudgeLogin />} />
-            <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
-            <Route path="/login/police" element={<PoliceLogin />} />
-            <Route path="/adminlogin" element={<AdminLogin />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/police-home" element={<PoliceHome />} /> {/* <-- NEW ROUTE */}
-            <Route path="/prosecutor/home" element={<ProsecutorHome />} />
-=======
+          <Route path="/" element={<Navigate to="/landingpage" />} />
           <Route path="/landingpage" element={<LandingPage />} />
           <Route path="/applyform" element={<ApplyForm />} />
           <Route path="/mycases" element={<MyCases />} />
@@ -51,11 +35,10 @@ const App = () => {
           <Route path="/login/police" element={<PoliceLogin />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/police-home" element={<PoliceHome />} /> {/* <-- NEW ROUTE */}
-          <Route path="/appliedandrejected" element={<AppliedRejectedPage/>}/>
-<Route path="/policeform" element={<PoliceForm/>}/>
->>>>>>> f983d9ec434b288625167bf6aba361d7a9f89a7d
-          <Route path="/" element={<Navigate to="/landingpage" />} />
+          <Route path="/police-home" element={<PoliceHome />} />
+          <Route path="/prosecutor/home" element={<ProsecutorHome />} />
+          <Route path="/send-to-prosecutor" element={<PoliceForm />} /> {/* ✅ New route */}
+          <Route path="/appliedandrejected" element={<AppliedRejected />} />
         </Routes>
       </Router>
     </LanguageProvider>

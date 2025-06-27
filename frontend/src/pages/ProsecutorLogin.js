@@ -1,43 +1,44 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import loginImage from '../assets/prosecector.png'; // Adjust the path to your image
+import { Link, useNavigate } from 'react-router-dom';
+import loginImage from '../assets/prosecector.png'; // Ensure the path is correct
 
 const ProsecutorLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch('http://localhost:8080/api/prosecutor/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await fetch('http://localhost:8080/api/prosecutor/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem('prosecutor', JSON.stringify(data));
-      window.location.href = '/prosecutor/home'; // Navigate to home page
-    } else {
-      const errorText = await response.text();
-      alert(`Login failed: ${errorText}`);
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('prosecutor', JSON.stringify(data));
+        localStorage.setItem('prosecutorUsername', data.username); // ✅ Store username separately
+        navigate('/prosecutor/home'); // Navigate using useNavigate
+      } else {
+        const errorText = await response.text();
+        alert(`Login failed: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Something went wrong during login');
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('Something went wrong during login');
-  }
-};
-
+  };
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-4 relative">
       <main className="max-w-6xl w-full flex flex-col md:flex-row items-center justify-center gap-12">
         <section className="flex-shrink-0 max-w-md md:max-w-lg">
-         <img src={loginImage} alt="Illustration" className="w-full h-auto" />
+          <img src={loginImage} alt="Illustration" className="w-full h-auto" />
         </section>
 
         <section className="w-full max-w-sm">

@@ -10,13 +10,13 @@ const AppliedRejectedPage = () => {
 
   useEffect(() => {
     // Fetch approved cases
-    fetch("http://localhost:8080/api/police/cases/approved")
+    fetch("http://localhost:8080/api/police/approved-cases")
       .then(res => res.json())
       .then(setApprovedCases)
       .catch(err => console.error("Error loading approved cases:", err));
 
     // Fetch rejected cases
-    fetch("http://localhost:8080/api/police/cases/rejected")
+    fetch("http://localhost:8080/api/police/rejected-cases")
       .then(res => res.json())
       .then(setRejectedCases)
       .catch(err => console.error("Error loading rejected cases:", err));

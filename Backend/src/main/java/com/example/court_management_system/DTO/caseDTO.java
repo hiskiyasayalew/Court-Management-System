@@ -24,4 +24,7 @@ public class caseDTO {
     private com.example.court_management_system.Entity.caseStatus status;
     private LocalDateTime submittedAt;
     private String userName;
+    private Long prosecutorId;
+    private String prosecutorName;
+
 }

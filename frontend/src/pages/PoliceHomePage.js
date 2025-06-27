@@ -15,16 +15,23 @@ const PoliceHome = () => {
       .catch(err => console.error("Error loading cases:", err));
   }, []);
 
-  const handleAction = async (action) => {  
-    const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}?${action === "approve" ? "description" : "reason"}=${encodeURIComponent(description)}`;
-    const response = await fetch(url, { method: "POST" });
-    if (response.ok) {
-      alert(`Case ${action}d successfully.`);
+ const handleAction = async (action) => {
+  const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}?${action === "approve" ? "description" : "reason"}=${encodeURIComponent(description)}`;
+  const response = await fetch(url, { method: "POST" });
+
+  if (response.ok) {
+    alert(`Case ${action}d successfully.`);
+
+    if (action === "approve") {
+      navigate('/send-to-prosecutor', { state: { caseData: selectedCase } }); // Pass selected case
+    } else {
       setCases(prev => prev.filter(c => c.id !== selectedCase.id));
       setSelectedCase(null);
       setDescription('');
     }
-  };
+  }
+};
+
 
   const handleLogout = () => {
     navigate('/login/police'); // Navigate to login page
@@ -33,9 +40,21 @@ const PoliceHome = () => {
   const handleAppliedRejected = () => {
     navigate('/appliedandrejected'); // Navigate to applied and rejected cases
   };
+const [police, setPolice] = useState(null);
+
+useEffect(() => {
+  const storedPolice = JSON.parse(localStorage.getItem("police"));
+  if (storedPolice) {
+    setPolice(storedPolice);
+  }
+}, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+
+     <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">
+     {police ? `Welcome, Officer ${police.officerName}` : "Police Dashboard"}
+    </h1>
       <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">Police Dashboard</h1>
 
       <div className="flex justify-between mb-4">

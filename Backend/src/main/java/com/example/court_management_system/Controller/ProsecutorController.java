@@ -1,10 +1,14 @@
 package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.ProsecutorDTO;
+import com.example.court_management_system.DTO.caseDTO;
+import com.example.court_management_system.Service.CaseService;           // Import CaseService
 import com.example.court_management_system.Service.ProsecutorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/prosecutor")
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProsecutorController {
 
     private final ProsecutorService prosecutorService;
+    private final CaseService caseService;   // Inject CaseService here
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProsecutor(@RequestBody ProsecutorDTO dto) {
@@ -30,5 +35,15 @@ public class ProsecutorController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    public List<ProsecutorDTO> getAllProsecutors() {
+        return prosecutorService.getAllProsecutors();
+    }
+
+    @GetMapping("/prosecutor-cases")
+    public List<caseDTO> getCasesAssignedToProsecutor(@RequestParam String username) {
+        return caseService.getCasesForProsecutor(username);
     }
 }

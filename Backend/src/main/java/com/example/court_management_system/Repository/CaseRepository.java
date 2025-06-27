@@ -10,7 +10,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CaseRepository extends JpaRepository<CaseEntity, Long> {
+
+    // ✅ Find all cases by phone number
     List<CaseEntity> findByPhone(String phone);
+
+    // ✅ Find all cases submitted by a specific user   
     List<CaseEntity> findByUser(UserEntity user);
 
+    // ✅ Delete all cases submitted by a specific user
+    void deleteAllByUser(UserEntity user);
 }

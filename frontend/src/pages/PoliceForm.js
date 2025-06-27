@@ -1,134 +1,175 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 const PoliceForm = () => {
+  const location = useLocation();
+  const passedCase = location.state?.caseData;
+
+  const [caseId, setCaseId] = useState('');
+  const [prosecutors, setProsecutors] = useState([]);
+  const [selectedProsecutor, setSelectedProsecutor] = useState('');
   const [details, setDetails] = useState('');
   const [evidence, setEvidence] = useState('');
   const [witnesses, setWitnesses] = useState('');
   const [caseFiles, setCaseFiles] = useState([]);
   const [evidenceFiles, setEvidenceFiles] = useState([]);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleCaseFileChange = (e) => {
-    setCaseFiles(e.target.files);
-  };
+  useEffect(() => {
+    if (passedCase?.id) {
+      setCaseId(passedCase.id);
+    }
+  }, [passedCase]);
 
-  const handleEvidenceFileChange = (e) => {
-    setEvidenceFiles(e.target.files);
-  };
+  useEffect(() => {
+    axios
+      .get('http://localhost:8080/api/prosecutor')
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setProsecutors(res.data);
+        } else {
+          console.error("Expected array but got:", res.data);
+          setProsecutors([]);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch prosecutors:', err);
+        setProsecutors([]);
+      });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    // Basic validation
-    if (!details || !evidence || !witnesses || caseFiles.length === 0) {
-      setError('All fields are required, including at least one case file.');
-      return;
-    }
 
     const formData = new FormData();
+    formData.append('caseId', caseId);
+    formData.append('prosecutorId', selectedProsecutor);
     formData.append('details', details);
     formData.append('evidence', evidence);
     formData.append('witnesses', witnesses);
 
-    // Append case files to FormData
-    for (let i = 0; i < caseFiles.length; i++) {
-      formData.append('caseFiles', caseFiles[i]);
+    for (let file of caseFiles) {
+      formData.append('caseFiles', file);
     }
 
-    // Append evidence files to FormData if any
-    for (let i = 0; i < evidenceFiles.length; i++) {
-      formData.append('evidenceFiles', evidenceFiles[i]);
+    for (let file of evidenceFiles) {
+      formData.append('evidenceFiles', file);
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/police/send-to-prosecutor', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        setSuccess('Case sent to prosecutor successfully.');
-        setDetails('');
-        setEvidence('');
-        setWitnesses('');
-        setCaseFiles([]);
-        setEvidenceFiles([]);
-      } else {
-        setError('Failed to send case. Please try again.');
-      }
+      const res = await axios.post('http://localhost:8080/api/police/send-to-prosecutor', formData);
+      setMessage('✅ Case successfully forwarded to prosecutor.');
+      // Optionally, reset the form
+      setDetails('');
+      setEvidence('');
+      setWitnesses('');
+      setCaseFiles([]);
+      setEvidenceFiles([]);
+      setSelectedProsecutor('');
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error(err);
+      setMessage('❌ Failed to send case: ' + (err.response?.data || err.message));
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-4xl font-bold text-center text-blue-700 mb-6">Send Case to Prosecutor</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
-        
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">Incident Details</label>
-          <textarea
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            className="w-full h-24 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
+        <h2 className="text-2xl font-bold mb-4 text-blue-700">Forward Case to Prosecutor</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block font-semibold">Case ID:</label>
+            <input
+              type="text"
+              value={caseId}
+              onChange={(e) => setCaseId(e.target.value)}
+              required
+              className="w-full border p-2 rounded"
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">Evidence Description</label>
-          <textarea
-            value={evidence}
-            onChange={(e) => setEvidence(e.target.value)}
-            className="w-full h-24 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
+          <div>
+            <label className="block font-semibold">Select Prosecutor:</label>
+            <select
+              value={selectedProsecutor}
+              onChange={(e) => setSelectedProsecutor(e.target.value)}
+              required
+              className="w-full border p-2 rounded"
+            >
+              <option value="">-- Select Prosecutor --</option>
+              {prosecutors.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">Witnesses</label>
-          <textarea
-            value={witnesses}
-            onChange={(e) => setWitnesses(e.target.value)}
-            className="w-full h-24 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
+          <div>
+            <label className="block font-semibold">Details:</label>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              required
+              className="w-full border p-2 rounded"
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">Upload Case Files (Mandatory)</label>
-          <input
-            type="file"
-            multiple
-            onChange={handleCaseFileChange}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </div>
+          <div>
+            <label className="block font-semibold">Evidence Summary:</label>
+            <textarea
+              value={evidence}
+              onChange={(e) => setEvidence(e.target.value)}
+              required
+              className="w-full border p-2 rounded"
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">Upload Evidence Files (Optional)</label>
-          <input
-            type="file"
-            multiple
-            onChange={handleEvidenceFileChange}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+          <div>
+            <label className="block font-semibold">Witnesses:</label>
+            <textarea
+              value={witnesses}
+              onChange={(e) => setWitnesses(e.target.value)}
+              required
+              className="w-full border p-2 rounded"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-        >
-          Send to Prosecutor
-        </button>
-      </form>
+          <div>
+            <label className="block font-semibold">Upload Case Files:</label>
+            <input
+              type="file"
+              multiple
+              onChange={(e) => setCaseFiles(Array.from(e.target.files))}
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold">Upload Evidence Files:</label>
+            <input
+              type="file"
+              multiple
+              onChange={(e) => setEvidenceFiles(Array.from(e.target.files))}
+              className="w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Send to Prosecutor
+          </button>
+        </form>
+
+        {message && (
+          <div className="mt-4 p-3 border rounded text-sm bg-gray-50">
+            {message}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

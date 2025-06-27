@@ -1,83 +1,107 @@
-    package com.example.court_management_system.Service;
+package com.example.court_management_system.Service;
 
-    import com.example.court_management_system.DTO.PoliceDTO;
-    import com.example.court_management_system.DTO.caseDTO;
-    import com.example.court_management_system.Entity.CaseEntity;
-    import com.example.court_management_system.Entity.PoliceEntity;
-    import com.example.court_management_system.Entity.caseStatus;
-    import com.example.court_management_system.Repository.CaseRepository;
-    import com.example.court_management_system.Repository.PoliceRepository;
-    import lombok.RequiredArgsConstructor;
-    import org.springframework.stereotype.Service;
+import com.example.court_management_system.DTO.PoliceDTO;
+import com.example.court_management_system.DTO.caseDTO;
+import com.example.court_management_system.Entity.CaseEntity;
+import com.example.court_management_system.Entity.PoliceEntity;
+import com.example.court_management_system.Entity.ProsecutorEntity;
+import com.example.court_management_system.Entity.caseStatus;
+import com.example.court_management_system.Repository.CaseRepository;
+import com.example.court_management_system.Repository.PoliceRepository;
+import com.example.court_management_system.Repository.ProsecutorRepository;
 
-    import java.util.List;
-    import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-    @Service
-    @RequiredArgsConstructor
-    public class PoliceService {
+import java.util.List;
+import java.util.stream.Collectors;
 
-        private final PoliceRepository policeRepository;
-        private final CaseRepository caseRepository;
+@Service
+@RequiredArgsConstructor
+public class PoliceService {
 
-        public List<caseDTO> getAllSubmittedCases() {
-            return caseRepository.findAll().stream()
-                    .filter(c -> c.getStatus() == caseStatus.SUBMITTED_TO_PROCESS)
-                    .map(this::toDTO)
-                    .collect(Collectors.toList());
-        }
+    private final PoliceRepository policeRepository;
+    private final CaseRepository caseRepository;
+    private final ProsecutorRepository prosecutorRepository;
 
-        public caseDTO approveCase(Long caseId, String description) {
-            CaseEntity caseEntity = caseRepository.findById(caseId)
-                    .orElseThrow(() -> new RuntimeException("Case not found"));
-            caseEntity.setStatus(caseStatus.UNDER_INVESTIGATION);
-            caseEntity.setCaseDescription(caseEntity.getCaseDescription() + "\n\n[Police Note]: " + description);
-            return toDTO(caseRepository.save(caseEntity));
-        }
+    // ✅ Fetch all cases with status SUBMITTED_TO_PROCESS
+    public List<caseDTO> getAllSubmittedCases() {
+        return caseRepository.findAll().stream()
+                .filter(c -> c.getStatus() == caseStatus.SUBMITTED_TO_PROCESS)
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
-        public caseDTO rejectCase(Long caseId, String reason) {
+    // ✅ Approve case and mark it as UNDER_INVESTIGATION with police feedback
+    public caseDTO approveCase(Long caseId, String description) {
         CaseEntity caseEntity = caseRepository.findById(caseId)
-            .orElseThrow(() -> new RuntimeException("Case not found with id: " + caseId));
+                .orElseThrow(() -> new RuntimeException("Case not found with ID: " + caseId));
 
-        caseEntity.setStatus(caseStatus.REJECTED);
+        caseEntity.setStatus(caseStatus.UNDER_INVESTIGATION);
 
         String existingDesc = caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "";
-        String appendedDesc = existingDesc + "\n\n[Police Rejection Reason]: " + reason;
-        caseEntity.setCaseDescription(appendedDesc);
+        String updatedDesc = existingDesc + "\n\n[Police Note]: " + description;
+        caseEntity.setCaseDescription(updatedDesc);
 
-        CaseEntity updatedCase = caseRepository.save(caseEntity);
-        return toDTO(updatedCase);
+        return toDTO(caseRepository.save(caseEntity));
     }
 
+    // ✅ Reject case with reason and mark it as REJECTED
+    public caseDTO rejectCase(Long caseId, String reason) {
+        CaseEntity caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found with ID: " + caseId));
 
-        public caseDTO forwardToProsecutor(Long caseId, String note) {
-            CaseEntity caseEntity = caseRepository.findById(caseId)
-                    .orElseThrow(() -> new RuntimeException("Case not found"));
-            caseEntity.setStatus(caseStatus.SENT_TO_PROSECUTOR); // You may need to add this status if missing
-            caseEntity.setCaseDescription(caseEntity.getCaseDescription() + "\n\n[Police Forward Note]: " + note);
-            return toDTO(caseRepository.save(caseEntity));
+        String existingDesc = caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "";
+        String updatedDesc = existingDesc + "\n\n[Police Rejection Reason]: " + reason;
+        caseEntity.setCaseDescription(updatedDesc);
+        caseEntity.setStatus(caseStatus.REJECTED);
+
+        return toDTO(caseRepository.save(caseEntity));
+    }
+
+    // ✅ Forward case to prosecutor, attach prosecutor, evidence, witness and uploaded files
+    public caseDTO sendToProsecutor(Long caseId, Long prosecutorId, String details, String evidence, String witnesses, List<String> uploadedFiles) {
+        CaseEntity caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found with ID: " + caseId));
+
+        ProsecutorEntity prosecutor = prosecutorRepository.findById(prosecutorId)
+                .orElseThrow(() -> new RuntimeException("Prosecutor not found with ID: " + prosecutorId));
+
+        caseEntity.setProsecutor(prosecutor);
+        caseEntity.setStatus(caseStatus.SENT_TO_PROSECUTOR);
+
+        String desc = caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "";
+        String newDesc = desc +
+                "\n\n[Police Details]: " + details +
+                "\n[Evidence]: " + evidence +
+                "\n[Witnesses]: " + witnesses;
+        caseEntity.setCaseDescription(newDesc);
+
+        if (uploadedFiles != null && !uploadedFiles.isEmpty()) {
+            caseEntity.setAdditionalFileNames(uploadedFiles);
         }
 
-    private caseDTO toDTO(CaseEntity entity) {
-        return caseDTO.builder()
-                .id(entity.getId())
-                .fullName(entity.getFullName())
-                .email(entity.getEmail())
-                .phone(entity.getPhone())
-                .dateOfIncident(entity.getDateOfIncident())
-                .caseType(entity.getCaseType())
-                .caseDescription(entity.getCaseDescription())
-                .idCardUploadName(entity.getIdCardUploadName())
-                .additionalFileNames(entity.getAdditionalFileNames())
-                .agreement(entity.getAgreement())
-                .status(entity.getStatus())
-                .submittedAt(entity.getSubmittedAt())
-                .userName(entity.getUser() != null ? entity.getUser().getUserName() : null) // ← fix here
-                .build();
+        return toDTO(caseRepository.save(caseEntity));
     }
 
+    // ✅ Get only approved (forwarded) cases   
+    public List<caseDTO> getApprovedCases() {
+        return caseRepository.findAll().stream()
+                .filter(c -> c.getStatus() == caseStatus.SENT_TO_PROSECUTOR)
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
-        public PoliceDTO registerPolice(PoliceDTO dto) {
+    // ✅ Get only rejected cases
+    public List<caseDTO> getRejectedCases() {
+        return caseRepository.findAll().stream()
+                .filter(c -> c.getStatus() == caseStatus.REJECTED)
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Register police (username must be unique)
+    public PoliceDTO registerPolice(PoliceDTO dto) {
         if (policeRepository.findByUsername(dto.getUsername()) != null) {
             throw new RuntimeException("Username already taken");
         }
@@ -94,6 +118,7 @@
         return toDTO(policeRepository.save(police));
     }
 
+    // ✅ Login police
     public PoliceDTO loginPolice(String username, String password) {
         PoliceEntity police = policeRepository.findByUsername(username);
         if (police == null || !police.getPassword().equals(password)) {
@@ -102,6 +127,7 @@
         return toDTO(police);
     }
 
+    // ✅ Convert PoliceEntity to DTO
     private PoliceDTO toDTO(PoliceEntity entity) {
         PoliceDTO dto = new PoliceDTO();
         dto.setId(entity.getId());
@@ -113,4 +139,26 @@
         dto.setPassword(entity.getPassword());
         return dto;
     }
-    }
+
+    // ✅ Convert CaseEntity to DTO
+    private caseDTO toDTO(CaseEntity entity) {
+    return caseDTO.builder()
+            .id(entity.getId())
+            .fullName(entity.getFullName())
+            .email(entity.getEmail())
+            .phone(entity.getPhone())
+            .dateOfIncident(entity.getDateOfIncident())
+            .caseType(entity.getCaseType())
+            .caseDescription(entity.getCaseDescription())
+            .idCardUploadName(entity.getIdCardUploadName())
+            .additionalFileNames(entity.getAdditionalFileNames())
+            .agreement(entity.getAgreement())
+            .status(entity.getStatus())
+            .submittedAt(entity.getSubmittedAt())
+            .userName(entity.getUser() != null ? entity.getUser().getUserName() : null)
+            .prosecutorName(entity.getProsecutor() != null ? entity.getProsecutor().getUsername() : null)  // ✅ NEW
+            .build();
+}
+
+    
+}

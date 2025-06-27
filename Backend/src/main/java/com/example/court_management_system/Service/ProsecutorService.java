@@ -6,6 +6,9 @@ import com.example.court_management_system.Repository.ProsecutorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProsecutorService {
@@ -34,6 +37,19 @@ public class ProsecutorService {
             throw new RuntimeException("Invalid username or password");
         }
         return toDTO(entity);
+    }
+
+    public List<ProsecutorDTO> getAllProsecutors() {
+        return prosecutorRepository.findAll().stream()
+                .map(p -> new ProsecutorDTO(
+                        p.getId(),
+                        p.getName(),
+                        p.getEmail(),
+                        p.getPhoneNumber(),
+                        p.getUsername(),
+                        null // Don't return password
+                ))
+                .collect(Collectors.toList());
     }
 
     private ProsecutorDTO toDTO(ProsecutorEntity entity) {

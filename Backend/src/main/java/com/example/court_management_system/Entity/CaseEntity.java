@@ -43,4 +43,8 @@ public class CaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @ManyToOne
+    @JoinColumn(name = "prosecutor_id")
+    private ProsecutorEntity prosecutor;
+
 }

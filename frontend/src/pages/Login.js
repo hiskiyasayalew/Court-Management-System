@@ -63,9 +63,9 @@ const Login = () => {
                 <input type="checkbox" className="w-4 h-4" />
                 {t.rememberMe}
               </label>
-              <Link to="/forgot-password" className="hover:underline">
+              {/* <Link to="/forgot-password" className="hover:underline">
                 {t.forgotPassword}
-              </Link>
+              </Link> */}
             </div>
             <button
               type="submit"

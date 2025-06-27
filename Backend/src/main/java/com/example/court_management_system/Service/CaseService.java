@@ -6,7 +6,6 @@ import com.example.court_management_system.Entity.UserEntity;
 import com.example.court_management_system.Entity.caseStatus;
 import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class CaseService {
 
     private final CaseRepository caseRepository;
-    private final UserRepository userRepository; // ✅ Must be final for injection
+    private final UserRepository userRepository;
 
     public caseDTO submitCase(caseDTO dto) {
         UserEntity user = userRepository.findByUserName(dto.getUserName());
@@ -39,7 +38,7 @@ public class CaseService {
                 .agreement(dto.getAgreement())
                 .status(caseStatus.SUBMITTED_TO_PROCESS)
                 .submittedAt(LocalDateTime.now())
-                .user(user) // associate case with user
+                .user(user)
                 .build();
 
         return toDTO(caseRepository.save(entity));
@@ -53,18 +52,18 @@ public class CaseService {
     }
 
     public caseDTO updateStatusWithDescription(Long id, caseStatus newStatus, String policeDescription) {
-    CaseEntity caseEntity = caseRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Case not found with id: " + id));
+        CaseEntity caseEntity = caseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Case not found with id: " + id));
 
-    caseEntity.setStatus(newStatus);
+        caseEntity.setStatus(newStatus);
 
-    String existingDesc = caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "";
-    String appendedDesc = existingDesc + "\n\n[Police Feedback]: " + policeDescription;
-    caseEntity.setCaseDescription(appendedDesc);
+        String updatedDescription = (caseEntity.getCaseDescription() != null ? caseEntity.getCaseDescription() : "")
+                + "\n\n[Police Feedback]: " + policeDescription;
 
-    return toDTO(caseRepository.save(caseEntity));
-}
+        caseEntity.setCaseDescription(updatedDescription);
 
+        return toDTO(caseRepository.save(caseEntity));
+    }
 
     public caseDTO getCaseById(Long id) {
         return toDTO(caseRepository.findById(id)
@@ -102,6 +101,35 @@ public class CaseService {
                 .agreement(entity.getAgreement())
                 .status(entity.getStatus())
                 .submittedAt(entity.getSubmittedAt())
+                .userName(entity.getUser() != null ? entity.getUser().getUserName() : null)
                 .build();
+    }   
+
+      public List<caseDTO> getCasesForProsecutor(String username) {
+        return caseRepository.findAll().stream()
+                .filter(c -> c.getProsecutor() != null && username.equals(c.getProsecutor().getUsername()))
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+        // ✅ Delete single case by ID
+    public void deleteCaseById(Long id) {
+        if (!caseRepository.existsById(id)) {
+            throw new RuntimeException("Case not found with ID: " + id);
+        }
+        caseRepository.deleteById(id);
+    }
+
+    // ✅ Delete all cases for a specific user
+    public void clearCasesByUserName(String userName) {
+        UserEntity user = userRepository.findByUserName(userName);
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + userName);
+        }
+
+        List<CaseEntity> userCases = caseRepository.findAll().stream()
+                .filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
+                .collect(Collectors.toList());
+
+        caseRepository.deleteAll(userCases);
     }
 }

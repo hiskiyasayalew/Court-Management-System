@@ -91,4 +91,16 @@ for (MultipartFile file : files) {
     public List<caseDTO> getCasesByUser(@RequestParam String userName) {
         return caseService.getCasesByUserName(userName);
     }
+
+        // ✅ DELETE: Single case by ID
+    @DeleteMapping("/{id}")
+    public void deleteCaseById(@PathVariable Long id) {
+        caseService.deleteCaseById(id);
+    }
+
+    // ✅ DELETE: All cases for a specific user
+    @DeleteMapping("/clear")
+    public void clearUserCases(@RequestParam String userName) {
+        caseService.clearCasesByUserName(userName);
+    }
 }
