@@ -6,6 +6,8 @@ import com.example.court_management_system.Entity.UserEntity;
 import com.example.court_management_system.Entity.caseStatus;
 import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -131,5 +133,30 @@ public class CaseService {
                 .collect(Collectors.toList());
 
         caseRepository.deleteAll(userCases);
+    }
+    @Transactional
+    public String prosecutorApproveCase(Long caseId, String description) {
+        CaseEntity caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found with id " + caseId));
+
+        caseEntity.setStatus(caseStatus.OPEN);  // set status to OPEN
+        caseEntity.setProsecutorReview(description);  // set prosecutor review/comment
+
+        caseRepository.save(caseEntity);
+
+        return "Case approved and status set to OPEN.";
+    }
+
+    @Transactional
+    public String prosecutorRejectCase(Long caseId, String reason) {
+        CaseEntity caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found with id " + caseId));
+
+        caseEntity.setStatus(caseStatus.REJECTED);  // set status to REJECTED
+        caseEntity.setProsecutorReview(reason);  // set prosecutor review/comment
+
+        caseRepository.save(caseEntity);
+
+        return "Case rejected and status set to REJECTED.";
     }
 }

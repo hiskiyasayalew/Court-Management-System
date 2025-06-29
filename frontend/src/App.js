@@ -14,9 +14,14 @@ import AdminLogin from './pages/AdminLogin';
 import MyCases from './pages/MyCases';
 import PoliceHome from './pages/PoliceHomePage';
 import ProsecutorHome from './pages/ProsecutorHomePage';
-import PoliceForm from './pages/PoliceForm'; // ✅ Add this import
-import AppliedRejected from './pages/AppliedRejectedPage'; // ✅ Add this import
-import AdminPage from './pages/AdminPage'; // Adjust the path if necessary
+import PoliceForm from './pages/PoliceForm';
+import AppliedRejected from './pages/AppliedRejectedPage';
+import AdminPage from './pages/AdminPage';
+import JudgeHomePage from './pages/JudgeHomePage';
+
+// ✅ Import your Prosecutor to Judge form
+import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
+
 const App = () => {
   return (
     <LanguageProvider>
@@ -35,9 +40,13 @@ const App = () => {
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/police-home" element={<PoliceHome />} />
           <Route path="/prosecutor/home" element={<ProsecutorHome />} />
-          <Route path="/send-to-prosecutor" element={<PoliceForm />} /> {/* ✅ New route */}
+          <Route path="/send-to-prosecutor" element={<PoliceForm />} />
           <Route path="/appliedandrejected" element={<AppliedRejected />} />
-          <Route path ="/admin" element={<AdminPage/>}/>
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/judge/home" element={<JudgeHomePage />} />
+
+          {/* ✅ Add this route for the prosecutor-to-judge form */}
+          <Route path="/send-to-judge" element={<ProsecutorToJudgeForm />} />
         </Routes>
       </Router>
     </LanguageProvider>

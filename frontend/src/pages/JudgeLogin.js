@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import loginImage from '../assets/judges.png'; // Adjust the path to your image
+import { Link, useNavigate } from 'react-router-dom';
+import loginImage from '../assets/judges.png';
 
 const JudgeLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement login logic or API call here
-    alert(`Username: ${username}, Password: ${password}`);
+    try {
+      const res = await fetch('http://localhost:8080/api/judge/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        alert('Login failed: ' + errorText);
+        return;
+      }
+
+      const data = await res.json();
+      localStorage.setItem('judge', JSON.stringify(data));
+      navigate('/judge/home');
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred. Please try again.');
+    }
   };
 
   return (

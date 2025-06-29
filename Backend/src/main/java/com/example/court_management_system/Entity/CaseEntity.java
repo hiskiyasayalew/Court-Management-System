@@ -39,6 +39,10 @@ public class CaseEntity {
 
     private LocalDateTime submittedAt;
 
+    @Column(length = 1000)
+    private String prosecutorReview;
+
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
