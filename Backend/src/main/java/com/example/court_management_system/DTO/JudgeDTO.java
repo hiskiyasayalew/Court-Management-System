@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class JudgeDTO {
+     private Long id; 
     private String name;
     private String username;
     private String password;

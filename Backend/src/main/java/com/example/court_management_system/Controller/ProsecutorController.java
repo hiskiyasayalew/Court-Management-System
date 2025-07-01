@@ -4,8 +4,10 @@ import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.DTO.ProsecutorDTO;
 import com.example.court_management_system.DTO.ProsecutorToJudgeFormDTO;
 import com.example.court_management_system.DTO.caseDTO;
+import com.example.court_management_system.Entity.CaseForwarding;
 import com.example.court_management_system.Service.*;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ public class ProsecutorController {
     private final ProsecutorService prosecutorService;
     private final CaseService caseService;
     private final JudgeService judgeService;
-    private final ProsecutorToJudgeFormService formService;
+    private final CaseForwardingService caseForwardingService;
      // ✅ You forgot to inject this
 
     @PostMapping("/register")
@@ -69,22 +71,14 @@ public class ProsecutorController {
     }
 
   
-    @PostMapping("/send-to-judge")
-    public ResponseEntity<?> sendToJudge(@ModelAttribute ProsecutorToJudgeFormDTO dto) {
-        System.out.println("Received caseId: " + dto.getCaseId());
-        System.out.println("Received prosecutorId: " + dto.getProsecutorId());
-        System.out.println("Received judgeId: " + dto.getJudgeId());
-        System.out.println("Details: " + dto.getDetails());
-        System.out.println("Evidence Summary: " + dto.getEvidenceSummary());
-        System.out.println("Witnesses: " + dto.getWitnesses());
-        System.out.println("caseFiles count: " + (dto.getCaseFiles() != null ? dto.getCaseFiles().size() : 0));
-        System.out.println("evidenceFiles count: " + (dto.getEvidenceFiles() != null ? dto.getEvidenceFiles().size() : 0));
-
+    @PostMapping(value = "/send-to-judge", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> sendToJudge(@ModelAttribute ProsecutorToJudgeFormDTO form) {
         try {
-            return ResponseEntity.ok(formService.submitFormToJudge(dto));
+            CaseForwarding saved = caseForwardingService.forwardCase(form);
+            return ResponseEntity.ok("Case forwarded to judge with ID " + saved.getId());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
 
 }

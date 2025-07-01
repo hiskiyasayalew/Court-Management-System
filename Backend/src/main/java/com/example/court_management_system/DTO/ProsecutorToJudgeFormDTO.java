@@ -1,10 +1,9 @@
 package com.example.court_management_system.DTO;
 
-import java.util.List;
-
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +13,10 @@ public class ProsecutorToJudgeFormDTO {
     private Long caseId;
     private Long prosecutorId;
     private Long judgeId;
+    private String courtName;
     private String details;
     private String evidenceSummary;
     private String witnesses;
-
     private List<MultipartFile> caseFiles;
     private List<MultipartFile> evidenceFiles;
 }

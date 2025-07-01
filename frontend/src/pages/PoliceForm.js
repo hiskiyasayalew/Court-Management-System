@@ -10,7 +10,7 @@ const PoliceForm = () => {
   const [prosecutors, setProsecutors] = useState([]);
   const [selectedProsecutor, setSelectedProsecutor] = useState('');
   const [details, setDetails] = useState('');
-  const [evidence, setEvidence] = useState('');
+  const [evidence, setEvidence] = useState(''); 
   const [witnesses, setWitnesses] = useState('');
   const [caseFiles, setCaseFiles] = useState([]);
   const [evidenceFiles, setEvidenceFiles] = useState([]);
