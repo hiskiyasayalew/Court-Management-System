@@ -78,32 +78,32 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif' }} className="relative">
-      {/* Navbar */}
+    <div className="font-sans relative">
+      {/* Responsive Navbar */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
           showNav ? 'translate-y-0' : '-translate-y-full'
-        } bg-white border-b border-gray-200`}
+        } bg-white border-b border-gray-200 shadow-sm`}
       >
-        <div className="max-w-screen-xl mx-auto flex justify-between items-center px-4 py-3">
-          <Link to="/" className="text-xl font-bold text-gray-900">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+          <Link to="/" className="text-lg sm:text-xl font-bold text-gray-900">
             Ethiopia CourtCase
           </Link>
 
-          <nav className="flex items-center gap-4 relative">
+          <nav className="flex items-center gap-3 sm:gap-4 relative">
             {/* Login Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 ref={buttonRef}
                 onClick={() => setDropdownOpen((prev) => !prev)}
-                className="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center gap-1"
+                className="text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5"
                 aria-haspopup="true"
                 aria-expanded={dropdownOpen}
                 aria-controls="loginDropdown"
               >
                 Login
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 sm:w-4 sm:h-4"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
@@ -117,24 +117,22 @@ const LandingPage = () => {
               {dropdownOpen && (
                 <div
                   id="loginDropdown"
-                  className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                  className="absolute right-0 mt-2 w-40 sm:w-48 bg-white rounded-md shadow-lg z-50 py-1"
                   role="menu"
-                  aria-label="Login options"
                 >
                   {[
-                    { label: 'Login as Judge', path: '/login/judge' },
-                    { label: 'Login as Police', path: '/login/police' },
-                    { label: 'Login as Prosecutor', path: '/login/prosecutor' },
-                    { label: 'Login as User', path: '/login' },
-                    { label: 'Login as Admin', path: '/adminlogin' },
+                    { label: 'Judge', path: '/login/judge' },
+                    { label: 'Police', path: '/login/police' },
+                    { label: 'Prosecutor', path: '/login/prosecutor' },
+                    { label: 'User', path: '/login' },
+                    { label: 'Admin', path: '/adminlogin' },
                   ].map(({ label, path }) => (
                     <Link
                       key={path}
                       to={path}
                       onClick={() => setDropdownOpen(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-gray-100"
                       role="menuitem"
-                      tabIndex={0}
                     >
                       {label}
                     </Link>
@@ -144,7 +142,10 @@ const LandingPage = () => {
             </div>
 
             {/* Sign Up Button */}
-            <Link to="/signup" className="px-3 py-1 rounded bg-[#f25c05] text-white text-sm hover:bg-[#d14e00] transition">
+            <Link 
+              to="/signup" 
+              className="px-2 py-1 sm:px-3 sm:py-1.5 rounded bg-[#f25c05] text-white text-xs sm:text-sm hover:bg-[#d14e00] transition"
+            >
               Sign Up
             </Link>
           </nav>
@@ -152,7 +153,7 @@ const LandingPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="relative h-[60vh] sm:h-screen w-full overflow-hidden">
         <AnimatePresence initial={false}>
           <motion.img
             key={currentSlide}
@@ -167,7 +168,6 @@ const LandingPage = () => {
           />
         </AnimatePresence>
 
-        {/* Overlay & Text */}
         <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center px-4 z-10">
           <motion.h1
             key={currentSlide + '-title'}
@@ -175,7 +175,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-4xl sm:text-5xl text-white font-normal mb-4"
+            className="text-2xl sm:text-4xl md:text-5xl text-white font-bold mb-2 sm:mb-4"
           >
             {slides[currentSlide].title}
           </motion.h1>
@@ -185,181 +185,147 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ delay: 0.9, duration: 1 }}
-            className="text-lg text-white max-w-2xl"
+            className="text-sm sm:text-lg text-white max-w-md sm:max-w-2xl"
           >
             {slides[currentSlide].description}
           </motion.p>
         </div>
       </section>
 
-      {/* 50/50 Sections */}
-      <section className="relative grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto px-4 py-16 items-center">
-        <motion.img
-          src="https://images.pexels.com/photos/38568/apple-imac-ipad-workplace-38568.jpeg"
-          alt="Case Management"
-          className="w-full rounded-lg pr-8"
-          initial={{ scale: 1.1, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          viewport={{ once: true, amount: 0.5 }}
-        />
+      {/* Features Sections */}
+      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <motion.img
+            src="https://images.pexels.com/photos/38568/apple-imac-ipad-workplace-38568.jpeg"
+            alt="Case Management"
+            className="w-full rounded-lg shadow-md"
+            initial={{ scale: 1.1, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            viewport={{ once: true, amount: 0.5 }}
+          />
 
-        <div className="hidden md:block absolute left-1/2 top-1/16 h-1/2 border-l border-gray-300" />
+          <motion.div
+            className="md:pl-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Modern Case Management</h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Effectively manage all aspects of court cases, including scheduling hearings, tracking case progress, and facilitating secure, seamless communication between judges, attorneys, police, prosecutors, and other key stakeholders within the Ethiopian judiciary system.
+            </p>
+          </motion.div>
+        </div>
 
-        <motion.div
-          className="md:pl-8"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
-          viewport={{ once: true, amount: 0.5 }}
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Modern Case Management</h2>
-          <p className="text-gray-600">
-            Effectively manage all aspects of court cases, including scheduling hearings, tracking case progress, and facilitating secure, seamless communication between judges, attorneys, police, prosecutors, and other key stakeholders within the Ethiopian judiciary system.
-          </p>
-        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center mt-12 sm:mt-16">
+          <motion.div
+            className="md:pr-8 order-1 md:order-2"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+              For Judges, Police, Prosecutors, and Citizens
+            </h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Designed to provide full accessibility and transparency, enabling judges, police, prosecutors, and citizens to efficiently track case statuses, access relevant documents, and collaborate seamlessly throughout the judicial process.
+            </p>
+          </motion.div>
+
+          <motion.img
+            src="https://images.pexels.com/photos/15686924/pexels-photo-15686924.jpeg"
+            alt="Stakeholders"
+            className="w-full rounded-lg shadow-md order-2 md:order-1"
+            initial={{ scale: 1.1, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            viewport={{ once: true, amount: 0.5 }}
+          />
+        </div>
       </section>
 
-      <section className="relative grid grid-cols-1 md:grid-cols-2 max-w-screen-xl mx-auto px-4 py-16 items-center">
-        <motion.div
-          className="md:pr-8"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
-          viewport={{ once: true, amount: 0.5 }}
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            For Judges, Police, Prosecutors, and Citizens
-          </h2>
-          <p className="text-gray-600">
-            Designed to provide full accessibility and transparency, enabling judges, police, prosecutors, and citizens to efficiently track case statuses, access relevant documents, and collaborate seamlessly throughout the judicial process.
-          </p>
-        </motion.div>
+      {/* Features Carousel */}
+      <section className="py-12 sm:py-16 bg-gray-50 overflow-hidden">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 sm:mb-12 px-4">
+          Explore More Features
+        </h2>
 
-        <div className="hidden md:block absolute left-1/2 top-1/16 h-1/2 border-l border-gray-300" />
-
-        <motion.img
-          src="https://images.pexels.com/photos/15686924/pexels-photo-15686924.jpeg"
-          alt="Stakeholders"
-          className="w-full rounded-lg pl-8"
-          initial={{ scale: 1.1, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          viewport={{ once: true, amount: 0.5 }}
-        />
+        <div className="relative">
+          <motion.div
+            className="flex w-[200%]"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ duration: 60, ease: 'linear', repeat: Infinity }}
+          >
+            {[...Array(2)].map((_, loopIdx) => (
+              <React.Fragment key={loopIdx}>
+                {[
+                  {
+                    image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg',
+                    title: 'Secure Data Handling',
+                    description: 'Protect your data with advanced encryption and security protocols.',
+                  },
+                  {
+                    image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg',
+                    title: 'Real-Time Notifications',
+                    description: 'Stay updated with instant alerts and case status changes.',
+                  },
+                  {
+                    image: 'https://images.pexels.com/photos/267614/pexels-photo-267614.jpeg',
+                    title: 'User-Friendly Interface',
+                    description: 'Navigate easily through an intuitive and accessible design.',
+                  },
+                  {
+                    image: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg',
+                    title: 'Comprehensive Reporting',
+                    description: 'Generate detailed reports for better case management.',
+                  },
+                ].map(({ image, title, description }, index) => (
+                  <div
+                    key={`${loopIdx}-${index}`}
+                    className="min-w-[250px] sm:min-w-[300px] mx-2 sm:mx-4 bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"
+                  >
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full h-40 sm:h-48 object-cover"
+                    />
+                    <div className="p-3 sm:p-4">
+                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-1">{title}</h3>
+                      <p className="text-gray-600 text-xs sm:text-sm">{description}</p>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </motion.div>
+        </div>
       </section>
 
-      {/* Sliding Cards Section */}
-      <section className="overflow-hidden py-16 bg-gray-50">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Explore More Features</h2>
-
-        <motion.div
-          className="flex w-[200%]"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: 60, ease: 'linear', repeat: Infinity }}
-        >
-          {/* Original 4 unique cards */}
-          {[
-            {
-              image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg',
-              title: 'Secure Data Handling',
-              description: 'Protect your data with advanced encryption and security protocols.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg',
-              title: 'Real-Time Notifications',
-              description: 'Stay updated with instant alerts and case status changes.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/267614/pexels-photo-267614.jpeg',
-              title: 'User-Friendly Interface',
-              description: 'Navigate easily through an intuitive and accessible design.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg',
-              title: 'Comprehensive Reporting',
-              description: 'Generate detailed reports for better case management.',
-            },
-          ].map(({ image, title, description }, index) => (
-            <div
-              key={'orig-' + index}
-              className="min-w-[300px] mx-4 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
-            >
-              <img
-                src={image}
-                alt={title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">{title}</h3>
-                <p className="text-sm text-gray-600">{description}</p>
-              </div>
-            </div>
-          ))}
-
-          {/* Duplicate the same 4 cards for seamless loop */}
-          {[
-            {
-              image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg',
-              title: 'Secure Data Handling',
-              description: 'Protect your data with advanced encryption and security protocols.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg',
-              title: 'Real-Time Notifications',
-              description: 'Stay updated with instant alerts and case status changes.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/267614/pexels-photo-267614.jpeg',
-              title: 'User-Friendly Interface',
-              description: 'Navigate easily through an intuitive and accessible design.',
-            },
-            {
-              image: 'https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg',
-              title: 'Comprehensive Reporting',
-              description: 'Generate detailed reports for better case management.',
-            },
-          ].map(({ image, title, description }, index) => (
-            <div
-              key={'dup-' + index}
-              className="min-w-[300px] mx-4 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
-            >
-              <img
-                src={image}
-                alt={title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-1">{title}</h3>
-                <p className="text-sm text-gray-600">{description}</p>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* FAQ */}
-      <section className="max-w-screen-md mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h2>
-        <div className="space-y-4">
+      {/* FAQ Section */}
+      <section className="max-w-screen-md mx-auto px-4 py-12 sm:py-16">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6 sm:mb-8">
+          Frequently Asked Questions
+        </h2>
+        <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index}>
+            <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setFaqOpen(faqOpen === index ? null : index)}
-                className="w-full text-left text-gray-800 font-semibold text-lg px-4 py-2 bg-gray-100 rounded-md"
+                className="w-full text-left text-gray-800 font-medium sm:font-semibold text-sm sm:text-base px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
                 aria-expanded={faqOpen === index}
-                aria-controls={`faq-content-${index}`}
               >
                 {faq.question}
               </button>
               <AnimatePresence>
                 {faqOpen === index && (
                   <motion.div
-                    id={`faq-content-${index}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden px-4 py-2 text-gray-600 bg-gray-50"
+                    className="px-4 py-2 text-gray-600 text-sm sm:text-base bg-white"
                   >
                     {faq.answer}
                   </motion.div>
@@ -372,17 +338,17 @@ const LandingPage = () => {
 
       {/* Parallax Section */}
       <section
-        className="h-[50vh] bg-fixed bg-center bg-cover"
+        className="h-[40vh] sm:h-[50vh] bg-fixed bg-center bg-cover"
         style={{ backgroundImage: "url('https://images.pexels.com/photos/5710947/pexels-photo-5710947.jpeg')" }}
       >
-        <div className="w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <h2 className="text-white text-4xl font-bold">Justice for All</h2>
+        <div className="w-full h-full bg-black/50 flex justify-center items-center">
+          <h2 className="text-white text-2xl sm:text-4xl font-bold">Justice for All</h2>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 text-center py-6 text-xs sm:text-sm">
-        &copy; 2024 Ethiopia CourtCaseSystem. All rights reserved.
+        &copy; {new Date().getFullYear()} Ethiopia CourtCaseSystem. All rights reserved.
       </footer>
     </div>
   );

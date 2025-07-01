@@ -74,15 +74,15 @@ const ApplyForm = ({ onSubmit }) => {
 
   if (submitted) {
     return (
-      <div className="bg-white min-h-screen flex items-center justify-center p-6">
-        <main className="max-w-lg w-full text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-4">Application Submitted</h1>
-          <p className="text-lg text-gray-700">
+      <div className="bg-white min-h-screen flex items-center justify-center p-4 sm:p-6">
+        <main className="max-w-md w-full text-center">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3 sm:mb-4">Application Submitted</h1>
+          <p className="text-base sm:text-lg text-gray-700">
             Submitted successfully. Your application will be reviewed by the admin.
           </p>
           <button
             onClick={() => setSubmitted(false)}
-            className="mt-8 bg-[#f25c05] text-white py-2 px-6 rounded-md hover:bg-[#d14e00] transition"
+            className="mt-6 sm:mt-8 bg-[#f25c05] text-white py-2 px-6 rounded-md hover:bg-[#d14e00] transition text-sm sm:text-base"
             type="button"
           >
             Submit another application
@@ -93,14 +93,14 @@ const ApplyForm = ({ onSubmit }) => {
   }
 
   return (
-    <div className="bg-white min-h-screen flex items-center justify-center p-6">
-      <main className="max-w-lg w-full">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-8 text-center">
+    <div className="bg-white min-h-screen flex items-center justify-center p-4 sm:p-6">
+      <main className="max-w-md sm:max-w-lg w-full">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6 sm:mb-8 text-center">
           Application Form
         </h1>
-        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+        <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit} noValidate>
           <div>
-            <label htmlFor="fullName" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="fullName" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Full Name <span className="text-red-600">*</span>
             </label>
             <input
@@ -110,16 +110,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Enter your full name"
-              className={`w-full border rounded-md px-3 py-2 ${
+              className={`w-full border rounded-md px-3 py-2 text-sm sm:text-base ${
                 errors.fullName ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.fullName && <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>}
+            {errors.fullName && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.fullName}</p>}
           </div>
 
           <div>
-            <label htmlFor="email" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Email <span className="text-red-600">*</span>
             </label>
             <input
@@ -129,16 +129,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
-              className={`w-full border rounded-md px-3 py-2 ${
+              className={`w-full border rounded-md px-3 py-2 text-sm sm:text-base ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+            {errors.email && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.email}</p>}
           </div>
 
           <div>
-            <label htmlFor="phone" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="phone" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Phone Number <span className="text-red-600">*</span>
             </label>
             <input
@@ -148,16 +148,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Enter your phone number"
-              className={`w-full border rounded-md px-3 py-2 ${
+              className={`w-full border rounded-md px-3 py-2 text-sm sm:text-base ${
                 errors.phone ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            {errors.phone && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.phone}</p>}
           </div>
 
           <div>
-            <label htmlFor="address" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="address" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Address <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -167,16 +167,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Enter your address"
-              className={`w-full border rounded-md px-3 py-2 resize-y ${
+              className={`w-full border rounded-md px-3 py-2 resize-y text-sm sm:text-base ${
                 errors.address ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address}</p>}
+            {errors.address && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.address}</p>}
           </div>
 
           <div>
-            <label htmlFor="role" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="role" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Select Role <span className="text-red-600">*</span>
             </label>
             <select
@@ -184,7 +184,7 @@ const ApplyForm = ({ onSubmit }) => {
               name="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className={`w-full border rounded-md px-3 py-2 ${
+              className={`w-full border rounded-md px-3 py-2 text-sm sm:text-base ${
                 errors.role ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
@@ -194,11 +194,11 @@ const ApplyForm = ({ onSubmit }) => {
               <option value="police">Police</option>
               <option value="prosecutor">Prosecutor</option>
             </select>
-            {errors.role && <p className="text-red-600 text-sm mt-1">{errors.role}</p>}
+            {errors.role && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.role}</p>}
           </div>
 
           <div>
-            <label htmlFor="reason" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="reason" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Why do you want to apply? <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -208,16 +208,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain your motivation"
-              className={`w-full border rounded-md px-3 py-2 resize-y ${
+              className={`w-full border rounded-md px-3 py-2 resize-y text-sm sm:text-base ${
                 errors.reason ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.reason && <p className="text-red-600 text-sm mt-1">{errors.reason}</p>}
+            {errors.reason && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.reason}</p>}
           </div>
 
           <div>
-            <label htmlFor="education" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="education" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Educational Background <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -227,16 +227,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={education}
               onChange={(e) => setEducation(e.target.value)}
               placeholder="List your degrees, certifications, institutions, etc."
-              className={`w-full border rounded-md px-3 py-2 resize-y ${
+              className={`w-full border rounded-md px-3 py-2 resize-y text-sm sm:text-base ${
                 errors.education ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.education && <p className="text-red-600 text-sm mt-1">{errors.education}</p>}
+            {errors.education && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.education}</p>}
           </div>
 
           <div>
-            <label htmlFor="educationFiles" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="educationFiles" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Upload Educational Degrees / Certificates <span className="text-red-600">*</span>
             </label>
             <input
@@ -246,18 +246,18 @@ const ApplyForm = ({ onSubmit }) => {
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               onChange={handleFileChange}
               multiple
-              className={`w-full border rounded-md px-3 py-2 ${
+              className={`w-full border rounded-md px-3 py-2 text-xs sm:text-sm ${
                 errors.educationFiles ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
             {errors.educationFiles && (
-              <p className="text-red-600 text-sm mt-1">{errors.educationFiles}</p>
+              <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.educationFiles}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="workExperience" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="workExperience" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Work Experience <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -267,16 +267,16 @@ const ApplyForm = ({ onSubmit }) => {
               value={workExperience}
               onChange={(e) => setWorkExperience(e.target.value)}
               placeholder="Describe your relevant work history"
-              className={`w-full border rounded-md px-3 py-2 resize-y ${
+              className={`w-full border rounded-md px-3 py-2 resize-y text-sm sm:text-base ${
                 errors.workExperience ? 'border-red-500' : 'border-gray-300'
               } focus:outline-none focus:ring-2 focus:ring-[#f25c05]`}
               required
             />
-            {errors.workExperience && <p className="text-red-600 text-sm mt-1">{errors.workExperience}</p>}
+            {errors.workExperience && <p className="text-red-600 text-xs sm:text-sm mt-1">{errors.workExperience}</p>}
           </div>
 
           <div>
-            <label htmlFor="additionalInfo" className="block font-medium text-gray-700 mb-1">
+            <label htmlFor="additionalInfo" className="block font-medium text-gray-700 mb-1 text-sm sm:text-base">
               Additional Information (optional)
             </label>
             <textarea
@@ -286,14 +286,14 @@ const ApplyForm = ({ onSubmit }) => {
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
               placeholder="Any other details you want to provide"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 resize-y text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#f25c05]"
             />
           </div>
 
           <div>
             <button
               type="submit"
-              className="w-full bg-[#f25c05] text-white py-2 rounded-md text-lg font-semibold hover:bg-[#d14e00] transition"
+              className="w-full bg-[#f25c05] text-white py-2 rounded-md text-base sm:text-lg font-semibold hover:bg-[#d14e00] transition"
             >
               Submit Application
             </button>

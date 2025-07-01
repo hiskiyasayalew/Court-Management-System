@@ -18,7 +18,7 @@ import PoliceForm from './pages/PoliceForm';
 import AppliedRejected from './pages/AppliedRejectedPage';
 import AdminPage from './pages/AdminPage';
 import JudgeHomePage from './pages/JudgeHomePage';
-
+import AppealPage from './pages/AppealPage';
 // ✅ Import your Prosecutor to Judge form
 import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
 
@@ -44,6 +44,7 @@ const App = () => {
           <Route path="/appliedandrejected" element={<AppliedRejected />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/judge/home" element={<JudgeHomePage />} />
+          <Route path="/appeal" element={<AppealPage/>} />
 
           {/* ✅ Add this route for the prosecutor-to-judge form */}
           <Route path="/send-to-judge" element={<ProsecutorToJudgeForm />} />
