@@ -38,17 +38,18 @@ public class JudgeService {
         return null;
     }
 
-   public List<JudgeDTO> getAllJudges() {
-    List<JudgeEntity> judgeEntities = judgeRepository.findAll();
-    return judgeEntities.stream()
+public List<JudgeDTO> getAllJudges() {
+    return judgeRepository.findAll().stream()
         .map(judge -> JudgeDTO.builder()
+            .id(judge.getId())  // 👈 add this!
             .name(judge.getName())
             .username(judge.getUsername())
-            .password(null)  // Never expose password in DTO responses
+            .password(null)
             .email(judge.getEmail())
             .status(judge.getStatus())
             .build())
         .toList();
 }
+
 
 }

@@ -1,9 +1,14 @@
 package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.JudgeDTO;
+import com.example.court_management_system.Entity.CaseForwarding;
+import com.example.court_management_system.Repository.CaseForwardingRepository;
 import com.example.court_management_system.Entity.JudgeEntity;
 import com.example.court_management_system.Service.JudgeService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class JudgeController {
 
     private final JudgeService judgeService;
+    private final CaseForwardingRepository repository;
 
     // Admin-only registration endpoint
    @PostMapping("/register")
@@ -37,4 +43,9 @@ public ResponseEntity<?> registerJudge(@RequestBody JudgeDTO judgeDTO) {
             return ResponseEntity.status(401).body("Login failed: " + e.getMessage());
         }
     }
+    @GetMapping("/cases")
+public List<CaseForwarding> getCasesForJudge(@RequestParam Long judgeId) {
+    return repository.findByJudgeId(judgeId);
+}
+
 }

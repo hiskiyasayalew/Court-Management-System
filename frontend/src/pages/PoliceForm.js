@@ -7,6 +7,7 @@ const PoliceForm = () => {
   const navigate = useNavigate();
   const passedCase = location.state?.caseData;
 
+  // Consolidated form state
   const [formData, setFormData] = useState({
     caseId: '',
     prosecutorId: '',
@@ -14,6 +15,8 @@ const PoliceForm = () => {
     evidence: '',
     witnesses: ''
   });
+
+  // Other state variables
   const [prosecutors, setProsecutors] = useState([]);
   const [caseFiles, setCaseFiles] = useState([]);
   const [evidenceFiles, setEvidenceFiles] = useState([]);

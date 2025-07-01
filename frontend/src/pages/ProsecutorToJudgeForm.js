@@ -99,7 +99,7 @@ const ProsecutorToJudgeForm = () => {
           setFileUploadProgress(progress);
         }
       });
-      
+
       setMessage({ 
         text: '✅ Case successfully forwarded to judge', 
         type: 'success' 
