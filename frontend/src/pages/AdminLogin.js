@@ -1,19 +1,48 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // ✅ React Router navigate
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Replace with real authentication logic
-    alert(`Admin Login Attempt:\nUsername: ${username}\nPassword: ${password}`);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const adminData = await response.json();
+        console.log('Login success:', adminData);
+
+        // ✅ Do something with the logged-in admin
+        alert(`Welcome, ${adminData.username}!`);
+
+        // ✅ Redirect to AdminPage
+        navigate('/admin');
+      } else {
+        const errorText = await response.text();
+        setError(errorText || 'Login failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-6">
       <main className="max-w-md w-full">
         <h1 className="text-3xl font-extrabold text-gray-900 mb-8 text-center">Admin Login</h1>
+        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
         <form className="space-y-6" onSubmit={handleSubmit} noValidate>
           <div>
             <label htmlFor="username" className="block font-medium text-gray-700 mb-1">

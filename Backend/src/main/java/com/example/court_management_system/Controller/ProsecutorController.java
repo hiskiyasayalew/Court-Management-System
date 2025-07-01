@@ -7,12 +7,9 @@ import com.example.court_management_system.DTO.caseDTO;
 import com.example.court_management_system.Entity.CaseForwarding;
 import com.example.court_management_system.Service.*;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 @RestController
