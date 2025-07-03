@@ -15,6 +15,16 @@ const initialFormData = {
   username: '',
   password: '',
   confirmPassword: '',
+  email: '',
+  phoneNumber: '',
+  firstName: '',
+  lastName: '',
+  city: '',
+  subCity: '',
+  officerName: '',
+  position: '',
+  name: '',
+  status: 'ACTIVE',
 };
 
 const AdminPage = () => {
@@ -55,8 +65,9 @@ const AdminPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
+
+    if (!formData.id && (!formData.password || formData.password !== formData.confirmPassword)) {
+      setError("Passwords don't match or are empty");
       return;
     }
 
@@ -67,6 +78,7 @@ const AdminPage = () => {
 
     const payload = { ...formData };
     delete payload.confirmPassword;
+    if (!payload.password) delete payload.password;
     if (!isEdit) delete payload.id;
 
     try {
@@ -86,7 +98,7 @@ const AdminPage = () => {
       case 'User':
         setFormData({
           id: user.id,
-          userName: user.userName,
+          username: user.userName,
           firstName: user.firstName,
           lastName: user.lastName,
           phoneNumber: user.phoneNumber,
@@ -129,10 +141,9 @@ const AdminPage = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure?")) return;
-    const role = selectedRole;
     try {
-      await axios.delete(`http://localhost:8080/api/admin/${roleApiMap[role]}/${id}`);
-      setUsers((us) => us.filter((u) => u.id !== id));
+      await axios.delete(`http://localhost:8080/api/admin/${roleApiMap[selectedRole]}/${id}`);
+      setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch {
       setError("Failed to delete user");
     }
@@ -202,7 +213,7 @@ const AdminPage = () => {
       case 'User':
         return (
           <>
-            <input name="userName" value={formData.userName || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
+            <input name="username" value={formData.username || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
             <input name="firstName" value={formData.firstName || ''} onChange={handleChange} placeholder="First Name" className="w-full border p-2" required />
             <input name="lastName" value={formData.lastName || ''} onChange={handleChange} placeholder="Last Name" className="w-full border p-2" required />
             <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" required />
@@ -228,10 +239,8 @@ const AdminPage = () => {
             <input name="name" value={formData.name || ''} onChange={handleChange} placeholder="Full Name" className="w-full border p-2" required />
             <input name="username" value={formData.username || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
             <input name="email" type="email" value={formData.email || ''} onChange={handleChange} placeholder="Email" className="w-full border p-2" required />
-            {selectedRole === 'Prosecutor' && (
-              <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" required />
-            )}
-            <select name="status" value={formData.status || 'ACTIVE'} onChange={handleChange} className="w-full border p-2">
+            <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" />
+            <select name="status" value={formData.status} onChange={handleChange} className="w-full border p-2">
               <option value="ACTIVE">ACTIVE</option>
               <option value="INACTIVE">INACTIVE</option>
             </select>
@@ -261,10 +270,26 @@ const AdminPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow-md mb-6">
           {error && <p className="text-red-600">{error}</p>}
           {renderForm()}
-          <input name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Password" className="w-full border p-2" required={!formData.id} />
-          <input name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm Password" className="w-full border p-2" required={!formData.id} />
+          <input
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className="w-full border p-2"
+            required={!formData.id}
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm Password"
+            className="w-full border p-2"
+            required={!formData.id}
+          />
           <button type="submit" disabled={isLoading} className="w-full bg-orange-500 text-white py-2">
-            {isLoading ? 'Processing...' : formData.id ? 'Update ' + selectedRole : 'Create ' + selectedRole}
+            {isLoading ? 'Processing...' : formData.id ? `Update ${selectedRole}` : `Create ${selectedRole}`}
           </button>
         </form>
       )}
@@ -283,9 +308,7 @@ function DataTable({ columns, data }) {
         {headerGroups.map((hg, i) => (
           <tr {...hg.getHeaderGroupProps()} key={i}>
             {hg.headers.map((col, j) => (
-              <th {...col.getHeaderProps()} key={j} className="border p-2">
-                {col.render('Header')}
-              </th>
+              <th {...col.getHeaderProps()} key={j} className="border p-2">{col.render('Header')}</th>
             ))}
           </tr>
         ))}

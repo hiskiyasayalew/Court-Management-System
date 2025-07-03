@@ -1,11 +1,13 @@
 package com.example.court_management_system.Controller;
 
+import com.example.court_management_system.DTO.ApplicationDTO;
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.DTO.PoliceDTO;
 import com.example.court_management_system.DTO.ProsecutorDTO;
 import com.example.court_management_system.DTO.UserDTO;
 import com.example.court_management_system.Entity.AdminEntity;
 import com.example.court_management_system.Entity.ApplicationEntity;
+import com.example.court_management_system.Repository.ApplicationRepository;
 import com.example.court_management_system.Service.AdminService;
 import com.example.court_management_system.Service.ApplicationService;
 import com.example.court_management_system.Service.JudgeService;
@@ -16,6 +18,7 @@ import com.example.court_management_system.Service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +26,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3001", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 
 public class AdminController {
 
@@ -42,6 +46,9 @@ public class AdminController {
     private final JudgeService judgeService;
     @Autowired
     private final ApplicationService applicationService;
+    @Autowired
+    private ApplicationRepository applicationRepository;
+    
 
     @PostMapping("/signup")
     public ResponseEntity<AdminEntity> createAdmin(@RequestBody AdminEntity admin) {
@@ -163,7 +170,25 @@ public ResponseEntity<?> getAllJudges() {
     public ResponseEntity<?> updatePolice(@RequestBody PoliceDTO dto) {
         return ResponseEntity.ok(policeService.updatePolice(dto));
     }
+    @GetMapping("/applications")
+    public ResponseEntity<?> getAllApplications() {
+        return ResponseEntity.ok(applicationService.getAllApplications());
+    }
 
+      @PostMapping(path = "/applications", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApplicationDTO> submitApplication(
+            @RequestPart("application") ApplicationDTO application,
+            @RequestPart("files") List<MultipartFile> files) {
 
-    
+        // For now: just print file names (you can save them later)
+        List<String> fileNames = files.stream()
+                                      .map(MultipartFile::getOriginalFilename)
+                                      .collect(Collectors.toList());
+        application.setEducationFiles(fileNames);
+
+        ApplicationDTO savedApplication = applicationService.submitApplication(application);
+        return ResponseEntity.ok(savedApplication);
+    }
+
+            
 }

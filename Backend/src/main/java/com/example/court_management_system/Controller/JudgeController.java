@@ -1,5 +1,6 @@
 package com.example.court_management_system.Controller;
 
+import com.example.court_management_system.DTO.CaseApprovalRequest;
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.Entity.CaseForwarding;
 import com.example.court_management_system.Repository.CaseForwardingRepository;
@@ -47,5 +48,15 @@ public ResponseEntity<?> registerJudge(@RequestBody JudgeDTO judgeDTO) {
 public List<CaseForwarding> getCasesForJudge(@RequestParam Long judgeId) {
     return repository.findByJudgeId(judgeId);
 }
+    @PostMapping("/approve")
+        public ResponseEntity<String> approveCase(@RequestBody CaseApprovalRequest approvalRequest) {
+            // Here you can save to database or perform business logic
+            
+            System.out.println("✅ Case Approved: " + approvalRequest.getCaseId());
+            System.out.println("📅 Hearing Date: " + approvalRequest.getHearingDate());
+            System.out.println("👨‍⚖️ Judges: " + approvalRequest.getAssignedJudges());
+            System.out.println("🏛 Court: " + approvalRequest.getAssignedCourt());
 
+            return ResponseEntity.ok("Case " + approvalRequest.getCaseId() + " approved successfully");
+        }
 }
