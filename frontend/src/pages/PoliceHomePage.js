@@ -36,28 +36,31 @@ const PoliceHome = () => {
     }
   }, []);
 
-  const handleAction = async (action) => {
-    try {
-      const url = `http://localhost:8080/api/police/${action}/${selectedCase.id}`;
-      const data = {
-        [action === "approve" ? "description" : "reason"]: description
-      };
+ const handleAction = async (action) => {
+  try {
+    const baseUrl = `http://localhost:8080/api/police/${action}/${selectedCase.id}`;
+    const param = action === "approve" ? "description" : "reason";
+    const encodedDescription = encodeURIComponent(description);
 
-      await axios.post(url, data);
+    const url = `${baseUrl}?${param}=${encodedDescription}`;
 
-      alert(`Case ${action}d successfully.`);
-      if (action === "approve") {
-        navigate('/send-to-prosecutor', { state: { caseData: selectedCase } });
-      } else {
-        setCases(prev => prev.filter(c => c.id !== selectedCase.id));
-        setSelectedCase(null);
-        setDescription('');
-      }
-    } catch (err) {
-      console.error(`Error ${action}ing case:`, err);
-      alert(`Failed to ${action} case. Please try again.`);
+    await axios.post(url); // No need to send JSON body
+
+    alert(`Case ${action}d successfully.`);
+
+    if (action === "approve") {
+      navigate('/send-to-prosecutor', { state: { caseData: selectedCase } });
+    } else {
+      setCases(prev => prev.filter(c => c.id !== selectedCase.id));
+      setSelectedCase(null);
+      setDescription('');
     }
-  };
+  } catch (err) {
+    console.error(`Error ${action}ing case:`, err);
+    alert(`Failed to ${action} case. Please try again.`);
+  }
+};
+
 
   const handleLogout = () => {
     localStorage.removeItem("police");
@@ -66,19 +69,17 @@ const PoliceHome = () => {
 
   const filteredCases = cases.filter(caseItem => {
     const matchesFilter = filter === 'all' || 
-                         (filter === 'pending' && caseItem.status === 'Pending') ||
                          (filter === 'approved' && caseItem.status === 'Approved') ||
                          (filter === 'rejected' && caseItem.status === 'Rejected');
-    
+
     const matchesSearch = caseItem.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          caseItem.caseType.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          caseItem.caseDescription.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesFilter && matchesSearch;
   });
 
   const statusColors = {
-    Pending: 'bg-yellow-100 text-yellow-800',
     Approved: 'bg-green-100 text-green-800',
     Rejected: 'bg-red-100 text-red-800'
   };
@@ -114,7 +115,7 @@ const PoliceHome = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
+        {/* Header */}
         <motion.div 
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
           initial={{ opacity: 0, y: -20 }}
@@ -173,7 +174,7 @@ const PoliceHome = () => {
           </div>
           
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {['all', 'pending', 'approved', 'rejected'].map((f) => (
+            {['all', 'approved', 'rejected'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -189,56 +190,40 @@ const PoliceHome = () => {
           </div>
         </div>
 
-        {/* Cases Grid */}
-        {filteredCases.length === 0 ? (
-          <motion.div
-            className="bg-white p-8 rounded-xl shadow text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <p className="text-gray-500 text-lg">No cases found matching your criteria</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            {filteredCases.map((c) => (
-              <motion.div
-                key={c.id}
-                className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg cursor-pointer border border-gray-200"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setSelectedCase(c)}
-                layout
-              >
-                <div className="flex justify-between items-start">
-                  <h2 className="text-lg font-bold truncate">{c.fullName}</h2>
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || 'bg-gray-100 text-gray-800'}`}>
-                    {c.status}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {new Date(c.submittedAt).toLocaleDateString()}
-                </p>
-                <p className="mt-3 text-sm text-gray-700 line-clamp-2">
-                  {c.caseDescription}
-                </p>
-                <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
-                  <span>ID: {c.id}</span>
-                  <button className="text-blue-600 hover:underline">
-                    View Details
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+        {/* Case Grid */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          {filteredCases.map((c) => (
+            <motion.div
+              key={c.id}
+              className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg cursor-pointer border border-gray-200"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedCase(c)}
+              layout
+            >
+              <div className="flex justify-between items-start">
+                <h2 className="text-lg font-bold truncate">{c.fullName}</h2>
+                <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || 'bg-gray-100 text-gray-800'}`}>
+                  {c.status}
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {new Date(c.submittedAt).toLocaleDateString()}
+              </p>
+              <p className="mt-3 text-sm text-gray-700 line-clamp-2">
+                {c.caseDescription}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
 
-        {/* Case Details Modal */}
+        {/* Case Modal */}
         <AnimatePresence>
           {selectedCase && (
             <motion.div
@@ -306,7 +291,6 @@ const PoliceHome = () => {
                     </p>
                   </div>
 
-                  {/* File Attachments */}
                   {(selectedCase.idCardUploadName || selectedCase.additionalFileNames?.length > 0) && (
                     <div className="mt-4">
                       <p className="text-gray-500 mb-2">Attachments</p>
@@ -345,43 +329,33 @@ const PoliceHome = () => {
                     </div>
                   )}
 
-                  {/* Review Textarea */}
                   <div className="mt-6">
                     <label className="block text-gray-700 mb-2">
-                      {selectedCase.status === 'Pending' ? 'Review Comments' : 'Additional Notes'}
+                      Review Comments
                     </label>
                     <textarea
                       className="w-full h-24 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder={
-                        selectedCase.status === 'Pending' 
-                          ? 'Enter your review comments...' 
-                          : 'Enter additional notes...'
-                      }
+                      placeholder="Enter your review comments..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="mt-6 flex flex-wrap gap-3 justify-end">
-                    {selectedCase.status === 'Pending' && (
-                      <>
-                        <button
-                          onClick={() => handleAction('approve')}
-                          className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
-                          disabled={!description.trim()}
-                        >
-                          Approve Case
-                        </button>
-                        <button
-                          onClick={() => handleAction('reject')}
-                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
-                          disabled={!description.trim()}
-                        >
-                          Reject Case
-                        </button>
-                      </>
-                    )}
+                    <button
+                      onClick={() => handleAction('approve')}
+                      className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
+                      disabled={!description.trim()}
+                    >
+                      Approve Case
+                    </button>
+                    <button
+                      onClick={() => handleAction('reject')}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
+                      disabled={!description.trim()}
+                    >
+                      Reject Case
+                    </button>
                     <button
                       onClick={() => {
                         setSelectedCase(null);

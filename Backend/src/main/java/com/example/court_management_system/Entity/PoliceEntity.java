@@ -1,5 +1,7 @@
 package com.example.court_management_system.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,4 +30,12 @@ public class PoliceEntity {
 
     @Column(nullable = false)
     private String password;
+
+private String reason;           // <-- MUST exist
+   private String education;        // <-- MUST exist
+   private String workExperience;   // <-- MUST exist
+   private String additionalInfo; 
+   
+     @ElementCollection
+    private List<String> educationFiles;// <-- MUST exist
 }

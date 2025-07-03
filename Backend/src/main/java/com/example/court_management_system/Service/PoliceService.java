@@ -159,6 +159,42 @@ public class PoliceService {
             .prosecutorName(entity.getProsecutor() != null ? entity.getProsecutor().getUsername() : null)  // ✅ NEW
             .build();
 }
+    
+    
+    
+            public void deletePoliceById(Long id) {
+            policeRepository.deleteById(id);
+        }
+
+        public PoliceDTO updatePolice(PoliceDTO dto) {
+            PoliceEntity existing = policeRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Police not found"));
+
+            existing.setOfficerName(dto.getOfficerName());
+            existing.setPosition(dto.getPosition());
+            existing.setPhoneNumber(dto.getPhoneNumber());
+            existing.setEmail(dto.getEmail());
+            existing.setUsername(dto.getUsername());
+            existing.setPassword(dto.getPassword());
+
+            return toDTO(policeRepository.save(existing));
+        }
+        public List<PoliceDTO> getAllPolice() {
+                return policeRepository.findAll().stream()
+                    .map(police -> {
+                        PoliceDTO dto = new PoliceDTO();
+                        dto.setId(police.getId());
+                        dto.setOfficerName(police.getOfficerName());
+                        dto.setPosition(police.getPosition());
+                        dto.setEmail(police.getEmail());
+                        dto.setPhoneNumber(police.getPhoneNumber());
+                        dto.setUsername(police.getUsername());
+                        dto.setPassword(null); // Don't expose password
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+            }
+
 
     
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MyCases = () => {
   const { t } = useLanguage();
@@ -8,6 +9,7 @@ const MyCases = () => {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCase, setSelectedCase] = useState(null);
 
   useEffect(() => {
     const fetchUserCases = async () => {
@@ -23,7 +25,7 @@ const MyCases = () => {
         const response = await fetch(`http://localhost:8080/api/cases/by-user?userName=${user.userName}`);
         if (!response.ok) throw new Error(t.fetchCasesFailed || "Failed to fetch user cases");
         const userCases = await response.json();
-        setCases(userCases);
+        setCases(userCases?.filter(Boolean) || []);
       } catch (error) {
         console.error("Error loading cases:", error);
         setError(error.message);
@@ -36,13 +38,14 @@ const MyCases = () => {
 
   const deleteCase = async (caseId) => {
     if (!window.confirm(t.confirmDeleteCase || "Are you sure you want to delete this case?")) return;
-    
+
     try {
       const response = await fetch(`http://localhost:8080/api/cases/${caseId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error(t.deleteCaseFailed || "Failed to delete case");
-      setCases(cases.filter(c => c.id !== caseId));
+      setCases(cases.filter(c => c?.id !== caseId));
+      if (selectedCase?.id === caseId) setSelectedCase(null);
     } catch (error) {
       console.error("Error deleting case:", error);
       alert(error.message);
@@ -51,7 +54,7 @@ const MyCases = () => {
 
   const clearAllCases = async () => {
     if (!window.confirm(t.confirmClearAllCases || "Are you sure you want to delete ALL your cases?")) return;
-    
+
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || !user.userName) return;
 
@@ -61,9 +64,18 @@ const MyCases = () => {
       });
       if (!response.ok) throw new Error(t.clearCasesFailed || "Failed to clear cases");
       setCases([]);
+      setSelectedCase(null);
     } catch (error) {
       console.error("Error clearing cases:", error);
       alert(error.message);
+    }
+  };
+
+  const handleCaseClick = (caseData) => {
+    if (selectedCase && selectedCase.id === caseData.id) {
+      setSelectedCase(null);
+    } else {
+      setSelectedCase(caseData);
     }
   };
 
@@ -116,38 +128,44 @@ const MyCases = () => {
           <>
             <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
               <ul className="divide-y divide-gray-200 max-h-[calc(100vh-300px)] overflow-y-auto">
-                {cases.map(({ id, fullName, caseType, submittedAt, status, caseDescription }) => (
+                {cases.filter(Boolean).map(c => (
                   <li
-                    key={id}
-                    className="p-4 sm:p-6 hover:bg-gray-50 transition-colors duration-150"
+                    key={c.id}
+                    className={`p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-150
+                      ${selectedCase?.id === c.id ? 'bg-gray-100' : ''}`}
+                    onClick={() => handleCaseClick(c)}
+                    aria-expanded={selectedCase?.id === c.id}
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-lg text-gray-800">{fullName}</h3>
+                          <h3 className="font-semibold text-lg text-gray-800">{c.fullName}</h3>
                           <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                            {caseType}
+                            {c.caseType}
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                          {new Date(submittedAt).toLocaleString()}
+                          {new Date(c.submittedAt).toLocaleString()}
                         </p>
                         <p className={`mt-2 text-sm font-medium ${
-                          status === (t.submittedToProcess || 'Submitted to Process') 
+                          c.status === (t.submittedToProcess || 'Submitted to Process') 
                             ? 'text-orange-600' 
                             : 'text-green-600'
                         }`}>
-                          {status}
+                          {c.status}
                         </p>
-                        {caseDescription && (
-                          <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
-                            {caseDescription}
+                        {c.caseDescription && (
+                          <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap truncate max-w-xl">
+                            {c.caseDescription}
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <button
-                          onClick={() => deleteCase(id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCase(c.id);
+                          }}
                           className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold transition"
                           aria-label={t.deleteCase || "Delete case"}
                         >
@@ -159,6 +177,52 @@ const MyCases = () => {
                 ))}
               </ul>
             </div>
+
+            <AnimatePresence>
+              {selectedCase && (
+                <motion.div
+                  key={selectedCase.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 30 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-xl shadow-lg p-8 mb-8 max-w-4xl mx-auto"
+                >
+                  <h3 className="text-2xl font-bold mb-6 text-gray-900">
+                    {t.caseDetails || "Case Details"} - {selectedCase.fullName}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 text-sm">
+                    <div>
+                      <p><strong>{t.caseId || "Case ID"}:</strong> {selectedCase.id}</p>
+                      <p><strong>{t.caseType || "Case Type"}:</strong> {selectedCase.caseType}</p>
+                      <p><strong>{t.submittedAt || "Submitted At"}:</strong> {new Date(selectedCase.submittedAt).toLocaleString()}</p>
+                      <p><strong>{t.status || "Status"}:</strong> {selectedCase.status}</p>
+                    </div>
+                    <div>
+                      {selectedCase.caseDescription && (
+                        <>
+                          <p><strong>{t.caseDescription || "Description"}:</strong></p>
+                          <p className="whitespace-pre-wrap">{selectedCase.caseDescription}</p>
+                        </>
+                      )}
+                      {selectedCase.evidenceSummary && (
+                        <>
+                          <p className="mt-4"><strong>{t.evidenceSummary || "Evidence Summary"}:</strong></p>
+                          <p className="whitespace-pre-wrap">{selectedCase.evidenceSummary}</p>
+                        </>
+                      )}
+                      {selectedCase.witnesses && (
+                        <>
+                          <p className="mt-4"><strong>{t.witnesses || "Witnesses"}:</strong></p>
+                          <p className="whitespace-pre-wrap">{selectedCase.witnesses}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="flex flex-col sm:flex-row justify-between gap-4">
               <button

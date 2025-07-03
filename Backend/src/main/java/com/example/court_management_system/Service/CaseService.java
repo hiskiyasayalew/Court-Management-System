@@ -43,8 +43,8 @@ public class CaseService {
                 .user(user)
                 .build();
 
-        return toDTO(caseRepository.save(entity));
-    }
+            return toDTO(caseRepository.save(entity));
+        }
 
     public List<caseDTO> getAllCases() {
         return caseRepository.findAll()
@@ -89,23 +89,38 @@ public class CaseService {
                 .collect(Collectors.toList());
     }
 
-    private caseDTO toDTO(CaseEntity entity) {
-        return caseDTO.builder()
-                .id(entity.getId())
-                .fullName(entity.getFullName())
-                .email(entity.getEmail())
-                .phone(entity.getPhone())
-                .dateOfIncident(entity.getDateOfIncident())
-                .caseType(entity.getCaseType())
-                .caseDescription(entity.getCaseDescription())
-                .idCardUploadName(entity.getIdCardUploadName())
-                .additionalFileNames(entity.getAdditionalFileNames())
-                .agreement(entity.getAgreement())
-                .status(entity.getStatus())
-                .submittedAt(entity.getSubmittedAt())
-                .userName(entity.getUser() != null ? entity.getUser().getUserName() : null)
+  private caseDTO toDTO(CaseEntity entity) {
+    caseDTO.JudgeDTO judgeDTO = null;
+    if (entity.getJudge() != null) {
+        judgeDTO = caseDTO.JudgeDTO.builder()
+                .id(entity.getJudge().getId())
+                .username(entity.getJudge().getUsername()) 
+                .name(entity.getJudge().getName())  // fixed capitalization here
                 .build();
-    }   
+    }
+
+    return caseDTO.builder()
+            .id(entity.getId())
+            .fullName(entity.getFullName())
+            .email(entity.getEmail())
+            .phone(entity.getPhone())
+            .dateOfIncident(entity.getDateOfIncident())
+            .caseType(entity.getCaseType())
+            .caseDescription(entity.getCaseDescription())
+            .idCardUploadName(entity.getIdCardUploadName())
+            .additionalFileNames(entity.getAdditionalFileNames())
+            .agreement(entity.getAgreement())
+            .status(entity.getStatus())
+            .submittedAt(entity.getSubmittedAt())
+            .userName(entity.getUser() != null ? entity.getUser().getUserName() : null)
+            .prosecutorId(entity.getProsecutor() != null ? entity.getProsecutor().getId() : null)
+            .prosecutorName(entity.getProsecutor() != null ? entity.getProsecutor().getUsername() : null)  // fixed capitalization
+            .prosecutorReview(entity.getProsecutorReview())  // prosecutor message
+            .judge(judgeDTO)
+            .court(entity.getCourt())  // court field must exist in CaseEntity
+            .build();
+}
+
 
       public List<caseDTO> getCasesForProsecutor(String username) {
         return caseRepository.findAll().stream()
@@ -120,7 +135,7 @@ public class CaseService {
         }
         caseRepository.deleteById(id);
     }
-
+    
     // ✅ Delete all cases for a specific user
     public void clearCasesByUserName(String userName) {
         UserEntity user = userRepository.findByUserName(userName);

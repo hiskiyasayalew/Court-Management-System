@@ -11,6 +11,7 @@ const ProsecutorToJudgeForm = () => {
   const [formData, setFormData] = useState({
     caseId: '',
     judgeId: '',
+    court: '',             // <-- Added court field here
     details: '',
     evidenceSummary: '',
     witnesses: ''
@@ -22,6 +23,15 @@ const ProsecutorToJudgeForm = () => {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
+
+  // Hardcoded courts for dropdown
+  const courtList = [
+    "Addis Ababa First Instance Court",
+    "Addis Ababa High Court",
+    "Federal First Instance Court",
+    "Federal High Court",
+    "Supreme Court"
+  ];
 
   useEffect(() => {
     if (passedCase?.id) {
@@ -79,6 +89,11 @@ const ProsecutorToJudgeForm = () => {
       setLoading(false);
       return;
     }
+    if (!formData.court) {
+      setMessage({ text: 'Please select a court', type: 'error' });
+      setLoading(false);
+      return;
+    }
 
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -106,7 +121,7 @@ const ProsecutorToJudgeForm = () => {
       });
       
       // Redirect after 2 seconds
-      setTimeout(() => navigate('/prosecutor-home'), 2000);
+      setTimeout(() => navigate('/prosecutor/home'), 2000);
     } catch (err) {
       console.error("Error sending form:", err.response || err);
       setMessage({ 
@@ -157,6 +172,26 @@ const ProsecutorToJudgeForm = () => {
                 readOnly
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
+            </div>
+
+            {/* Court Selection Dropdown */}
+            <div>
+              <label htmlFor="court" className="block text-sm font-medium text-gray-700">
+                Select Court
+              </label>
+              <select
+                id="court"
+                name="court"
+                value={formData.court}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">-- Select Court --</option>
+                {courtList.map((court, idx) => (
+                  <option key={idx} value={court}>{court}</option>
+                ))}
+              </select>
             </div>
 
             {/* Judge Selection */}

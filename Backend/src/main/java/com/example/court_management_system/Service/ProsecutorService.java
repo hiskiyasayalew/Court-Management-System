@@ -62,4 +62,25 @@ public class ProsecutorService {
         dto.setPassword(entity.getPassword());
         return dto;
     }
+
+    public void deleteProsecutorById(Long id) {
+    prosecutorRepository.deleteById(id);
+}
+
+public ProsecutorDTO updateProsecutor(ProsecutorDTO dto) {
+    ProsecutorEntity existing = prosecutorRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("Prosecutor not found"));
+
+    existing.setName(dto.getName());
+    existing.setPhoneNumber(dto.getPhoneNumber());
+    existing.setEmail(dto.getEmail());
+    existing.setUsername(dto.getUsername());
+    existing.setPassword(dto.getPassword());
+
+    return toDTO(prosecutorRepository.save(existing));
+}
+
+        
+    
+
 }

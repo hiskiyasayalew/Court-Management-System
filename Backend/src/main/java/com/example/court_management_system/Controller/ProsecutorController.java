@@ -2,14 +2,17 @@ package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.DTO.ProsecutorDTO;
-import com.example.court_management_system.DTO.ProsecutorToJudgeFormDTO;
 import com.example.court_management_system.DTO.caseDTO;
-import com.example.court_management_system.Entity.CaseForwarding;
+import com.example.court_management_system.Entity.CaseEntity;
+import com.example.court_management_system.Entity.JudgeEntity;
+import com.example.court_management_system.Repository.CaseRepository;
+import com.example.court_management_system.Repository.JudgeRepository;
 import com.example.court_management_system.Service.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -22,7 +25,10 @@ public class ProsecutorController {
     private final CaseService caseService;
     private final JudgeService judgeService;
     private final CaseForwardingService caseForwardingService;
-     // ✅ You forgot to inject this
+
+    // ✅ Add these two so RequiredArgsConstructor will inject them
+    private final CaseRepository caseRepository;
+    private final JudgeRepository judgeRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProsecutor(@RequestBody ProsecutorDTO dto) {
@@ -67,16 +73,31 @@ public class ProsecutorController {
         return judgeService.getAllJudges();
     }
 
-  
-    @PostMapping(value = "/send-to-judge", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> sendToJudge(@ModelAttribute ProsecutorToJudgeFormDTO form) {
-        try {
-            CaseForwarding saved = caseForwardingService.forwardCase(form);
-            return ResponseEntity.ok("Case forwarded to judge with ID " + saved.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
+    @PostMapping("/send-to-judge")
+    public ResponseEntity<?> sendToJudge(
+            @RequestParam Long caseId,
+            @RequestParam Long judgeId,
+            @RequestParam String court,
+            @RequestParam Long prosecutorId
+            // 👉 plus: handle file uploads etc. if needed
+    ) {
+        // 1️⃣ Find the case
+        CaseEntity caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() -> new RuntimeException("Case not found"));
 
-}
+        // 2️⃣ Find the judge
+        JudgeEntity judge = judgeRepository.findById(judgeId)
+                .orElseThrow(() -> new RuntimeException("Judge not found"));
+
+        // 3️⃣ Save judge to case
+        caseEntity.setJudge(judge);
+
+        // 4️⃣ Save court to case
+        caseEntity.setCourt(court);
+
+        // 5️⃣ Save
+        caseRepository.save(caseEntity);
+
+        return ResponseEntity.ok("✅ Sent to judge successfully!");
+    }
 }

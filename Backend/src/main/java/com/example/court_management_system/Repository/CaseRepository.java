@@ -19,4 +19,7 @@ public interface CaseRepository extends JpaRepository<CaseEntity, Long> {
 
     // ✅ Delete all cases submitted by a specific user
     void deleteAllByUser(UserEntity user);
+    
+    List<CaseEntity> findByUserUserName(String userName);
+
 }

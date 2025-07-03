@@ -41,6 +41,8 @@ public class CaseEntity {
 
     @Column(length = 1000)
     private String prosecutorReview;
+    
+    private String court;
 
 
     @ManyToOne
@@ -51,4 +53,7 @@ public class CaseEntity {
     @JoinColumn(name = "prosecutor_id")
     private ProsecutorEntity prosecutor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "judge_id")
+    private JudgeEntity judge;
 }
