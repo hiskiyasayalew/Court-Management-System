@@ -21,5 +21,8 @@ public interface CaseRepository extends JpaRepository<CaseEntity, Long> {
     void deleteAllByUser(UserEntity user);
     
     List<CaseEntity> findByUserUserName(String userName);
+    
+    List<CaseEntity> findByStatusAndJudgeId(String status, Long judgeId);
+
 
 }

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ Added!
 import axios from 'axios';
 
 const JudgeHomePage = () => {
+  const navigate = useNavigate(); // ✅ Added!
+
   const [cases, setCases] = useState([]);
   const [selectedCase, setSelectedCase] = useState(null);
   const [showApprovalForm, setShowApprovalForm] = useState(false);
@@ -14,7 +17,19 @@ const JudgeHomePage = () => {
   const judge = JSON.parse(localStorage.getItem('judge'));
   const judgeName = judge ? judge.name : 'Judge';
 
-  const dummyJudges = ['Judge John Doe', 'Judge Jane Smith', 'Judge Alex Brown'];
+  const dummyJudges = [
+    'Judge John Doe',
+    'Judge Jane Smith',
+    'Judge Alex Brown',
+    'Judge Emily White',
+    'Judge Michael Green',
+    'Judge Sarah Johnson',
+    'Judge David Wilson',
+    'Judge Linda Martinez',
+    'Judge Robert Taylor',
+    'Judge Patricia Anderson',
+  ];
+
   const dummyCourts = ['High Court A', 'District Court B', 'Magistrate Court C'];
 
   useEffect(() => {
@@ -22,8 +37,8 @@ const JudgeHomePage = () => {
 
     axios
       .get(`http://localhost:8080/api/judge/cases?judgeId=${judge.id}`)
-      .then(res => setCases(res.data))
-      .catch(err => console.error('Failed to fetch cases', err));
+      .then((res) => setCases(res.data))
+      .catch((err) => console.error('Failed to fetch cases', err));
   }, [judge]);
 
   const handleOpenApprovalForm = () => {
@@ -41,16 +56,32 @@ const JudgeHomePage = () => {
 
   const handleApprovalChange = (e) => {
     const { name, value } = e.target;
-    setApprovalData(prev => ({ ...prev, [name]: value }));
+    setApprovalData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleJudgesChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions).map(o => o.value);
-    setApprovalData(prev => ({ ...prev, assignedJudges: selectedOptions }));
+  const handleJudgeCheckboxChange = (judgeName) => {
+    setApprovalData((prev) => {
+      const alreadySelected = prev.assignedJudges.includes(judgeName);
+      if (alreadySelected) {
+        return {
+          ...prev,
+          assignedJudges: prev.assignedJudges.filter((j) => j !== judgeName),
+        };
+      } else {
+        return {
+          ...prev,
+          assignedJudges: [...prev.assignedJudges, judgeName],
+        };
+      }
+    });
   };
 
   const handleSubmitApproval = async () => {
-    if (!approvalData.hearingDate || !approvalData.assignedCourt || approvalData.assignedJudges.length === 0) {
+    if (
+      !approvalData.hearingDate ||
+      !approvalData.assignedCourt ||
+      approvalData.assignedJudges.length === 0
+    ) {
       alert('Please fill out all fields.');
       return;
     }
@@ -65,7 +96,7 @@ const JudgeHomePage = () => {
     try {
       await axios.post('http://localhost:8080/api/judge/approve', payload);
       alert('✅ Case approved and scheduled successfully!');
-      setCases(prev => prev.filter(c => c.caseId !== selectedCase.caseId));
+      setCases((prev) => prev.filter((c) => c.caseId !== selectedCase.caseId));
       setSelectedCase(null);
       handleCloseApprovalForm();
     } catch (err) {
@@ -78,7 +109,7 @@ const JudgeHomePage = () => {
     try {
       await axios.post('http://localhost:8080/api/judge/reject', { caseId: selectedCase.caseId });
       alert(`❌ Case ${selectedCase.caseId} rejected.`);
-      setCases(prev => prev.filter(c => c.caseId !== selectedCase.caseId));
+      setCases((prev) => prev.filter((c) => c.caseId !== selectedCase.caseId));
       setSelectedCase(null);
     } catch (err) {
       console.error('Rejection failed:', err);
@@ -88,20 +119,38 @@ const JudgeHomePage = () => {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-4xl font-bold mb-2 animate-fade-in">Welcome, {judgeName}!</h1>
-      <p className="text-gray-700 mb-8 text-lg">Here are your assigned cases for review.</p>
+      <h1 className="text-4xl font-bold mb-2 animate-fade-in">
+        Welcome, {judgeName}!
+      </h1>
+
+      <button
+        onClick={() => navigate('/judge/verdicts')}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4"
+      >
+        📜 Go to Verdict Page
+      </button>
+
+      <p className="text-gray-700 mb-8 text-lg">
+        Here are your assigned cases for review.
+      </p>
 
       {!selectedCase ? (
         <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-          {cases.map(c => (
+          {cases.map((c) => (
             <li
               key={c.caseId || c.id}
               onClick={() => setSelectedCase(c)}
               className="cursor-pointer p-6 border rounded-xl shadow hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 ease-in-out bg-white"
             >
-              <p className="text-lg font-semibold mb-2">📁 Case ID: {c.caseId}</p>
+              <p className="text-lg font-semibold mb-2">
+                📁 Case ID: {c.caseId}
+              </p>
               <p className="text-gray-600">
-                {c.details ? (c.details.length > 100 ? `${c.details.substring(0, 100)}...` : c.details) : 'No details provided'}
+                {c.details
+                  ? c.details.length > 100
+                    ? `${c.details.substring(0, 100)}...`
+                    : c.details
+                  : 'No details provided'}
               </p>
             </li>
           ))}
@@ -117,10 +166,19 @@ const JudgeHomePage = () => {
 
           <h2 className="text-2xl font-bold mb-4">Case Details</h2>
           <div className="space-y-2">
-            <p><strong>Case ID:</strong> {selectedCase.caseId}</p>
-            <p><strong>Details:</strong> {selectedCase.details || 'N/A'}</p>
-            <p><strong>Evidence Summary:</strong> {selectedCase.evidenceSummary || 'N/A'}</p>
-            <p><strong>Witnesses:</strong> {selectedCase.witnesses || 'N/A'}</p>
+            <p>
+              <strong>Case ID:</strong> {selectedCase.caseId}
+            </p>
+            <p>
+              <strong>Details:</strong> {selectedCase.details || 'N/A'}
+            </p>
+            <p>
+              <strong>Evidence Summary:</strong>{' '}
+              {selectedCase.evidenceSummary || 'N/A'}
+            </p>
+            <p>
+              <strong>Witnesses:</strong> {selectedCase.witnesses || 'N/A'}
+            </p>
           </div>
 
           <h3 className="mt-6 font-semibold text-lg">Case Files:</h3>
@@ -185,7 +243,9 @@ const JudgeHomePage = () => {
           <div className="bg-white p-8 rounded-xl max-w-md w-full shadow-lg">
             <h3 className="text-xl font-bold mb-4">Schedule & Approve Case</h3>
 
-            <label className="block mb-2 font-medium">Hearing Date & Time</label>
+            <label className="block mb-2 font-medium">
+              Hearing Date & Time
+            </label>
             <input
               type="datetime-local"
               name="hearingDate"
@@ -195,17 +255,19 @@ const JudgeHomePage = () => {
             />
 
             <label className="block mb-2 font-medium">Assign Judges</label>
-            <select
-              multiple
-              name="assignedJudges"
-              value={approvalData.assignedJudges}
-              onChange={handleJudgesChange}
-              className="w-full border rounded px-3 py-2 mb-4"
-            >
+            <div className="mb-4 max-h-40 overflow-y-auto border rounded p-2">
               {dummyJudges.map((j, i) => (
-                <option key={i} value={j}>{j}</option>
+                <label key={i} className="flex items-center mb-1">
+                  <input
+                    type="checkbox"
+                    checked={approvalData.assignedJudges.includes(j)}
+                    onChange={() => handleJudgeCheckboxChange(j)}
+                    className="mr-2"
+                  />
+                  {j}
+                </label>
               ))}
-            </select>
+            </div>
 
             <label className="block mb-2 font-medium">Assign Court</label>
             <select
@@ -216,7 +278,9 @@ const JudgeHomePage = () => {
             >
               <option value="">-- Select Court --</option>
               {dummyCourts.map((c, i) => (
-                <option key={i} value={c}>{c}</option>
+                <option key={i} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
 

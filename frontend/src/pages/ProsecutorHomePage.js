@@ -53,23 +53,27 @@ const ProsecutorHomePage = () => {
   };
 
   const handleProsecutorAction = async (action) => {
-    try {
-      const url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
-
-      const res = await fetch(url, { method: "POST" });
-      if (!res.ok) throw new Error("Failed to process case");
-
-      alert(`Case ${action}d successfully`);
-      setCases((prev) => prev.filter((c) => c.id !== selectedCase.id));
-      if (action === "approve") {
-        navigate("/send-to-judge", { state: { caseData: selectedCase } });
-      } else {
-        setSelectedCase(null);
-      }
-    } catch (err) {
-      alert(err.message);
+  try {
+    let url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
+    if (action === "reject") {
+      url += `?reason=No+reason`;
     }
-  };
+
+    const res = await fetch(url, { method: "POST" });
+    if (!res.ok) throw new Error("Failed to process case");
+
+    alert(`Case ${action}d successfully`);
+    setCases((prev) => prev.filter((c) => c.id !== selectedCase.id));
+    if (action === "approve") {
+      navigate("/send-to-judge", { state: { caseData: selectedCase } });
+    } else {
+      setSelectedCase(null);
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
 
   const statusColors = {
     Approved: "bg-green-100 text-green-800",
