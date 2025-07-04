@@ -20,10 +20,13 @@ public class CaseForwarding {
     private Long caseId;
     private Long prosecutorId;
     private Long judgeId;
-    private String courtName;
+
     private String details;
     private String evidenceSummary;
     private String witnesses;
+
+     private String courtName;     // ✅ was missing
+    private String status;  
 
     @ElementCollection
     private List<String> caseFileNames;

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 const ProsecutorHomePage = () => {
   const [cases, setCases] = useState([]);
   const [selectedCase, setSelectedCase] = useState(null);
-  const [description, setDescription] = useState("");
   const [prosecutor, setProsecutor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,14 +53,8 @@ const ProsecutorHomePage = () => {
   };
 
   const handleProsecutorAction = async (action) => {
-    if (!description.trim()) {
-      alert("Please provide your feedback.");
-      return;
-    }
-
     try {
-      const param = action === "approve" ? "description" : "reason";
-      const url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}?${param}=${encodeURIComponent(description)}`;
+      const url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
 
       const res = await fetch(url, { method: "POST" });
       if (!res.ok) throw new Error("Failed to process case");
@@ -72,7 +65,6 @@ const ProsecutorHomePage = () => {
         navigate("/send-to-judge", { state: { caseData: selectedCase } });
       } else {
         setSelectedCase(null);
-        setDescription("");
       }
     } catch (err) {
       alert(err.message);
@@ -177,8 +169,6 @@ const ProsecutorHomePage = () => {
             </motion.div>
           )
         ) : (
-          // CASE DETAILS MODAL — keep your existing layout
-          // Add approve/reject buttons outside "Pending" condition
           <AnimatePresence>
             <motion.div
               className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4"
@@ -192,29 +182,19 @@ const ProsecutorHomePage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
-                {/* Same content */}
                 <h2 className="text-xl font-bold mb-2">{selectedCase.fullName}</h2>
-
-                <textarea
-                  placeholder="Enter reason or description..."
-                  className="w-full p-2 mt-4 border rounded"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
 
                 <div className="mt-4 flex flex-wrap gap-2 justify-between">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleProsecutorAction("approve")}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold transition"
-                      disabled={!description.trim()}
                     >
                       Approve & Forward
                     </button>
                     <button
                       onClick={() => handleProsecutorAction("reject")}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
-                      disabled={!description.trim()}
                     >
                       Reject
                     </button>

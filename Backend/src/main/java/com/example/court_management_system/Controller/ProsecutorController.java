@@ -2,16 +2,21 @@ package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.DTO.ProsecutorDTO;
+import com.example.court_management_system.DTO.ProsecutorToJudgeFormDTO;
 import com.example.court_management_system.DTO.caseDTO;
 import com.example.court_management_system.Entity.CaseEntity;
+import com.example.court_management_system.Entity.CaseForwarding;
 import com.example.court_management_system.Entity.JudgeEntity;
 import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Repository.JudgeRepository;
 import com.example.court_management_system.Service.*;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -73,31 +78,53 @@ public class ProsecutorController {
         return judgeService.getAllJudges();
     }
 
-    @PostMapping("/send-to-judge")
-    public ResponseEntity<?> sendToJudge(
-            @RequestParam Long caseId,
-            @RequestParam Long judgeId,
-            @RequestParam String court,
-            @RequestParam Long prosecutorId
-            // 👉 plus: handle file uploads etc. if needed
-    ) {
-        // 1️⃣ Find the case
+    @PostMapping(value = "/send-to-judge", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<?> sendToJudge(
+        @RequestParam Long caseId,
+        @RequestParam Long judgeId,
+        @RequestParam String court,
+        @RequestParam Long prosecutorId,
+        @RequestParam String details,
+        @RequestParam String evidenceSummary,
+        @RequestParam String witnesses,
+        @RequestPart(required = false) List<MultipartFile> caseFiles,
+        @RequestPart(required = false) List<MultipartFile> evidenceFiles
+) {
+    try {
+        // Build DTO to send to the service layer
+        ProsecutorToJudgeFormDTO dto = ProsecutorToJudgeFormDTO.builder()
+                .caseId(caseId)
+                .judgeId(judgeId)
+                .prosecutorId(prosecutorId)
+                .courtName(court)
+                .details(details)
+                .evidenceSummary(evidenceSummary)
+                .witnesses(witnesses)
+                .caseFiles(caseFiles)
+                .evidenceFiles(evidenceFiles)
+                .build();
+
+        // Let the service handle everything, including file saving
+        caseForwardingService.forwardCase(dto);
+
+        // Update CaseEntity to assign court and judge
         CaseEntity caseEntity = caseRepository.findById(caseId)
                 .orElseThrow(() -> new RuntimeException("Case not found"));
-
-        // 2️⃣ Find the judge
         JudgeEntity judge = judgeRepository.findById(judgeId)
                 .orElseThrow(() -> new RuntimeException("Judge not found"));
 
-        // 3️⃣ Save judge to case
-        caseEntity.setJudge(judge);
-
-        // 4️⃣ Save court to case
         caseEntity.setCourt(court);
-
-        // 5️⃣ Save
+        caseEntity.setJudge(judge);
         caseRepository.save(caseEntity);
 
         return ResponseEntity.ok("✅ Sent to judge successfully!");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("❌ Failed to send to judge: " + e.getMessage());
     }
+}
+
+
+
 }

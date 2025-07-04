@@ -1,8 +1,10 @@
 package com.example.court_management_system.Controller;
 
 import com.example.court_management_system.DTO.CaseApprovalRequest;
+import com.example.court_management_system.DTO.JudgeApprovalDTO;
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.Entity.CaseForwarding;
+import com.example.court_management_system.Entity.JudgeDecisionEntity;
 import com.example.court_management_system.Repository.CaseForwardingRepository;
 import com.example.court_management_system.Entity.JudgeEntity;
 import com.example.court_management_system.Service.JudgeService;
@@ -48,15 +50,19 @@ public ResponseEntity<?> registerJudge(@RequestBody JudgeDTO judgeDTO) {
 public List<CaseForwarding> getCasesForJudge(@RequestParam Long judgeId) {
     return repository.findByJudgeId(judgeId);
 }
-    @PostMapping("/approve")
-        public ResponseEntity<String> approveCase(@RequestBody CaseApprovalRequest approvalRequest) {
-            // Here you can save to database or perform business logic
-            
-            System.out.println("✅ Case Approved: " + approvalRequest.getCaseId());
-            System.out.println("📅 Hearing Date: " + approvalRequest.getHearingDate());
-            System.out.println("👨‍⚖️ Judges: " + approvalRequest.getAssignedJudges());
-            System.out.println("🏛 Court: " + approvalRequest.getAssignedCourt());
+  
+        @PostMapping("/approve")
+    public JudgeDecisionEntity approveCase(@RequestBody JudgeApprovalDTO dto) {
+        return judgeService.approveCase(dto);
+    }
 
-            return ResponseEntity.ok("Case " + approvalRequest.getCaseId() + " approved successfully");
-        }
+    @PostMapping("/reject")
+    public void rejectCase(@RequestBody JudgeApprovalDTO dto) {
+        judgeService.rejectCase(dto.getCaseId());
+    }
+
+    @GetMapping("/decision")
+    public List<JudgeDecisionEntity> getCaseSchedule(@RequestParam Long caseId) {
+        return judgeService.getUserVisibleSchedule(caseId);
+    }
 }

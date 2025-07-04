@@ -10,6 +10,7 @@ const MyCases = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
+  const [judgeDecision, setJudgeDecision] = useState(null); // 🔥 NEW
 
   useEffect(() => {
     const fetchUserCases = async () => {
@@ -45,7 +46,10 @@ const MyCases = () => {
       });
       if (!response.ok) throw new Error(t.deleteCaseFailed || "Failed to delete case");
       setCases(cases.filter(c => c?.id !== caseId));
-      if (selectedCase?.id === caseId) setSelectedCase(null);
+      if (selectedCase?.id === caseId) {
+        setSelectedCase(null);
+        setJudgeDecision(null);
+      }
     } catch (error) {
       console.error("Error deleting case:", error);
       alert(error.message);
@@ -65,17 +69,32 @@ const MyCases = () => {
       if (!response.ok) throw new Error(t.clearCasesFailed || "Failed to clear cases");
       setCases([]);
       setSelectedCase(null);
+      setJudgeDecision(null);
     } catch (error) {
       console.error("Error clearing cases:", error);
       alert(error.message);
     }
   };
 
-  const handleCaseClick = (caseData) => {
+  const handleCaseClick = async (caseData) => {
     if (selectedCase && selectedCase.id === caseData.id) {
       setSelectedCase(null);
-    } else {
-      setSelectedCase(caseData);
+      setJudgeDecision(null);
+      return;
+    }
+
+    setSelectedCase(caseData);
+    try {
+      const response = await fetch(`http://localhost:8080/api/judge/decision?caseId=${caseData.id}`);
+      if (response.ok) {
+        const decisions = await response.json();
+        setJudgeDecision(decisions?.[0] || null); // take first if multiple
+      } else {
+        setJudgeDecision(null);
+      }
+    } catch (err) {
+      console.error("Failed to fetch judge decision:", err);
+      setJudgeDecision(null);
     }
   };
 
@@ -220,6 +239,27 @@ const MyCases = () => {
                       )}
                     </div>
                   </div>
+
+                  {judgeDecision && (
+                    <div className="mt-8 border-t pt-6">
+                      <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                        {t.judgeDecision || "Judge Decision"}
+                      </h4>
+                      <p><strong>{t.assignedCourt || "Assigned Court"}:</strong> {judgeDecision.assignedCourt}</p>
+                      <p><strong>{t.hearingDate || "Hearing Date"}:</strong> {new Date(judgeDecision.hearingDate).toLocaleString()}</p>
+                      <p><strong>{t.status || "Status"}:</strong> {judgeDecision.status}</p>
+                      {judgeDecision.assignedJudges && judgeDecision.assignedJudges.length > 0 && (
+                        <>
+                          <p><strong>{t.assignedJudges || "Assigned Judges"}:</strong></p>
+                          <ul className="list-disc list-inside text-sm text-gray-700">
+                            {judgeDecision.assignedJudges.map((judge, index) => (
+                              <li key={index}>{judge}</li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

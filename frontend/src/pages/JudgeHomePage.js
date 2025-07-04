@@ -95,13 +95,13 @@ const JudgeHomePage = () => {
         <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
           {cases.map(c => (
             <li
-              key={c.id}
+              key={c.caseId || c.id}
               onClick={() => setSelectedCase(c)}
               className="cursor-pointer p-6 border rounded-xl shadow hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 ease-in-out bg-white"
             >
               <p className="text-lg font-semibold mb-2">📁 Case ID: {c.caseId}</p>
               <p className="text-gray-600">
-                {c.details.length > 100 ? `${c.details.substring(0, 100)}...` : c.details}
+                {c.details ? (c.details.length > 100 ? `${c.details.substring(0, 100)}...` : c.details) : 'No details provided'}
               </p>
             </li>
           ))}
@@ -118,41 +118,49 @@ const JudgeHomePage = () => {
           <h2 className="text-2xl font-bold mb-4">Case Details</h2>
           <div className="space-y-2">
             <p><strong>Case ID:</strong> {selectedCase.caseId}</p>
-            <p><strong>Details:</strong> {selectedCase.details}</p>
-            <p><strong>Evidence Summary:</strong> {selectedCase.evidenceSummary}</p>
-            <p><strong>Witnesses:</strong> {selectedCase.witnesses}</p>
+            <p><strong>Details:</strong> {selectedCase.details || 'N/A'}</p>
+            <p><strong>Evidence Summary:</strong> {selectedCase.evidenceSummary || 'N/A'}</p>
+            <p><strong>Witnesses:</strong> {selectedCase.witnesses || 'N/A'}</p>
           </div>
 
           <h3 className="mt-6 font-semibold text-lg">Case Files:</h3>
           <ul className="list-disc ml-5">
-            {selectedCase.caseFileNames.map((file, i) => (
-              <li key={i}>
-                <a
-                  href={`http://localhost:8080/uploads/${file}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  {file}
-                </a>
-              </li>
-            ))}
+            {selectedCase.caseFileNames?.length > 0 ? (
+              selectedCase.caseFileNames.map((file, i) => (
+                <li key={i}>
+                  <a
+                    href={`http://localhost:8080/uploads/${file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {file}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>No case files</li>
+            )}
           </ul>
 
           <h3 className="mt-4 font-semibold text-lg">Evidence Files:</h3>
           <ul className="list-disc ml-5">
-            {selectedCase.evidenceFileNames.map((file, i) => (
-              <li key={i}>
-                <a
-                  href={`http://localhost:8080/uploads/${file}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  {file}
-                </a>
-              </li>
-            ))}
+            {selectedCase.evidenceFileNames?.length > 0 ? (
+              selectedCase.evidenceFileNames.map((file, i) => (
+                <li key={i}>
+                  <a
+                    href={`http://localhost:8080/uploads/${file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {file}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>No evidence files</li>
+            )}
           </ul>
 
           <div className="flex gap-4 mt-8">
@@ -172,7 +180,6 @@ const JudgeHomePage = () => {
         </div>
       )}
 
-      {/* Approval Form Modal */}
       {showApprovalForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl max-w-md w-full shadow-lg">
