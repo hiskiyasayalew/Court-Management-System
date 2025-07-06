@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
-
+import VerdictPage from './pages/VerdictPage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import HomePage from './pages/HomePage';
@@ -19,8 +19,8 @@ import AppliedRejected from './pages/AppliedRejectedPage';
 import AdminPage from './pages/AdminPage';
 import JudgeHomePage from './pages/JudgeHomePage';
 import AppealPage from './pages/AppealPage';
+// ✅ Import your Prosecutor to Judge form
 import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
-import VerdictPage from './pages/VerdictPage'; // ✅ NEW!
 
 const App = () => {
   return (
@@ -44,9 +44,11 @@ const App = () => {
           <Route path="/appliedandrejected" element={<AppliedRejected />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/judge/home" element={<JudgeHomePage />} />
-          <Route path="/appeal" element={<AppealPage />} />
+          <Route path="/judge/verdicts"element={<VerdictPage/>}/>
+          <Route path="/appeal" element={<AppealPage/>} />
+
+          {/* ✅ Add this route for the prosecutor-to-judge form */}
           <Route path="/send-to-judge" element={<ProsecutorToJudgeForm />} />
-          <Route path="/judge/verdicts" element={<VerdictPage />} /> {/* ✅ NEW! */}
         </Routes>
       </Router>
     </LanguageProvider>
