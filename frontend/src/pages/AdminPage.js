@@ -64,34 +64,39 @@ const AdminPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!formData.id && (!formData.password || formData.password !== formData.confirmPassword)) {
-      setError("Passwords don't match or are empty");
-      return;
-    }
+  if (!formData.id && (!formData.password || formData.password !== formData.confirmPassword)) {
+    setError("Passwords don't match or are empty");
+    return;
+  }
 
-    setIsLoading(true);
-    const role = selectedRole;
-    const isEdit = formData.id !== '';
-    const url = `http://localhost:8080/api/admin/${roleApiMap[role]}/${isEdit ? 'update' : 'create'}`;
+  setIsLoading(true);
+  const role = selectedRole;
+  const isEdit = formData.id !== '';
+  const url = `http://localhost:8080/api/admin/${roleApiMap[role]}/${isEdit ? 'update' : 'create'}`;
 
-    const payload = { ...formData };
-    delete payload.confirmPassword;
-    if (!payload.password) delete payload.password;
-    if (!isEdit) delete payload.id;
+  const payload = { ...formData };
+  delete payload.confirmPassword;
+  if (!payload.password) delete payload.password;
+  if (!isEdit) delete payload.id;
 
-    try {
+  try {
+    if (isEdit) {
       await axios.put(url, payload);
-      fetchUsers(role);
-      setFormData(initialFormData);
-      setError('');
-    } catch {
-      setError("Failed to save user");
-    } finally {
-      setIsLoading(false);
+    } else {
+      await axios.post(url, payload); // ✅ Correct for create!
     }
-  };
+    fetchUsers(role);
+    setFormData(initialFormData);
+    setError('');
+  } catch {
+    setError("Failed to save user");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleEdit = (user) => {
     switch (selectedRole) {

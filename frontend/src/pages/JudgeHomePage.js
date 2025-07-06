@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ Added!
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const JudgeHomePage = () => {
-  const navigate = useNavigate(); // ✅ Added!
+  const navigate = useNavigate();
 
   const [cases, setCases] = useState([]);
   const [selectedCase, setSelectedCase] = useState(null);
   const [showApprovalForm, setShowApprovalForm] = useState(false);
+  const [showVerdictForm, setShowVerdictForm] = useState(false);
+  const [verdictText, setVerdictText] = useState('');
+
   const [approvalData, setApprovalData] = useState({
     hearingDate: '',
     assignedJudges: [],
@@ -234,6 +237,12 @@ const JudgeHomePage = () => {
             >
               ❌ Reject
             </button>
+            <button
+              onClick={() => setShowVerdictForm(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              📜 Submit Verdict
+            </button>
           </div>
         </div>
       )}
@@ -293,6 +302,57 @@ const JudgeHomePage = () => {
               </button>
               <button
                 onClick={handleCloseApprovalForm}
+                className="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVerdictForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-lg">
+            <h3 className="text-xl font-bold mb-4">
+              Submit Verdict for Case {selectedCase.caseId}
+            </h3>
+            <textarea
+              rows="6"
+              value={verdictText}
+              onChange={(e) => setVerdictText(e.target.value)}
+              placeholder="Enter verdict details here..."
+              className="w-full border rounded p-3 mb-4"
+            />
+            <div className="flex justify-between">
+              <button
+                onClick={async () => {
+                  if (!verdictText.trim()) {
+                    alert('Verdict text cannot be empty.');
+                    return;
+                  }
+                  try {
+                    await axios.post('http://localhost:8080/api/judge/verdict', {
+                      caseId: selectedCase.caseId,
+                      verdictText: verdictText.trim(),
+                    });
+                    alert('Verdict submitted successfully!');
+                    setShowVerdictForm(false);
+                    setVerdictText('');
+                  } catch (err) {
+                    console.error('Failed to submit verdict:', err);
+                    alert('Failed to submit verdict.');
+                  }
+                }}
+                className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => {
+                  setShowVerdictForm(false);
+                  setVerdictText('');
+                }}
                 className="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400"
               >
                 Cancel

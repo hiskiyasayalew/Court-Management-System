@@ -8,4 +8,5 @@ import com.example.court_management_system.Entity.VerdictEntity;
 
 public interface VerdictRepository extends JpaRepository<VerdictEntity, Long> {
     List<VerdictEntity> findByJudgeId(Long judgeId);
+    VerdictEntity findByCaseId(Long caseId);
 }

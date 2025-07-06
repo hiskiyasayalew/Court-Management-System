@@ -10,7 +10,8 @@ const MyCases = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
-  const [judgeDecision, setJudgeDecision] = useState(null); // 🔥 NEW
+  const [judgeDecision, setJudgeDecision] = useState(null);
+  const [verdict, setVerdict] = useState(null);
 
   useEffect(() => {
     const fetchUserCases = async () => {
@@ -49,6 +50,7 @@ const MyCases = () => {
       if (selectedCase?.id === caseId) {
         setSelectedCase(null);
         setJudgeDecision(null);
+        setVerdict(null);
       }
     } catch (error) {
       console.error("Error deleting case:", error);
@@ -70,6 +72,7 @@ const MyCases = () => {
       setCases([]);
       setSelectedCase(null);
       setJudgeDecision(null);
+      setVerdict(null);
     } catch (error) {
       console.error("Error clearing cases:", error);
       alert(error.message);
@@ -80,23 +83,38 @@ const MyCases = () => {
     if (selectedCase && selectedCase.id === caseData.id) {
       setSelectedCase(null);
       setJudgeDecision(null);
+      setVerdict(null);
       return;
     }
 
     setSelectedCase(caseData);
     try {
       const response = await fetch(`http://localhost:8080/api/judge/decision?caseId=${caseData.id}`);
-      if (response.ok) {
-        const decisions = await response.json();
-        setJudgeDecision(decisions?.[0] || null); // take first if multiple
-      } else {
-        setJudgeDecision(null);
-      }
+      const decisions = response.ok ? await response.json() : [];
+      setJudgeDecision(decisions?.[0] || null);
     } catch (err) {
       console.error("Failed to fetch judge decision:", err);
       setJudgeDecision(null);
     }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/cases/verdict?caseId=${caseData.id}`);
+      if (response.ok) {
+        const verdictData = await response.json();
+        setVerdict(verdictData);
+      } else {
+        setVerdict(null);
+      }
+    } catch (err) {
+      console.error("Failed to fetch verdict:", err);
+      setVerdict(null);
+    }
   };
+
+  const handleAppeal = (caseId) => {
+  navigate(`/appeal-form/${caseId}`);
+};
+
 
   if (loading) {
     return (
@@ -147,13 +165,11 @@ const MyCases = () => {
           <>
             <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
               <ul className="divide-y divide-gray-200 max-h-[calc(100vh-300px)] overflow-y-auto">
-                {cases.filter(Boolean).map(c => (
+                {cases.map(c => (
                   <li
                     key={c.id}
-                    className={`p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-150
-                      ${selectedCase?.id === c.id ? 'bg-gray-100' : ''}`}
+                    className={`p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-150 ${selectedCase?.id === c.id ? 'bg-gray-100' : ''}`}
                     onClick={() => handleCaseClick(c)}
-                    aria-expanded={selectedCase?.id === c.id}
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                       <div className="flex-1">
@@ -163,14 +179,8 @@ const MyCases = () => {
                             {c.caseType}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {new Date(c.submittedAt).toLocaleString()}
-                        </p>
-                        <p className={`mt-2 text-sm font-medium ${
-                          c.status === (t.submittedToProcess || 'Submitted to Process') 
-                            ? 'text-orange-600' 
-                            : 'text-green-600'
-                        }`}>
+                        <p className="text-sm text-gray-500 mt-1">{new Date(c.submittedAt).toLocaleString()}</p>
+                        <p className={`mt-2 text-sm font-medium ${c.status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-600'}`}>
                           {c.status}
                         </p>
                         {c.caseDescription && (
@@ -186,7 +196,6 @@ const MyCases = () => {
                             deleteCase(c.id);
                           }}
                           className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold transition"
-                          aria-label={t.deleteCase || "Delete case"}
                         >
                           {t.delete || 'Delete'}
                         </button>
@@ -258,6 +267,27 @@ const MyCases = () => {
                           </ul>
                         </>
                       )}
+                    </div>
+                  )}
+
+                  {verdict && (
+                    <div className="mt-8 border-t pt-6">
+                      <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                        {t.verdict || "Final Verdict"}
+                      </h4>
+                      <p><strong>{t.verdictText || "Verdict Text"}:</strong></p>
+                      <p className="whitespace-pre-wrap text-gray-700">{verdict.verdictText}</p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        {t.verdictDate || "Date"}: {new Date(verdict.verdictDate).toLocaleString()}
+                      </p>
+
+                    <button
+                    onClick={() => handleAppeal(selectedCase.id)}
+                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm"
+                  >
+                    {t.appeal || 'Appeal'}
+                  </button>
+
                     </div>
                   )}
                 </motion.div>

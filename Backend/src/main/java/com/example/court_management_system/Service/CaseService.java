@@ -7,6 +7,7 @@ import com.example.court_management_system.Entity.caseStatus;
 import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Repository.UserRepository;
 
+import jakarta.persistence.criteria.CriteriaBuilder.Case;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -161,6 +162,13 @@ public class CaseService {
 
         return "Case approved and status set to OPEN.";
     }
+
+public List<CaseEntity> getProsecutorCasesWithAppeals(String username) {
+    return caseRepository.findProsecutorCasesIncludingAppeals(username);
+}
+
+
+
 
     @Transactional
     public String prosecutorRejectCase(Long caseId, String reason) {

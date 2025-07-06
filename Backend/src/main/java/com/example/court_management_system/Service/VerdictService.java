@@ -10,6 +10,7 @@ import com.example.court_management_system.Repository.VerdictRepository;
 
 @Service
 public class VerdictService {
+    
     @Autowired
     private VerdictRepository repo;
 
@@ -19,5 +20,9 @@ public class VerdictService {
 
     public List<VerdictEntity> findByJudge(Long judgeId) {
         return repo.findByJudgeId(judgeId);
+    }
+
+    public VerdictEntity findByCaseId(Long caseId) {
+        return repo.findByCaseId(caseId);
     }
 }

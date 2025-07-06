@@ -27,6 +27,7 @@ public class CaseForwarding {
 
      private String courtName;     // ✅ was missing
     private String status;  
+    
 
     @ElementCollection
     private List<String> caseFileNames;

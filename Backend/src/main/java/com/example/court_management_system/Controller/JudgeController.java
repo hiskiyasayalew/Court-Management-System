@@ -11,6 +11,7 @@ import com.example.court_management_system.Repository.CaseForwardingRepository;
 import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Entity.JudgeEntity;
 import com.example.court_management_system.Entity.VerdictEntity;
+import com.example.court_management_system.Entity.caseStatus;
 import com.example.court_management_system.Service.JudgeService;
 import com.example.court_management_system.Service.VerdictService;
 
@@ -84,15 +85,11 @@ public List<CaseForwarding> getCasesForJudge(@RequestParam Long judgeId) {
         v.setCaseId(dto.getCaseId());
         v.setVerdictText(dto.getVerdictText());
         v.setVerdictDate(LocalDateTime.now());
-        // optionally handle file storage
 
         verdictService.save(v);
 
         return ResponseEntity.ok("Verdict saved");
     }
 
-    @GetMapping("/approved-cases")
-    public List<CaseEntity> getApprovedCases(@RequestParam Long judgeId) {
-        return caseRepo.findByStatusAndJudgeId("APPROVED", judgeId);
-    }
+  
 }

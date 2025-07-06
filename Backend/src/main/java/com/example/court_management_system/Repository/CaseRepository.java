@@ -2,10 +2,15 @@ package com.example.court_management_system.Repository;
 
 import com.example.court_management_system.Entity.CaseEntity;
 import com.example.court_management_system.Entity.UserEntity;
+import com.example.court_management_system.Entity.caseStatus;
+
+import jakarta.persistence.criteria.CriteriaBuilder.Case;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,7 +27,11 @@ public interface CaseRepository extends JpaRepository<CaseEntity, Long> {
     
     List<CaseEntity> findByUserUserName(String userName);
     
-    List<CaseEntity> findByStatusAndJudgeId(String status, Long judgeId);
+    List<CaseEntity> findByStatusAndJudge_Id(caseStatus status, Long judgeId);
+    
+    @Query("SELECT c FROM CaseEntity c WHERE c.prosecutor.username = :username AND (c.status = com.example.court_management_system.Entity.caseStatus.SUBMITTED_TO_PROCESS OR c.status = com.example.court_management_system.Entity.caseStatus.SENT_TO_PROSECUTOR)")
+    List<CaseEntity> findProsecutorCasesIncludingAppeals(@Param("username") String username);
+
 
 
 }

@@ -6,5 +6,6 @@ public enum caseStatus {
     CLOSED,
     SUBMITTED_TO_PROCESS,
     SENT_TO_PROSECUTOR,
-    REJECTED 
+    REJECTED,
+    APPROVED
 }

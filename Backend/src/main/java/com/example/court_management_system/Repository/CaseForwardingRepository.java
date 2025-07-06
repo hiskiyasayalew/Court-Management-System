@@ -1,5 +1,6 @@
 package com.example.court_management_system.Repository;
 
+import com.example.court_management_system.Entity.CaseEntity;
 import com.example.court_management_system.Entity.CaseForwarding;
 
 import java.util.List;
@@ -10,5 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CaseForwardingRepository extends JpaRepository<CaseForwarding, Long> {
    List<CaseForwarding> findByJudgeId(Long judgeId);
+
+   List<CaseForwarding> findByStatusAndJudgeId(String status, Long judgeId);
+
 
 }

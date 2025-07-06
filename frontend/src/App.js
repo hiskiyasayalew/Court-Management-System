@@ -20,7 +20,8 @@ import AdminPage from './pages/AdminPage';
 import JudgeHomePage from './pages/JudgeHomePage';
 import AppealPage from './pages/AppealPage';
 import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
-import VerdictPage from './pages/VerdictPage'; // ✅ NEW!
+import VerdictPage from './pages/VerdictPage';
+import AppealForm from './pages/AppealForm'; // ✅ Make sure this is imported
 
 const App = () => {
   return (
@@ -46,7 +47,8 @@ const App = () => {
           <Route path="/judge/home" element={<JudgeHomePage />} />
           <Route path="/appeal" element={<AppealPage />} />
           <Route path="/send-to-judge" element={<ProsecutorToJudgeForm />} />
-          <Route path="/judge/verdicts" element={<VerdictPage />} /> {/* ✅ NEW! */}
+          <Route path="/judge/verdicts" element={<VerdictPage />} />
+          <Route path="/appeal-form/:caseId" element={<AppealForm />} /> {/* ✅ Appeal Form route */}
         </Routes>
       </Router>
     </LanguageProvider>

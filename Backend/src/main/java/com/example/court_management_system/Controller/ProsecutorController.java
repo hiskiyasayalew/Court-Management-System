@@ -11,6 +11,7 @@ import com.example.court_management_system.Repository.CaseRepository;
 import com.example.court_management_system.Repository.JudgeRepository;
 import com.example.court_management_system.Service.*;
 
+import jakarta.persistence.criteria.CriteriaBuilder.Case;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -58,15 +59,17 @@ public class ProsecutorController {
         return prosecutorService.getAllProsecutors();
     }
 
-    @GetMapping("/prosecutor-cases")
-    public List<caseDTO> getCasesAssignedToProsecutor(@RequestParam String username) {
-        return caseService.getCasesForProsecutor(username);
+   @PostMapping("/approve/{caseId}")
+public ResponseEntity<?> approveCase(
+    @PathVariable Long caseId,
+    @RequestParam(required = false) String description
+) {
+    if (description == null || description.trim().isEmpty()) {
+        description = "Approved by prosecutor"; // default fallback
     }
+    return ResponseEntity.ok(caseService.prosecutorApproveCase(caseId, description));
+}
 
-    @PostMapping("/approve/{caseId}")
-    public ResponseEntity<?> approveCase(@PathVariable Long caseId, @RequestParam String description) {
-        return ResponseEntity.ok(caseService.prosecutorApproveCase(caseId, description));
-    }
 
     @PostMapping("/reject/{caseId}")
     public ResponseEntity<?> rejectCase(@PathVariable Long caseId, @RequestParam String reason) {
@@ -125,6 +128,11 @@ public ResponseEntity<?> sendToJudge(
     }
 }
 
+    @GetMapping("/prosecutor-cases")
+    public ResponseEntity<?> getProsecutorCases(@RequestParam String username) {
+        List<CaseEntity> cases = caseService.getProsecutorCasesWithAppeals(username);
+        return ResponseEntity.ok(cases);
+    }
 
 
 }
