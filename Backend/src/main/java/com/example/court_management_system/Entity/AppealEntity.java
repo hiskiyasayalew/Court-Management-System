@@ -20,8 +20,12 @@ public class AppealEntity {
     private String userName;
     private String reason;
     private String assignedProsecutor;
-    private String status = "Pending";  // Pending, Accepted, Rejected
+    private String status = "Pending";
     private LocalDateTime submittedAt = LocalDateTime.now();
 
-    // Getters and Setters
+    @ManyToOne
+    @JoinColumn(name = "caseId", referencedColumnName = "id", insertable = false, updatable = false)
+    private CaseEntity caseEntity; // 👈 this is now linked
+
 }
+

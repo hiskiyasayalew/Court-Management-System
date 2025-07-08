@@ -1,9 +1,11 @@
 package com.example.court_management_system.Controller;
 
+import com.example.court_management_system.DTO.AppealResponseDTO;
 import com.example.court_management_system.DTO.JudgeDTO;
 import com.example.court_management_system.DTO.ProsecutorDTO;
 import com.example.court_management_system.DTO.ProsecutorToJudgeFormDTO;
 import com.example.court_management_system.DTO.caseDTO;
+import com.example.court_management_system.Entity.AppealEntity;
 import com.example.court_management_system.Entity.CaseEntity;
 import com.example.court_management_system.Entity.CaseForwarding;
 import com.example.court_management_system.Entity.JudgeEntity;
@@ -31,6 +33,8 @@ public class ProsecutorController {
     private final CaseService caseService;
     private final JudgeService judgeService;
     private final CaseForwardingService caseForwardingService;
+    
+    private final AppealService appealService;
 
     // ✅ Add these two so RequiredArgsConstructor will inject them
     private final CaseRepository caseRepository;
@@ -133,6 +137,14 @@ public ResponseEntity<?> sendToJudge(
         List<CaseEntity> cases = caseService.getProsecutorCasesWithAppeals(username);
         return ResponseEntity.ok(cases);
     }
+
+        @GetMapping("/appeals")
+        public ResponseEntity<List<AppealResponseDTO>> getAppealedCases(@RequestParam String username) {
+            List<AppealResponseDTO> appeals = appealService.getAppealsForProsecutor(username);
+            return ResponseEntity.ok(appeals);
+        }
+
+
 
 
 }

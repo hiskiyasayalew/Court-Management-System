@@ -163,9 +163,13 @@ public class CaseService {
         return "Case approved and status set to OPEN.";
     }
 
-public List<CaseEntity> getProsecutorCasesWithAppeals(String username) {
-    return caseRepository.findProsecutorCasesIncludingAppeals(username);
-}
+    public List<CaseEntity> getProsecutorCasesWithAppeals(String username) {
+        return caseRepository.findAll().stream()
+            .filter(c -> c.getProsecutor() != null && username.equals(c.getProsecutor().getUsername()))
+            .filter(c -> c.getStatus() == caseStatus.SUBMITTED_TO_PROCESS || c.getStatus() == caseStatus.SENT_TO_PROSECUTOR)
+            .collect(Collectors.toList());
+    }
+
 
 
 

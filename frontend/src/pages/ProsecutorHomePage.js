@@ -22,18 +22,24 @@ const ProsecutorHomePage = () => {
 
     const fetchCases = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/prosecutor/prosecutor-cases?username=${prosecutor.username}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to load cases");
+        const [casesRes, appealsRes] = await Promise.all([
+          fetch(`http://localhost:8080/api/prosecutor/prosecutor-cases?username=${prosecutor.username}`),
+          fetch(`http://localhost:8080/api/prosecutor/appeals?username=${prosecutor.username}`)
+        ]);
 
-        // Updated filtering logic as requested
-        const normalCases = data.filter(c => c.status === "SUBMITTED_TO_PROCESS");
-        const appealed = data.filter(c => c.status === "SENT_TO_PROSECUTOR");
+        const caseData = await casesRes.json();
+        const appealData = await appealsRes.json();
+
+        if (!casesRes.ok || !appealsRes.ok) throw new Error("Error loading data");
+
+        const normalCases = caseData.filter(
+          c => c.status === "SUBMITTED_TO_PROCESS" || c.status === "SENT_TO_PROSECUTOR"
+        );
 
         setCases(normalCases);
-        setAppealedCases(appealed);
+        setAppealedCases(appealData);
       } catch (error) {
-        console.error("Failed to load cases:", error);
+        console.error("Failed to load cases or appeals:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -49,6 +55,7 @@ const ProsecutorHomePage = () => {
     try {
       const res = await fetch(`http://localhost:8080/api/cases/${caseId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete case");
+
       setCases(prev => prev.filter(c => c.id !== caseId));
       setAppealedCases(prev => prev.filter(c => c.id !== caseId));
       setSelectedCase(null);
@@ -67,6 +74,7 @@ const ProsecutorHomePage = () => {
       if (!res.ok) throw new Error("Failed to process case");
 
       alert(`Case ${action}d successfully`);
+
       setCases(prev => prev.filter(c => c.id !== selectedCase.id));
       setAppealedCases(prev => prev.filter(c => c.id !== selectedCase.id));
 
@@ -80,22 +88,23 @@ const ProsecutorHomePage = () => {
     }
   };
 
+  const filteredCases = cases.filter(c =>
+    c.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.caseType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.caseDescription?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredAppealedCases = appealedCases.filter(a =>
+    a.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    a.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (a.caseId + "").includes(searchTerm)
+  );
+
   const statusColors = {
     Approved: "bg-green-100 text-green-800",
     Rejected: "bg-red-100 text-red-800",
+    SENT_TO_PROSECUTOR: "bg-yellow-100 text-yellow-800"
   };
-
-  const filteredCases = cases.filter(c =>
-    c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseDescription.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredAppealedCases = appealedCases.filter(c =>
-    c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseDescription.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (loading) {
     return (
@@ -140,14 +149,14 @@ const ProsecutorHomePage = () => {
         <div className="mb-6">
           <input
             type="text"
-            placeholder="Search by name, type, or description..."
+            placeholder="Search by name, type, description, or ID..."
             className="w-full max-w-md p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        {/* Normal Cases Section */}
+        {/* Submitted Cases */}
         <h2 className="text-xl font-bold mb-4 text-gray-800">Submitted Cases</h2>
         {filteredCases.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-10">
@@ -174,29 +183,26 @@ const ProsecutorHomePage = () => {
           <div className="text-center text-gray-500 italic mb-10">No submitted cases found</div>
         )}
 
-        {/* Divider */}
-        <hr className="border-t-2 border-gray-300 my-8" />
-
-        {/* Appealed Cases Section */}
+        {/* Appealed Cases */}
         <h2 className="text-xl font-bold mb-4 text-gray-800">Appealed Cases</h2>
         {filteredAppealedCases.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredAppealedCases.map(c => (
+            {filteredAppealedCases.map(appeal => (
               <motion.div
-                key={c.id}
+                key={appeal.id}
                 className="bg-white p-4 rounded-lg shadow hover:shadow-lg cursor-pointer border border-yellow-300"
                 whileHover={{ scale: 1.02 }}
-                onClick={() => setSelectedCase(c)}
+                onClick={() => setSelectedCase(appeal)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-lg font-semibold truncate">{c.fullName}</h2>
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || "bg-gray-100 text-gray-800"}`}>
-                    {c.status}
+                  <h2 className="text-lg font-semibold truncate">{appeal.userName}</h2>
+                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[appeal.status] || "bg-gray-100 text-gray-800"}`}>
+                    {appeal.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
-                <p className="text-xs text-gray-500 mt-2">{new Date(c.submittedAt).toLocaleDateString()}</p>
-                <p className="mt-3 text-sm text-gray-700 line-clamp-2">{c.caseDescription}</p>
+                <p className="text-gray-600 text-sm mt-1">Appealed Case ID: {appeal.caseId}</p>
+                <p className="text-xs text-gray-500 mt-2">{new Date(appeal.submittedAt).toLocaleDateString()}</p>
+                <p className="mt-3 text-sm text-gray-700 line-clamp-2">{appeal.reason}</p>
               </motion.div>
             ))}
           </div>
@@ -204,7 +210,7 @@ const ProsecutorHomePage = () => {
           <div className="text-center text-gray-500 italic">No appealed cases found</div>
         )}
 
-        {/* Case Details Modal */}
+        {/* Modal */}
         <AnimatePresence>
           {selectedCase && (
             <motion.div
@@ -219,9 +225,9 @@ const ProsecutorHomePage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
-                <h2 className="text-xl font-bold mb-2">{selectedCase.fullName}</h2>
-                <p className="text-sm text-gray-600 mb-2">{selectedCase.caseType}</p>
-                <p className="text-sm text-gray-700 mb-4">{selectedCase.caseDescription}</p>
+                <h2 className="text-xl font-bold mb-2">{selectedCase.fullName || selectedCase.userName}</h2>
+                <p className="text-sm text-gray-600 mb-2">{selectedCase.caseType || `Appealed Case ID: ${selectedCase.caseId}`}</p>
+                <p className="text-sm text-gray-700 mb-4">{selectedCase.caseDescription || selectedCase.reason}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2 justify-between">
                   <div className="flex gap-2">
