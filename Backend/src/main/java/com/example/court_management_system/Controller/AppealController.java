@@ -31,4 +31,15 @@ public class AppealController {
     public ResponseEntity<List<AppealResponseDTO>> getAppealsForProsecutor(@RequestParam String prosecutorUsername) {
         return ResponseEntity.ok(appealService.getAppealsForProsecutor(prosecutorUsername));
     }
+
+    @PostMapping("/{appealId}/approve")
+public ResponseEntity<?> approveAppeal(@PathVariable Long appealId, @RequestParam String description) {
+    return ResponseEntity.ok(appealService.approveAppeal(appealId, description));
+}
+
+@PostMapping("/{appealId}/reject")
+public ResponseEntity<?> rejectAppeal(@PathVariable Long appealId, @RequestParam String reason) {
+    return ResponseEntity.ok(appealService.rejectAppeal(appealId, reason));
+}
+
 }

@@ -66,23 +66,46 @@ const ProsecutorHomePage = () => {
 
   const handleProsecutorAction = async (action) => {
     try {
-      let url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
-      if (action === "reject") url += `?reason=No+reason`;
-      if (action === "approve") url += `?description=Approved`;
+      let url;
+
+      if (selectedCase.caseId) {
+        // ✅ It's an appeal
+        url = `http://localhost:8080/api/appeals/${selectedCase.id}/${action}`;
+        if (action === "reject") url += `?reason=No+reason`;
+        if (action === "approve") url += `?description=Approved`;
+      } else {
+        // ✅ Normal case
+        url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
+        if (action === "reject") url += `?reason=No+reason`;
+        if (action === "approve") url += `?description=Approved`;
+      }
 
       const res = await fetch(url, { method: "POST" });
       if (!res.ok) throw new Error("Failed to process case");
 
       alert(`Case ${action}d successfully`);
 
-      setCases(prev => prev.filter(c => c.id !== selectedCase.id));
+      // ✅ Remove from UI
+      setCases(prev => prev.filter(c =>
+        c.id !== selectedCase.id && c.id !== selectedCase.caseId
+      ));
       setAppealedCases(prev => prev.filter(c => c.id !== selectedCase.id));
 
+      // ✅ Navigate to judge form if approved
       if (action === "approve") {
-        navigate("/send-to-judge", { state: { caseData: selectedCase } });
+        if (selectedCase.caseId) {
+          // ✅ Appeal → use linked caseId
+          navigate("/send-to-judge", {
+            state: { caseData: { ...selectedCase, id: selectedCase.caseId } }
+          });
+        } else {
+          // ✅ Normal case
+          navigate("/send-to-judge", { state: { caseData: selectedCase } });
+        }
       } else {
         setSelectedCase(null);
       }
+
     } catch (err) {
       alert(err.message);
     }
@@ -174,7 +197,10 @@ const ProsecutorHomePage = () => {
                   </span>
                 </div>
                 <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
-                <p className="text-xs text-gray-500 mt-2">{new Date(c.submittedAt).toLocaleDateString()}</p>
+                {/* ✅ Null-safe date rendering */}
+                <p className="text-xs text-gray-500 mt-2">
+                  {c.submittedAt ? new Date(c.submittedAt).toLocaleDateString() : "—"}
+                </p>
                 <p className="mt-3 text-sm text-gray-700 line-clamp-2">{c.caseDescription}</p>
               </motion.div>
             ))}
@@ -201,7 +227,10 @@ const ProsecutorHomePage = () => {
                   </span>
                 </div>
                 <p className="text-gray-600 text-sm mt-1">Appealed Case ID: {appeal.caseId}</p>
-                <p className="text-xs text-gray-500 mt-2">{new Date(appeal.submittedAt).toLocaleDateString()}</p>
+                {/* ✅ Null-safe date rendering for appeals */}
+                <p className="text-xs text-gray-500 mt-2">
+                  {appeal.submittedAt ? new Date(appeal.submittedAt).toLocaleDateString() : "—"}
+                </p>
                 <p className="mt-3 text-sm text-gray-700 line-clamp-2">{appeal.reason}</p>
               </motion.div>
             ))}

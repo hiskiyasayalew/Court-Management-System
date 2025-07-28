@@ -2,15 +2,18 @@ package com.example.court_management_system.Entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "judges")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class JudgeEntity {
 
     @Id
