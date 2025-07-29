@@ -27,6 +27,14 @@ const initialFormData = {
   status: 'ACTIVE',
 };
 
+const roleIcons = {
+  User: '👤',
+  Police: '👮',
+  Prosecutor: '⚖️',
+  Judge: '👨‍⚖️',
+  Applications: '📩',
+};
+
 const AdminPage = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const [formData, setFormData] = useState(initialFormData);
@@ -54,9 +62,7 @@ const AdminPage = () => {
     }
   };
 
-  const handleRoleChange = (role) => {
-    setSelectedRole(role);
-  };
+  const handleRoleChange = (role) => setSelectedRole(role);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,44 +70,41 @@ const AdminPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!formData.id && (!formData.password || formData.password !== formData.confirmPassword)) {
-    setError("Passwords don't match or are empty");
-    return;
-  }
-
-  setIsLoading(true);
-  const role = selectedRole;
-  const isEdit = formData.id !== '';
-  const url = `http://localhost:8080/api/admin/${roleApiMap[role]}/${isEdit ? 'update' : 'create'}`;
-
-  const payload = { ...formData };
-  delete payload.confirmPassword;
-  if (!payload.password) delete payload.password;
-  if (!isEdit) delete payload.id;
-
-  try {
-    if (isEdit) {
-      await axios.put(url, payload);
-    } else {
-      await axios.post(url, payload); // ✅ Correct for create!
+    e.preventDefault();
+    if (!formData.id && (!formData.password || formData.password !== formData.confirmPassword)) {
+      setError("Passwords don't match or are empty");
+      return;
     }
-    fetchUsers(role);
-    setFormData(initialFormData);
-    setError('');
-  } catch {
-    setError("Failed to save user");
-  } finally {
-    setIsLoading(false);
-  }
-};
 
+    setIsLoading(true);
+    const isEdit = formData.id !== '';
+    const url = `http://localhost:8080/api/admin/${roleApiMap[selectedRole]}/${isEdit ? 'update' : 'create'}`;
+
+    const payload = { ...formData };
+    delete payload.confirmPassword;
+    if (!payload.password) delete payload.password;
+    if (!isEdit) delete payload.id;
+
+    try {
+      if (isEdit) {
+        await axios.put(url, payload);
+      } else {
+        await axios.post(url, payload);
+      }
+      fetchUsers(selectedRole);
+      setFormData(initialFormData);
+      setError('');
+    } catch {
+      setError("Failed to save user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = (user) => {
     switch (selectedRole) {
       case 'User':
-        setFormData({
+        return setFormData({
           id: user.id,
           username: user.userName,
           firstName: user.firstName,
@@ -113,9 +116,8 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
-        break;
       case 'Police':
-        setFormData({
+        return setFormData({
           id: user.id,
           officerName: user.officerName,
           position: user.position,
@@ -125,10 +127,9 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
-        break;
       case 'Prosecutor':
       case 'Judge':
-        setFormData({
+        return setFormData({
           id: user.id,
           name: user.name,
           username: user.username,
@@ -138,9 +139,8 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
-        break;
       default:
-        setFormData(initialFormData);
+        return setFormData(initialFormData);
     }
   };
 
@@ -164,8 +164,7 @@ const AdminPage = () => {
         { Header: 'Role', accessor: 'role' },
         { Header: 'Reason', accessor: 'reason' },
         { Header: 'Education', accessor: 'education' },
-        { Header: 'Work Experience', accessor: 'workExperience' },
-        { Header: 'Additional Info', accessor: 'additionalInfo' },
+        { Header: 'Experience', accessor: 'workExperience' },
         {
           Header: 'Files',
           Cell: ({ row }) => (
@@ -205,8 +204,8 @@ const AdminPage = () => {
         Header: 'Actions',
         Cell: ({ row }) => (
           <div className="flex gap-2">
-            <button onClick={() => handleEdit(row.original)} className="text-blue-500">Edit</button>
-            <button onClick={() => handleDelete(row.original.id)} className="text-red-500">Delete</button>
+            <button onClick={() => handleEdit(row.original)} className="text-blue-500 hover:underline">Edit</button>
+            <button onClick={() => handleDelete(row.original.id)} className="text-red-500 hover:underline">Delete</button>
           </div>
         ),
       },
@@ -214,92 +213,111 @@ const AdminPage = () => {
   }, [users, selectedRole]);
 
   const renderForm = () => {
-    switch (selectedRole) {
-      case 'User':
-        return (
-          <>
-            <input name="username" value={formData.username || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
-            <input name="firstName" value={formData.firstName || ''} onChange={handleChange} placeholder="First Name" className="w-full border p-2" required />
-            <input name="lastName" value={formData.lastName || ''} onChange={handleChange} placeholder="Last Name" className="w-full border p-2" required />
-            <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" required />
-            <input name="city" value={formData.city || ''} onChange={handleChange} placeholder="City" className="w-full border p-2" required />
-            <input name="subCity" value={formData.subCity || ''} onChange={handleChange} placeholder="Sub City" className="w-full border p-2" required />
-            <input name="email" type="email" value={formData.email || ''} onChange={handleChange} placeholder="Email" className="w-full border p-2" required />
-          </>
-        );
-      case 'Police':
-        return (
-          <>
-            <input name="officerName" value={formData.officerName || ''} onChange={handleChange} placeholder="Officer Name" className="w-full border p-2" required />
-            <input name="position" value={formData.position || ''} onChange={handleChange} placeholder="Position" className="w-full border p-2" required />
-            <input name="email" type="email" value={formData.email || ''} onChange={handleChange} placeholder="Email" className="w-full border p-2" required />
-            <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" required />
-            <input name="username" value={formData.username || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
-          </>
-        );
-      case 'Prosecutor':
-      case 'Judge':
-        return (
-          <>
-            <input name="name" value={formData.name || ''} onChange={handleChange} placeholder="Full Name" className="w-full border p-2" required />
-            <input name="username" value={formData.username || ''} onChange={handleChange} placeholder="Username" className="w-full border p-2" required />
-            <input name="email" type="email" value={formData.email || ''} onChange={handleChange} placeholder="Email" className="w-full border p-2" required />
-            <input name="phoneNumber" value={formData.phoneNumber || ''} onChange={handleChange} placeholder="Phone Number" className="w-full border p-2" />
-            <select name="status" value={formData.status} onChange={handleChange} className="w-full border p-2">
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-            </select>
-          </>
-        );
-      default:
-        return null;
-    }
+    const inputClass = "w-full border p-2 rounded";
+    const fields = {
+      User: (
+        <>
+          <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" className={inputClass} />
+          <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" className={inputClass} />
+          <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" className={inputClass} />
+          <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className={inputClass} />
+          <input name="city" value={formData.city} onChange={handleChange} placeholder="City" className={inputClass} />
+          <input name="subCity" value={formData.subCity} onChange={handleChange} placeholder="Sub City" className={inputClass} />
+          <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" className={inputClass} />
+        </>
+      ),
+      Police: (
+        <>
+          <input name="officerName" value={formData.officerName} onChange={handleChange} placeholder="Officer Name" className={inputClass} />
+          <input name="position" value={formData.position} onChange={handleChange} placeholder="Position" className={inputClass} />
+          <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" className={inputClass} />
+          <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className={inputClass} />
+          <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" className={inputClass} />
+        </>
+      ),
+      Prosecutor: (
+        <>
+          <input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className={inputClass} />
+          <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" className={inputClass} />
+          <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" className={inputClass} />
+          <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className={inputClass} />
+          <select name="status" value={formData.status} onChange={handleChange} className={inputClass}>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+        </>
+      ),
+      Judge: (
+        <>
+          <input name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className={inputClass} />
+          <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" className={inputClass} />
+          <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" className={inputClass} />
+          <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" className={inputClass} />
+          <select name="status" value={formData.status} onChange={handleChange} className={inputClass}>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+        </>
+      ),
+    };
+    return fields[selectedRole] || null;
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
-      <div className="mb-4 flex gap-3 flex-wrap">
-        {['User', 'Police', 'Prosecutor', 'Judge', 'Applications'].map((role) => (
-          <button
-            key={role}
-            onClick={() => handleRoleChange(role)}
-            className={`px-4 py-2 rounded ${selectedRole === role ? 'bg-orange-600 text-white' : 'bg-orange-300 text-black'}`}
-          >
-            Manage {role}
-          </button>
-        ))}
+    <div className="min-h-screen flex bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-md p-4">
+        <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
+        <div className="space-y-2">
+          {Object.keys(roleApiMap).map((role) => (
+            <button
+              key={role}
+              onClick={() => handleRoleChange(role)}
+              className={`w-full flex items-center px-4 py-2 rounded transition ${
+                selectedRole === role ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'
+              }`}
+            >
+              <span className="mr-2">{roleIcons[role]}</span> {role}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {selectedRole && selectedRole !== 'Applications' && (
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded shadow-md mb-6">
-          {error && <p className="text-red-600">{error}</p>}
-          {renderForm()}
-          <input
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full border p-2"
-            required={!formData.id}
-          />
-          <input
-            name="confirmPassword"
-            type="password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm Password"
-            className="w-full border p-2"
-            required={!formData.id}
-          />
-          <button type="submit" disabled={isLoading} className="w-full bg-orange-500 text-white py-2">
-            {isLoading ? 'Processing...' : formData.id ? `Update ${selectedRole}` : `Create ${selectedRole}`}
-          </button>
-        </form>
-      )}
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-4">{selectedRole ? `Manage ${selectedRole}` : 'Select a Role'}</h1>
 
-      {users.length > 0 && <DataTable columns={columns} data={users} />}
+        {error && <p className="text-red-600 mb-4">{error}</p>}
+
+        {selectedRole && selectedRole !== 'Applications' && (
+          <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow space-y-4 mb-6">
+            {renderForm()}
+            <input
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="w-full border p-2 rounded"
+              required={!formData.id}
+            />
+            <input
+              name="confirmPassword"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm Password"
+              className="w-full border p-2 rounded"
+              required={!formData.id}
+            />
+            <button type="submit" disabled={isLoading} className="w-full bg-orange-500 text-white py-2 rounded">
+              {isLoading ? 'Processing...' : formData.id ? `Update ${selectedRole}` : `Create ${selectedRole}`}
+            </button>
+          </form>
+        )}
+
+        {users.length > 0 && <DataTable columns={columns} data={users} />}
+      </div>
     </div>
   );
 };
@@ -308,31 +326,33 @@ function DataTable({ columns, data }) {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
   return (
-    <table {...getTableProps()} className="w-full border border-collapse">
-      <thead className="bg-gray-100">
-        {headerGroups.map((hg, i) => (
-          <tr {...hg.getHeaderGroupProps()} key={i}>
-            {hg.headers.map((col, j) => (
-              <th {...col.getHeaderProps()} key={j} className="border p-2">{col.render('Header')}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()} key={i}>
-              {row.cells.map((cell, j) => (
-                <td {...cell.getCellProps()} key={j} className="border p-2">
-                  {cell.render('Cell')}
-                </td>
+    <div className="overflow-x-auto">
+      <table {...getTableProps()} className="w-full bg-white rounded shadow border">
+        <thead className="bg-gray-100">
+          {headerGroups.map((hg, i) => (
+            <tr {...hg.getHeaderGroupProps()} key={i}>
+              {hg.headers.map((col, j) => (
+                <th {...col.getHeaderProps()} key={j} className="p-2 border">{col.render('Header')}</th>
               ))}
             </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} key={i} className="hover:bg-gray-50">
+                {row.cells.map((cell, j) => (
+                  <td {...cell.getCellProps()} key={j} className="p-2 border">
+                    {cell.render('Cell')}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

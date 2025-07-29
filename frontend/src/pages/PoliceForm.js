@@ -118,7 +118,7 @@ const PoliceForm = () => {
       setFileUploadProgress(0);
 
       // Redirect after 2 seconds
-      setTimeout(() => navigate('/police-dashboard'), 2000);
+      setTimeout(() => navigate('/police-home'), 2000);
     } catch (err) {
       console.error(err);
       setMessage({ 

@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import CourtIcon from '../assets/court-icon.jpg'; // Ensure to place the image in your assets folder
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -68,6 +69,7 @@ const HomePage = () => {
       alert("User not logged in.");
       return;
     }
+
     const {
       fullName, email, phone, dateOfIncident,
       caseType, caseDescription, idCardUpload,
@@ -105,7 +107,17 @@ const HomePage = () => {
       });
       if (!response.ok) throw new Error(await response.text());
       setSubmissionStatus(t.caseSubmittedSuccess || 'Case submitted successfully!');
-      setFormData({ fullName: '', email: '', phone: '', dateOfIncident: '', caseType: '', caseDescription: '', idCardUpload: null, fileUpload: [], agreement: false });
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        dateOfIncident: '',
+        caseType: '',
+        caseDescription: '',
+        idCardUpload: null,
+        fileUpload: [],
+        agreement: false
+      });
     } catch (error) {
       console.error(error);
       setSubmissionStatus(error.message || 'Submission failed.');
@@ -114,12 +126,32 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-200 text-gray-900 font-sans">
-      {/* Responsive Header */}
+      
+      {/* Header/Navbar */}
       <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-gray-300 border-b border-gray-400`}>
-        <div className="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center px-3 sm:px-4 py-2 sm:py-3 gap-2 sm:gap-0">
-          <div className="text-gray-900 font-bold text-lg sm:text-xl">{t.title}</div>
-          <div className="flex items-center gap-2 sm:gap-4 order-3 sm:order-2">
-            <LanguageSwitcher className="text-sm sm:text-base" />
+        <div className="max-w-screen-xl mx-auto flex justify-between items-center px-4 py-3">
+          
+          {/* Left: Logo + Title */}
+          <div className="flex items-center gap-2">
+            <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
+            <span className="text-gray-900 font-bold text-lg sm:text-xl">Ethiopian Court Case System</span>
+          </div>
+          
+          {/* Right: Nav Links + Lang Switcher + Logout */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <button 
+              onClick={() => navigate('/mycases')} 
+              className="bg-gray-300 text-gray-900 font-semibold px-3 py-1 rounded-full hover:bg-gray-400 shadow text-sm"
+            >
+              {t.myCases || 'My Cases'}
+            </button>
+            <button 
+              onClick={() => navigate('/appeal')} 
+              className="bg-gray-300 text-gray-900 font-semibold px-3 py-1 rounded-full hover:bg-gray-400 shadow text-sm"
+            >
+              {t.appeal || 'Appeal'}
+            </button>
+            <LanguageSwitcher />
             <button 
               onClick={() => {
                 if (window.confirm(t.logoutConfirmation || "Are you sure you want to logout?")) {
@@ -127,23 +159,9 @@ const HomePage = () => {
                   navigate('/login');
                 }
               }} 
-              className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-4 sm:px-6 py-1 sm:py-2 rounded-full shadow-lg shadow-[#f25c05]/50 transition-colors text-sm sm:text-base"
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-4 py-1 rounded-full shadow-lg shadow-[#f25c05]/50 transition-colors text-sm"
             >
               {t.logout}
-            </button>
-          </div>
-          <div className="flex gap-2 sm:gap-4 items-center order-2 sm:order-3">
-            <button 
-              onClick={() => navigate('/mycases')} 
-              className="bg-gray-300 text-gray-900 font-semibold px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:bg-gray-400 shadow-md text-sm sm:text-base"
-            >
-              {t.myCases || 'My Cases'}
-            </button>
-            <button 
-              onClick={() => navigate('/appeal')} 
-              className="bg-gray-300 text-gray-900 font-semibold px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:bg-gray-400 shadow-md text-sm sm:text-base"
-            >
-              {t.appeal || 'Appeal'}
             </button>
           </div>
         </div>

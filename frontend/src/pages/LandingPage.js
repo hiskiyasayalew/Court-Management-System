@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import CourtIcon from '../assets/court-icon.jpg'; // Ensure to place the image in your assets folder
 
 // Local GIFs
 import GavelGif from "./Gavel.gif";
@@ -134,10 +135,11 @@ const LandingPage = () => {
             style={{ backgroundColor }}
           >
             <img
-              src={getGif()}
-              alt="Loading..."
-              className="w-28 h-28 object-contain"
-            />
+  src={getGif()}
+  alt="Loading..."
+  className="w-40 h-40 sm:w-48 sm:h-48 object-contain"
+/>
+
            <p className="mt-4 text-gray-800 text-lg font-light text-center font-[Poppins]">
   Loading...
 </p>
@@ -156,9 +158,11 @@ const LandingPage = () => {
           } bg-white border-b border-gray-200 shadow-sm`}
         >
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-            <Link to="/" className="text-lg sm:text-xl font-bold text-gray-900">
-              Ethiopia CourtCase
-            </Link>
+            <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-bold text-gray-900">
+              <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
+
+  <span className="hidden sm:inline">Ethiopia CourtCase System</span>
+</Link>
 
             <nav className="flex items-center gap-3 sm:gap-4 relative">
               {/* DROPDOWN */}

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate ,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import loginImage from '../assets/polices.png';
-
 
 const PoliceLogin = () => {
   const [formData, setFormData] = useState({
@@ -65,7 +64,7 @@ const PoliceLogin = () => {
           <motion.img 
             src={loginImage} 
             alt="Police illustration" 
-            className="w-full h-auto rounded-lg shadow-lg"
+            className="w-full h-auto rounded-lg" // Removed shadow-lg for more visibility
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />

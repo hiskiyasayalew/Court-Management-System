@@ -66,7 +66,7 @@ const Login = () => {
           <motion.img 
             src={loginimage} 
             alt="Illustration" 
-            className="w-full h-auto rounded-lg shadow-lg"
+            className="w-full h-auto rounded-lg" // Removed shadow-lg for more visibility
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
