@@ -158,13 +158,7 @@ const Login = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4" />
-                {t.rememberMe}
-              </label>
-              <Link to="/forgot-password" className="hover:underline">
-                {t.forgotPassword || 'Forgot password?'}
-              </Link>
+            
             </motion.div>
 
             {error && (

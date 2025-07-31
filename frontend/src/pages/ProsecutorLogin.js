@@ -48,7 +48,7 @@ const ProsecutorLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-8">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-8">
       <motion.div 
         className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16"
         initial={{ opacity: 0 }}
@@ -65,7 +65,7 @@ const ProsecutorLogin = () => {
           <motion.img 
             src={loginImage} 
             alt="Prosecutor illustration" 
-            className="w-full h-auto rounded-lg" // Removed shadow-lg for more visibility
+            className="w-3/4 h-auto rounded-lg" // Removed shadow-lg for more visibility
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
