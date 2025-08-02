@@ -136,7 +136,7 @@ const PoliceHome = () => {
               onClick={() => navigate('/appliedandrejected')}
               className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition text-sm sm:text-base"
             >
-              Applied & Rejected Cases
+              Approved and Rejected 
             </button>
             <button
               onClick={handleLogout}
@@ -174,7 +174,7 @@ const PoliceHome = () => {
           </div>
           
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {['all', 'approved', 'rejected'].map((f) => (
+            {['all'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}

@@ -191,7 +191,7 @@ const JudgeHomePage = () => {
                 selectedCase.caseFileNames.map((file, i) => (
                   <li key={i}>
                     <a
-                      href={`http://localhost:8080/uploads/${file}`}
+                     href={`http://localhost:8080/uploads/judge_cases/${file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline"

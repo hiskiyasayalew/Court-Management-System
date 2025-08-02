@@ -46,7 +46,7 @@
         private String prosecutorReview;
         
         private String court;
-
+        
 
         @ManyToOne
         @JoinColumn(name = "user_id")
