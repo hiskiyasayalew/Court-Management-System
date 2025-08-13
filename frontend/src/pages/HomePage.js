@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import CourtIcon from '../assets/court-icon.jpg'; // Ensure to place the image in your assets folder
+import CourtIcon from '../assets/court-icon.jpg';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -36,6 +36,7 @@ const HomePage = () => {
   const [submissionStatus, setSubmissionStatus] = useState('');
   const [showNav, setShowNav] = useState(true);
   const lastScrollY = useRef(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -126,19 +127,32 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-200 text-gray-900 font-sans">
-      
       {/* Header/Navbar */}
       <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-gray-300 border-b border-gray-400`}>
         <div className="max-w-screen-xl mx-auto flex justify-between items-center px-4 py-3">
-          
           {/* Left: Logo + Title */}
           <div className="flex items-center gap-2">
             <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
-            <span className="text-gray-900 font-bold text-lg sm:text-xl">Ethiopian Court Case System</span>
+            <span className="hidden sm:inline text-gray-900 font-bold text-lg sm:text-xl">Ethiopian Court Case System</span>
+            <span className="sm:hidden text-gray-900 font-bold text-lg">ECCS</span>
           </div>
           
-          {/* Right: Nav Links + Lang Switcher + Logout */}
-          <div className="flex items-center gap-3 sm:gap-5">
+          {/* Mobile Menu Button */}
+          <button 
+            className="sm:hidden p-2 rounded-md focus:outline-none"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex items-center gap-3 sm:gap-5">
             <button 
               onClick={() => navigate('/mycases')} 
               className="bg-gray-300 text-gray-900 font-semibold px-3 py-1 rounded-full hover:bg-gray-400 shadow text-sm"
@@ -165,6 +179,46 @@ const HomePage = () => {
             </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="sm:hidden bg-gray-300 px-4 py-3 border-t border-gray-400">
+            <div className="flex flex-col space-y-3">
+              <button 
+                onClick={() => {
+                  navigate('/mycases');
+                  setIsMobileMenuOpen(false);
+                }} 
+                className="w-full text-left bg-gray-300 text-gray-900 font-semibold px-3 py-2 rounded hover:bg-gray-400 shadow text-sm"
+              >
+                {t.myCases || 'My Cases'}
+              </button>
+              <button 
+                onClick={() => {
+                  navigate('/appeal');
+                  setIsMobileMenuOpen(false);
+                }} 
+                className="w-full text-left bg-gray-300 text-gray-900 font-semibold px-3 py-2 rounded hover:bg-gray-400 shadow text-sm"
+              >
+                {t.appeal || 'Appeal'}
+              </button>
+              <div className="flex justify-between items-center">
+                <LanguageSwitcher />
+                <button 
+                  onClick={() => {
+                    if (window.confirm(t.logoutConfirmation || "Are you sure you want to logout?")) {
+                      localStorage.removeItem("user");
+                      navigate('/login');
+                    }
+                  }} 
+                  className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-semibold px-4 py-1 rounded-full shadow-lg shadow-[#f25c05]/50 transition-colors text-sm"
+                >
+                  {t.logout}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -194,7 +248,7 @@ const HomePage = () => {
         {/* Benefits Section */}
         <motion.section 
           aria-label="Benefits of Digital Court System" 
-          className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-14 max-w-6xl mx-auto" 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-14 max-w-6xl mx-auto" 
           variants={staggerContainer} 
           initial="hidden" 
           whileInView="visible" 
@@ -205,7 +259,7 @@ const HomePage = () => {
               key={idx} 
               variants={fadeInUp} 
               tabIndex={0} 
-              className="flex items-center gap-3 sm:gap-4 bg-gray-300 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 shadow-md text-gray-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer min-w-[200px] sm:min-w-[250px] flex-1"
+              className="flex items-center gap-3 sm:gap-4 bg-gray-300 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 shadow-md text-gray-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
             >
               <svg className="h-6 w-6 sm:h-8 sm:w-8" fill="none" stroke="#0369a1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                 <path d="M5 13l4 4L19 7" />
@@ -351,7 +405,11 @@ const HomePage = () => {
             </div>
 
             {submissionStatus && (
-              <div className="text-center font-semibold text-red-600 text-sm sm:text-base">{submissionStatus}</div>
+              <div className={`text-center font-semibold text-sm sm:text-base ${
+                submissionStatus.includes('success') ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {submissionStatus}
+              </div>
             )}
 
             <button 
