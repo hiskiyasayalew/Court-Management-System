@@ -25,7 +25,7 @@ const AppliedRejectedPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4 sm:mb-6">
-        Applied and Rejected Cases
+        Approved and Rejected Cases
       </h1>
 
       <div className="flex justify-end mb-4 sm:mb-6">
@@ -71,14 +71,7 @@ const AppliedRejectedPage = () => {
                   </p>
                 </motion.div>
               ))}
-              <motion.button
-                onClick={() => navigate('/policeform')}
-                className="w-full sm:w-auto bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 mt-4"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Send to Prosecutor
-              </motion.button>
+          
             </div>
           )}
         </motion.div>

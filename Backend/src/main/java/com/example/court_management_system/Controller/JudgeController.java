@@ -76,17 +76,17 @@ public List<CaseForwarding> getCasesForJudge(@RequestParam Long judgeId) {
         return judgeService.getUserVisibleSchedule(caseId);
     }
 
-       @PostMapping("/verdict")
-    public ResponseEntity<?> submitVerdict(@RequestBody VerdictDTO dto) {
-        VerdictEntity v = new VerdictEntity();
-        v.setCaseId(dto.getCaseId());
-        v.setVerdictText(dto.getVerdictText());
-        v.setVerdictDate(LocalDateTime.now());
-
-        verdictService.save(v);
-
-        return ResponseEntity.ok("Verdict saved");
+      @PostMapping("/verdict")
+public ResponseEntity<?> submitVerdict(@RequestBody VerdictDTO dto) {
+    try {
+        verdictService.save(dto);
+        return ResponseEntity.ok("Verdict saved and case closed.");
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Failed to submit verdict: " + e.getMessage());
     }
+}
+
 
   
 }

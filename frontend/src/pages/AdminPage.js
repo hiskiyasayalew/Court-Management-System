@@ -172,7 +172,7 @@ const AdminPage = () => {
               {row.original.educationFiles?.map((file, idx) => (
                 <a
                   key={idx}
-                  href={`http://localhost:8080/${file}`}
+                  href={`http://localhost:8080/uploads/${file}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-blue-600 underline"

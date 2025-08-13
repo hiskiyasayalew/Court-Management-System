@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import CourtIcon from '../assets/court-icon.jpg'; // Ensure to place the image in your assets folder
+import CourtIcon from '../assets/justice-scale.png'; 
 
-// Local GIFs
-import GavelGif from "./Gavel.gif";
-import SystemGif from "./system.gif";
-import LoadingGif from "./Loading Files.gif";
+import GavelGif from "./gavel (1).gif";
 
 const slides = [
   {
@@ -25,31 +22,28 @@ const slides = [
     description: "Empowering judges, police, prosecutors, and citizens alike.",
   },
 ];
+
 const faqs = [
   {
     question: "What is the Ethiopian CourtCase Management System?",
-    answer:
-      "It is a digital platform designed to streamline court case processes in Ethiopia, making the judicial system more transparent and accessible.",
+    answer: "It is a digital platform designed to streamline court case processes in Ethiopia, making the judicial system more transparent and accessible.",
   },
   {
     question: "Who can use this platform?",
-    answer:
-      "Judges, police officers, prosecutors, citizens, and administrators can access and use the system based on their roles.",
+    answer: "Judges, police officers, prosecutors, citizens, and administrators can access and use the system based on their roles.",
   },
   {
     question: "Is my data secure?",
-    answer:
-      "Yes. The system employs strict security measures to ensure that all user data and case information is protected.",
+    answer: "Yes. The system employs strict security measures to ensure that all user data and case information is protected.",
   },
   {
     question: "Can I file or track a case online?",
-    answer:
-      "Yes, citizens and legal professionals can file new cases and track the progress of existing ones through their respective dashboards.",
+    answer: "Yes, citizens and legal professionals can file new cases and track the progress of existing ones through their respective dashboards.",
   },
 ];
 
 const LandingPage = () => {
-  const [loadingStep, setLoadingStep] = useState(0); // 0 = Loading, 1 = System, 2 = Gavel, 3 = Done
+  const [isLoading, setIsLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showNav, setShowNav] = useState(true);
   const [faqOpen, setFaqOpen] = useState(null);
@@ -61,22 +55,17 @@ const LandingPage = () => {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    const timers = [
-      setTimeout(() => setLoadingStep(1), 2000),
-      setTimeout(() => setLoadingStep(2), 4000),
-      setTimeout(() => {
-        setLoadingStep(3);
-        document.body.style.overflow = "auto";
-      }, 6000),
-    ];
-    return () => timers.forEach(clearTimeout);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      document.body.style.overflow = "auto";
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setCurrentSlide((prev) => (prev + 1) % slides.length),
-      4000
-    );
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -112,45 +101,34 @@ const LandingPage = () => {
     };
   }, []);
 
-  const backgroundColor = "rgb(255, 186, 100)";
-
-  const getGif = () => {
-    if (loadingStep === 0) return LoadingGif;
-    if (loadingStep === 1) return SystemGif;
-    return GavelGif;
-  };
-
   return (
     <>
-      {/* Multi-step PRELOADER */}
+      {/* PRELOADER */}
       <AnimatePresence>
-        {loadingStep < 3 && (
+        {isLoading && (
           <motion.div
-            key={`preloader-${loadingStep}`}
+            key="preloader"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
             className="fixed inset-0 flex flex-col justify-center items-center z-[9999]"
-            style={{ backgroundColor }}
+            style={{ backgroundColor: "white" }}
           >
-            <img
-  src={getGif()}
-  alt="Loading..."
-  className="w-40 h-40 sm:w-48 sm:h-48 object-contain"
-/>
-
-           <p className="mt-4 text-gray-800 text-lg font-light text-center font-[Poppins]">
-  Loading...
-</p>
-
+            <img src={GavelGif} alt="Loading..." className="w-40 h-40 sm:w-48 sm:h-48 object-contain" />
+            <p className="mt-6 text-gray-800 text-lg font-medium text-center font-[Poppins]">Loading...</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main Page Content */}
-      {loadingStep >= 3 && (
-        <div className="font-sans relative">
+      {/* MAIN CONTENT */}
+      {!isLoading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="font-sans relative"
+        >
         {/* NAVBAR */}
         <header
           className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
@@ -158,11 +136,11 @@ const LandingPage = () => {
           } bg-white border-b border-gray-200 shadow-sm`}
         >
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-bold text-gray-900">
-              <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
-
-  <span className="hidden sm:inline">Ethiopia CourtCase System</span>
+ <Link to="/" className="flex items-center gap-2 text-lg sm:text-xl font-medium text-gray-900 font-poppins">
+  <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
+  <span className="hidden sm:inline">Ethiopia CourtCase Management System</span>
 </Link>
+
 
             <nav className="flex items-center gap-3 sm:gap-4 relative">
               {/* DROPDOWN */}
@@ -377,10 +355,11 @@ const LandingPage = () => {
           &copy; {new Date().getFullYear()} Ethiopia CourtCaseSystem. All rights
           reserved.
         </footer>
-     </div>
+      </motion.div>
       )}
     </>
   );
 };
+
 
 export default LandingPage;

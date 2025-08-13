@@ -55,7 +55,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-8 relative">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-8 relative">
       <LanguageSwitcher />
       <motion.div 
         className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16"
@@ -73,7 +73,7 @@ const Signup = () => {
           <motion.img 
             src={signupimage} 
             alt="Signup illustration" 
-            className="w-full h-auto rounded-lg shadow-lg"
+            className="w-0.8 h-auto mx-auto"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
@@ -274,38 +274,49 @@ const Signup = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.city}
-                </label>
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={t.city}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="subCity" className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.subCity}
-                </label>
-                <input
-                  id="subCity"
-                  name="subCity"
-                  type="text"
-                  value={formData.subCity}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={t.subCity}
-                  required
-                />
-              </div>
-            </div>
+           <div className="grid grid-cols-2 gap-4">
+  <div>
+    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+      {t.city}
+    </label>
+    <select
+      id="city"
+      name="city"
+      value={formData.city}
+      onChange={handleChange}
+      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      required
+    >
+      <option value="Addis Ababa">Addis Ababa</option>
+    </select>
+  </div>
+  <div>
+    <label htmlFor="subCity" className="block text-sm font-medium text-gray-700 mb-1">
+      {t.subCity}
+    </label>
+    <select
+      id="subCity"
+      name="subCity"
+      value={formData.subCity}
+      onChange={handleChange}
+      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      required
+    >
+      <option value="">Select sub-city</option>
+      <option value="Addis Ketema">Addis Ketema</option>
+      <option value="Akaky Kaliti">Akaky Kaliti</option>
+      <option value="Arada">Arada</option>
+      <option value="Bole">Bole</option>
+      <option value="Gullele">Gullele</option>
+      <option value="Kirkos">Kirkos</option>
+      <option value="Kolfe Keranio">Kolfe Keranio</option>
+      <option value="Lideta">Lideta</option>
+      <option value="Nifas Silk‑Lafto">Nifas Silk‑Lafto</option>
+      <option value="Yeka">Yeka</option>
+      <option value="Lemi Kura">Lemi Kura</option>
+    </select>
+  </div>
+</div>
 
             <div>
               <button

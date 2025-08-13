@@ -3,7 +3,8 @@ import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import CourtIcon from '../assets/court-icon.jpg';
+import CourtIcon from '../assets/justice-scale.png'; 
+// Ensure to place the image in your assets folder
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -133,8 +134,7 @@ const HomePage = () => {
           {/* Left: Logo + Title */}
           <div className="flex items-center gap-2">
             <img src={CourtIcon} alt="Court Icon" className="w-8 h-8" />
-            <span className="hidden sm:inline text-gray-900 font-bold text-lg sm:text-xl">Ethiopian Court Case System</span>
-            <span className="sm:hidden text-gray-900 font-bold text-lg">ECCS</span>
+            <span className="text-gray-900 font-medium  text-lg sm:text-xl">Ethiopian Court Case System</span>
           </div>
           
           {/* Mobile Menu Button */}
@@ -222,10 +222,10 @@ const HomePage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="bg-gray-200 max-w-7xl mx-auto mt-16 sm:mt-20 mb-12 rounded-3xl p-4 sm:p-6 md:p-8 lg:p-14 flex-grow shadow-xl z-0">
+      <main className="bg-gray-200 max-w-7xl  mx-auto mt-10 sm:mt-20 mb-12 rounded-3xl p-4 sm:p-6 md:p-8 lg:p-14 flex-grow shadow-xl z-0">
         {/* Welcome Section */}
         <motion.section 
-          className="mb-8 sm:mb-12 text-center max-w-4xl mx-auto" 
+          className="mb-8 sm:mb-12 text-center max-w-4xl mx-auto font-poppins font-light" 
           initial="hidden" 
           whileInView="visible" 
           viewport={{ once: true }} 
@@ -239,7 +239,7 @@ const HomePage = () => {
           </motion.h1>
           <motion.p 
             variants={fadeInUp} 
-            className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed font-ligher"
           >
             {t.introText}
           </motion.p>
