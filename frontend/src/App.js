@@ -7,7 +7,7 @@ import Signup from './pages/Signup';
 import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
 import ProsecutorLogin from './pages/ProsecutorLogin';
-import PoliceLogin from './pages/PoliceLogin';
+import PoliceLogin from './pages/PoliceLogin';  
 import JudgeLogin from './pages/JudgeLogin';
 import ApplyForm from './pages/ApplyForm';
 import AdminLogin from './pages/AdminLogin';
@@ -19,9 +19,9 @@ import AppliedRejected from './pages/AppliedRejectedPage';
 import AdminPage from './pages/AdminPage';
 import JudgeHomePage from './pages/JudgeHomePage';
 import AppealPage from './pages/AppealPage';
-// ✅ Import your Prosecutor to Judge form
 import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
-import AppealForm from './pages/AppealForm'; // ✅ Make sure this is imported
+import AppealForm from './pages/AppealForm'; 
+import PrivateRoute from './pages/PrivateRoute';
 
 const App = () => {
   return (
@@ -43,7 +43,7 @@ const App = () => {
           <Route path="/prosecutor/home" element={<ProsecutorHome />} />
           <Route path="/send-to-prosecutor" element={<PoliceForm />} />
           <Route path="/appliedandrejected" element={<AppliedRejected />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
           <Route path="/judge/home" element={<JudgeHomePage />} />
           <Route path="/judge/verdicts"element={<VerdictPage/>}/>
           <Route path="/appeal" element={<AppealPage/>} />

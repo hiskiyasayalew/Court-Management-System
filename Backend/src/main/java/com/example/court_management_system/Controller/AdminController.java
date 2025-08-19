@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -56,15 +57,21 @@ public class AdminController {
         return ResponseEntity.ok(savedAdmin);
     }
 
-       @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody Map<String, String> loginData) {
-    String username = loginData.get("username");
-    String password = loginData.get("password");
+      @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginData) {
+        String username = loginData.get("username");
+        String password = loginData.get("password");
 
-    return adminService.login(username, password)
-            .<ResponseEntity<?>>map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(401).body("Invalid username or password"));
-}
+        Optional<String> tokenOpt = adminService.login(username, password);
+
+        if (tokenOpt.isPresent()) {
+            return ResponseEntity.ok(Map.of("token", tokenOpt.get()));
+        } else {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+    }
+
+
 
             @PostMapping("/users/create")
         public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
