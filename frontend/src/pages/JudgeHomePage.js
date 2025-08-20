@@ -22,19 +22,64 @@ const JudgeHomePage = () => {
   const judgeName = judge ? judge.name : 'Judge';
 
   const dummyJudges = [
-    'Judge John Doe',
-    'Judge Jane Smith',
-    'Judge Alex Brown',
-    'Judge Emily White',
-    'Judge Michael Green',
-    'Judge Sarah Johnson',
-    'Judge David Wilson',
-    'Judge Linda Martinez',
-    'Judge Robert Taylor',
-    'Judge Patricia Anderson',
+    // Municipal Judges
+    'Judge Abebe Demesu',
+    'Judge Ermias Temesgen',
+    'Judge Mahlet Gashaw',
+    'Judge Girma Taye',
+    'Judge Temesgen Tameru',
+    'Judge Sara Teshome',
+    'Judge Dawit Walelegn',
+    'Judge Meron Assefa',
+    'Judge Tayech Gizechew',
+    'Judge Nigussu Alelegn',
+
+    // Sharia Judges
+    'Judge Ahmed Mohammed',
+    'Judge Fatima Ali',
+    'Judge Yusuf Ibrahim',
+    'Judge Amina Hussein',
+    'Judge Khalid Osman',
+    'Judge Mariam Abdi',
+    'Judge Hassan Farah',
+    'Judge Leila Osman',
+    'Judge Ismail Ahmed',
+    'Judge Rahma Abdirahman',
+
+    // Social Court Judges
+    'Judge Elias Bekele',
+    'Judge Helen Tekle',
+    'Judge Samuel Kassa',
+    'Judge Tsion Habte',
+    'Judge Daniel Girma',
+    'Judge Selamawit Abate',
+    'Judge Getachew Tadesse',
+    'Judge Muluye Desta',
+    'Judge Netsanet Alemu',
+    'Judge Bereket Alemayehu',
   ];
 
-  const dummyCourts = ['High Court A', 'District Court B', 'Magistrate Court C'];
+  const dummyCourts = [
+    'Lideta District Bench',
+    'Addis Ketema District Bench',
+    'Yeka District Bench',
+    'Arada District Bench',
+    'Kolfe Keraniyo District Bench',
+    'Bole District Bench',
+    'Kirkos District Bench',
+    'Menagesha District Bench',
+    'Akaki District Bench',
+    'Nefas Silk Lafto District Bench',
+    'Addis Ababa Sharia First Instance Court – Lideta Branch',
+    'Addis Ababa Sharia First Instance Court – Bole Branch',
+    'Addis Ababa Sharia First Instance Court – Arada Branch',
+    'Addis Ababa City First Instance Court – Arada Sub-city Branch',
+    'Addis Ababa City First Instance Court – Yeka Sub-city Branch',
+    'Addis Ababa City Appellate Court – Bole Branch',
+    'Social Court – Kebele 01, Lideta Sub-city',
+    'Social Court – Kebele 05, Arada Sub-city',
+    'Social Court – Kebele 10, Bole Sub-city',
+  ];
 
   useEffect(() => {
     if (!judge) return;
@@ -121,17 +166,32 @@ const JudgeHomePage = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('judge');
+    navigate('/login/judge');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
       <div className="max-w-5xl mx-auto">
-        <motion.h1 
-          className="text-4xl font-bold mb-2 text-blue-700"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Welcome, {judgeName}!
-        </motion.h1>
+        {/* Header with Logout */}
+        <div className="flex justify-between items-center mb-6">
+          <motion.h1
+            className="text-4xl font-bold text-blue-700"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Welcome, {judgeName}!
+          </motion.h1>
+
+          <button
+            onClick={handleLogout}
+            className="bg-orange-600 text-white px-5 py-2 rounded hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
+        </div>
 
         <p className="text-gray-700 mb-8 text-lg">
           Here are your assigned cases for review.
@@ -191,7 +251,7 @@ const JudgeHomePage = () => {
                 selectedCase.caseFileNames.map((file, i) => (
                   <li key={i}>
                     <a
-                     href={`http://localhost:8080/uploads/judge_cases/${file}`}
+                      href={`http://localhost:8080/uploads/judge_cases/${file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline"
@@ -228,6 +288,7 @@ const JudgeHomePage = () => {
           </div>
         )}
 
+        {/* Approval Form */}
         {showApprovalForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded-xl max-w-md w-full shadow-lg">
@@ -290,6 +351,7 @@ const JudgeHomePage = () => {
           </div>
         )}
 
+        {/* Verdict Form */}
         {showVerdictForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-xl max-w-md w-full shadow-lg">
@@ -314,10 +376,12 @@ const JudgeHomePage = () => {
                       await axios.post('http://localhost:8080/api/judge/verdict', {
                         caseId: selectedCase.caseId,
                         verdictText: verdictText.trim(),
+                        judgeId: judge.id,
                       });
                       alert('Verdict submitted successfully!');
                       setShowVerdictForm(false);
                       setVerdictText('');
+                      localStorage.setItem('refreshCases', Date.now());
                     } catch (err) {
                       console.error('Failed to submit verdict:', err);
                       alert('Failed to submit verdict.');

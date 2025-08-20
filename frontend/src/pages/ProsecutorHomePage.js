@@ -63,7 +63,10 @@ const ProsecutorHomePage = () => {
       alert("Failed to delete case");
     }
   };
-
+  const handleLogout = () => {
+    localStorage.removeItem("prosecutor"); // Clear saved prosecutor session
+    navigate("/login/prosecutor"); // Redirect to login page
+  };
   const handleProsecutorAction = async (action) => {
     try {
       let url;
@@ -160,15 +163,24 @@ const ProsecutorHomePage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <motion.h1
-          className="text-2xl sm:text-3xl font-bold mb-6 text-center text-blue-700"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {prosecutor ? `Welcome, Prosecutor ${prosecutor.name}` : "Prosecutor Dashboard"}
-        </motion.h1>
+        <div className="flex justify-between items-center mb-6">
+         <motion.h1
+    className="text-2xl sm:text-3xl font-bold text-blue-700"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    {prosecutor ? `Welcome, Prosecutor ${prosecutor.name}` : "Prosecutor Dashboard"}
+  </motion.h1>
 
+  {/* Logout button on the right */}
+  <button
+    onClick={handleLogout}
+    className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded-lg shadow font-semibold transition"
+  >
+    Logout
+  </button>
+        </div>
         <div className="mb-6">
           <input
             type="text"

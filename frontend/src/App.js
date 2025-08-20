@@ -22,6 +22,10 @@ import AppealPage from './pages/AppealPage';
 import ProsecutorToJudgeForm from './pages/ProsecutorToJudgeForm';
 import AppealForm from './pages/AppealForm'; 
 import PrivateRoute from './pages/PrivateRoute';
+import HomeGuard from "./guards/HomeGuard";
+import PoliceGuard from "./guards/PoliceGuard";
+import ProsecutorGuard from "./guards/ProsecutorGuard";
+import JudgeGuard from "./guards/JudgeGuard";
 
 const App = () => {
   return (
@@ -34,17 +38,20 @@ const App = () => {
           <Route path="/mycases" element={<MyCases />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/home"element={<HomeGuard><HomePage /></HomeGuard>}/>
           <Route path="/login/judge" element={<JudgeLogin />} />
           <Route path="/login/prosecutor" element={<ProsecutorLogin />} />
           <Route path="/login/police" element={<PoliceLogin />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
-          <Route path="/police-home" element={<PoliceHome />} />
-          <Route path="/prosecutor/home" element={<ProsecutorHome />} />
+          
+      {/* Other routes... */}
+      
+          <Route path="/police-home"element={<PoliceGuard><PoliceHome /></PoliceGuard>}/>
+          <Route path="/prosecutor/home"element={<ProsecutorGuard><ProsecutorHome /></ProsecutorGuard>}/>
           <Route path="/send-to-prosecutor" element={<PoliceForm />} />
           <Route path="/appliedandrejected" element={<AppliedRejected />} />
           <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
-          <Route path="/judge/home" element={<JudgeHomePage />} />
+          <Route path="/judge/home"element={<JudgeGuard><JudgeHomePage /></JudgeGuard>}/>
           <Route path="/judge/verdicts"element={<VerdictPage/>}/>
           <Route path="/appeal" element={<AppealPage/>} />
 
