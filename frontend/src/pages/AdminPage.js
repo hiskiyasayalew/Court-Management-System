@@ -26,6 +26,7 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const roleApiMap = {
     User: 'users',

@@ -50,14 +50,14 @@ const ProsecutorLogin = () => {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-8">
       <motion.div 
-        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16"
+        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 xl:gap-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Left side - Image */}
+        {/* Desktop Image - Hidden on mobile */}
         <motion.section 
-          className="flex-shrink-0 max-w-md lg:max-w-xl"
+          className="flex-shrink-0 max-w-md lg:max-w-xl hidden md:block"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -65,29 +65,45 @@ const ProsecutorLogin = () => {
           <motion.img 
             src={loginImage} 
             alt="Prosecutor illustration" 
-            className="w-3/4 h-auto rounded-lg" // Removed shadow-lg for more visibility
+            className="w-full h-auto rounded-lg"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
         </motion.section>
 
+        {/* Mobile Image - Centered and smaller */}
+        <motion.section 
+          className="flex-shrink-0 w-full max-w-xs mb-6 md:hidden"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="flex justify-center">
+            <img 
+              src={loginImage} 
+              alt="Prosecutor illustration" 
+              className="w-2/3 h-auto rounded-lg"
+            />
+          </div>
+        </motion.section>
+
         {/* Right side - Login Form */}
         <motion.section 
-          className="w-full max-w-md bg-white p-8 rounded-xl shadow-md"
+          className="w-full max-w-md bg-white p-6 sm:p-8 rounded-xl shadow-md"
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
               Prosecutor Login
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Access your case management dashboard
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                 Username
@@ -152,9 +168,6 @@ const ProsecutorLogin = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-            </div>
-
             <div>
               <button
                 type="submit"
@@ -178,7 +191,7 @@ const ProsecutorLogin = () => {
 
           {error && (
             <motion.div 
-              className="mt-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm"
+              className="mt-5 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -186,7 +199,7 @@ const ProsecutorLogin = () => {
             </motion.div>
           )}
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-5 text-center text-sm text-gray-500">
             No account?{' '}
             <Link 
               to="/applyform" 

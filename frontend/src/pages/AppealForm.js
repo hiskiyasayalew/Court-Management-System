@@ -49,7 +49,7 @@ const AppealForm = () => {
 
       if (response.ok) {
         alert("Appeal submitted successfully!");
-        navigate('/AppealPage');
+        navigate('/appeal');
       } else {
         alert("Failed to submit appeal.");
       }

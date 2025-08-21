@@ -48,17 +48,17 @@ const Login = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <LanguageSwitcher className="absolute top-4 right-4 sm:top-6 sm:right-6" />
+      <LanguageSwitcher className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10" />
       
       <motion.main 
-        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 xl:gap-24"
+        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-12 xl:gap-16"
         initial={{ y: 20 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Left side image */}
+        {/* Left side image - Hidden on small screens, shown on medium and up */}
         <motion.section 
-          className="flex-shrink-0 max-w-md lg:max-w-xl"
+          className="flex-shrink-0 w-full max-w-md lg:max-w-lg xl:max-w-xl hidden md:block"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -66,10 +66,26 @@ const Login = () => {
           <motion.img 
             src={loginimage} 
             alt="Illustration" 
-            className="w-full h-auto rounded-lg" // Removed shadow-lg for more visibility
+            className="w-full h-auto rounded-lg"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
+        </motion.section>
+
+        {/* Mobile-only image - Centered and smaller */}
+        <motion.section 
+          className="flex-shrink-0 w-full max-w-xs mb-6 md:hidden"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="flex justify-center">
+            <img 
+              src={loginimage} 
+              alt="Illustration" 
+              className="w-3/4 h-auto rounded-lg"
+            />
+          </div>
         </motion.section>
 
         {/* Right side login form */}
@@ -80,7 +96,7 @@ const Login = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <motion.h1 
-            className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-6"
+            className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-6 text-center md:text-left"
             initial={{ y: -20 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.4 }}
@@ -103,7 +119,7 @@ const Login = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder={t.usernameOrEmail}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-transparent"
                 required
               />
             </motion.div>
@@ -123,7 +139,7 @@ const Login = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder={t.password}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f25c05] focus:border-transparent"
                   required
                 />
                 <button
@@ -158,7 +174,7 @@ const Login = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-            
+              {/* Forgot password link can be added here if needed */}
             </motion.div>
 
             {error && (
@@ -179,7 +195,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f25c05] ${
+                className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f25c05] ${
                   isLoading ? 'bg-orange-400' : 'bg-[#f25c05] hover:bg-[#d14e00]'
                 }`}
               >
@@ -197,7 +213,7 @@ const Login = () => {
           </form>
 
           <motion.p 
-            className="text-xs sm:text-sm text-gray-700 mt-6"
+            className="text-xs sm:text-sm text-gray-700 mt-6 text-center md:text-left"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}

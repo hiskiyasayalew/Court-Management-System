@@ -36,31 +36,30 @@ const PoliceHome = () => {
     }
   }, []);
 
- const handleAction = async (action) => {
-  try {
-    const baseUrl = `http://localhost:8080/api/police/${action}/${selectedCase.id}`;
-    const param = action === "approve" ? "description" : "reason";
-    const encodedDescription = encodeURIComponent(description);
+  const handleAction = async (action) => {
+    try {
+      const baseUrl = `http://localhost:8080/api/police/${action}/${selectedCase.id}`;
+      const param = action === "approve" ? "description" : "reason";
+      const encodedDescription = encodeURIComponent(description);
 
-    const url = `${baseUrl}?${param}=${encodedDescription}`;
+      const url = `${baseUrl}?${param}=${encodedDescription}`;
 
-    await axios.post(url); // No need to send JSON body
+      await axios.post(url);
 
-    alert(`Case ${action}d successfully.`);
+      alert(`Case ${action}d successfully.`);
 
-    if (action === "approve") {
-      navigate('/send-to-prosecutor', { state: { caseData: selectedCase } });
-    } else {
-      setCases(prev => prev.filter(c => c.id !== selectedCase.id));
-      setSelectedCase(null);
-      setDescription('');
+      if (action === "approve") {
+        navigate('/send-to-prosecutor', { state: { caseData: selectedCase } });
+      } else {
+        setCases(prev => prev.filter(c => c.id !== selectedCase.id));
+        setSelectedCase(null);
+        setDescription('');
+      }
+    } catch (err) {
+      console.error(`Error ${action}ing case:`, err);
+      alert(`Failed to ${action} case. Please try again.`);
     }
-  } catch (err) {
-    console.error(`Error ${action}ing case:`, err);
-    alert(`Failed to ${action} case. Please try again.`);
-  }
-};
-
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("police");
@@ -113,7 +112,7 @@ const PoliceHome = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div 
@@ -140,7 +139,7 @@ const PoliceHome = () => {
             </button>
             <button
               onClick={handleLogout}
-              className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded-lg shadow font-semibold transition"
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition text-sm sm:text-base"
             >
               Logout
             </button>
@@ -153,12 +152,12 @@ const PoliceHome = () => {
             <input
               type="text"
               placeholder="Search cases..."
-              className="w-full p-2 pl-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 pl-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <svg
-              className="absolute left-3 top-3 h-5 w-5 text-gray-400"
+              className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -178,7 +177,7 @@ const PoliceHome = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition ${
                   filter === f
                     ? 'bg-[#f25c05] text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-100'
@@ -192,7 +191,7 @@ const PoliceHome = () => {
 
         {/* Case Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -200,23 +199,23 @@ const PoliceHome = () => {
           {filteredCases.map((c) => (
             <motion.div
               key={c.id}
-              className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg cursor-pointer border border-gray-200"
+              className="bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg cursor-pointer border border-gray-200"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSelectedCase(c)}
               layout
             >
               <div className="flex justify-between items-start">
-                <h2 className="text-lg font-bold truncate">{c.fullName}</h2>
+                <h2 className="text-base sm:text-lg font-bold truncate">{c.fullName}</h2>
                 <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || 'bg-gray-100 text-gray-800'}`}>
                   {c.status}
                 </span>
               </div>
-              <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
+              <p className="text-gray-600 text-xs sm:text-sm mt-1">{c.caseType}</p>
               <p className="text-xs text-gray-500 mt-2">
                 {new Date(c.submittedAt).toLocaleDateString()}
               </p>
-              <p className="mt-3 text-sm text-gray-700 line-clamp-2">
+              <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">
                 {c.caseDescription}
               </p>
             </motion.div>
@@ -238,11 +237,11 @@ const PoliceHome = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex justify-between items-start">
                     <h2 className="text-xl sm:text-2xl font-bold mb-2">
                       {selectedCase.fullName}
-                      <span className={`ml-3 text-xs sm:text-sm px-2 py-1 rounded-full ${statusColors[selectedCase.status] || 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`ml-2 sm:ml-3 text-xs sm:text-sm px-2 py-1 rounded-full ${statusColors[selectedCase.status] || 'bg-gray-100 text-gray-800'}`}>
                         {selectedCase.status}
                       </span>
                     </h2>
@@ -253,58 +252,58 @@ const PoliceHome = () => {
                       }}
                       className="text-gray-500 hover:text-gray-700"
                     >
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 text-sm">
                     <div>
-                      <p className="text-gray-500">Email</p>
-                      <p className="text-gray-800">{selectedCase.email}</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">Email</p>
+                      <p className="text-gray-800 text-sm sm:text-base">{selectedCase.email}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Phone</p>
-                      <p className="text-gray-800">{selectedCase.phone}</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">Phone</p>
+                      <p className="text-gray-800 text-sm sm:text-base">{selectedCase.phone}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Incident Date</p>
-                      <p className="text-gray-800">{selectedCase.dateOfIncident}</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">Incident Date</p>
+                      <p className="text-gray-800 text-sm sm:text-base">{selectedCase.dateOfIncident}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Case Type</p>
-                      <p className="text-gray-800">{selectedCase.caseType}</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">Case Type</p>
+                      <p className="text-gray-800 text-sm sm:text-base">{selectedCase.caseType}</p>
                     </div>
                     <div className="sm:col-span-2">
-                      <p className="text-gray-500">Submitted At</p>
-                      <p className="text-gray-800">
+                      <p className="text-gray-500 text-xs sm:text-sm">Submitted At</p>
+                      <p className="text-gray-800 text-sm sm:text-base">
                         {new Date(selectedCase.submittedAt).toLocaleString()}
                       </p>
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-gray-500">Case Description</p>
-                    <p className="text-gray-800 whitespace-pre-wrap mt-1 p-3 bg-gray-50 rounded">
+                    <p className="text-gray-500 text-xs sm:text-sm">Case Description</p>
+                    <p className="text-gray-800 whitespace-pre-wrap mt-1 p-3 bg-gray-50 rounded text-sm sm:text-base">
                       {selectedCase.caseDescription}
                     </p>
                   </div>
 
                   {(selectedCase.idCardUploadName || selectedCase.additionalFileNames?.length > 0) && (
                     <div className="mt-4">
-                      <p className="text-gray-500 mb-2">Attachments</p>
+                      <p className="text-gray-500 mb-2 text-xs sm:text-sm">Attachments</p>
                       <div className="space-y-2">
                         {selectedCase.idCardUploadName && (
                           <div className="flex items-center p-2 bg-gray-50 rounded">
-                            <svg className="h-5 w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
                             <a
                               href={`http://localhost:8080/uploads/${encodeURIComponent(selectedCase.idCardUploadName)}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline truncate"
+                              className="text-blue-600 hover:underline truncate text-xs sm:text-sm"
                             >
                               {selectedCase.idCardUploadName}
                             </a>
@@ -312,14 +311,14 @@ const PoliceHome = () => {
                         )}
                         {selectedCase.additionalFileNames?.map((file, index) => (
                           <div key={index} className="flex items-center p-2 bg-gray-50 rounded">
-                            <svg className="h-5 w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
                             <a
                               href={`http://localhost:8080/uploads/${file}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline truncate"
+                              className="text-blue-600 hover:underline truncate text-xs sm:text-sm"
                             >
                               {file}
                             </a>
@@ -330,11 +329,11 @@ const PoliceHome = () => {
                   )}
 
                   <div className="mt-6">
-                    <label className="block text-gray-700 mb-2">
+                    <label className="block text-gray-700 mb-2 text-sm sm:text-base">
                       Review Comments
                     </label>
                     <textarea
-                      className="w-full h-24 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-24 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                       placeholder="Enter your review comments..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
@@ -344,14 +343,14 @@ const PoliceHome = () => {
                   <div className="mt-6 flex flex-wrap gap-3 justify-end">
                     <button
                       onClick={() => handleAction('approve')}
-                      className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                       disabled={!description.trim()}
                     >
                       Approve Case
                     </button>
                     <button
                       onClick={() => handleAction('reject')}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                       disabled={!description.trim()}
                     >
                       Reject Case
@@ -361,7 +360,7 @@ const PoliceHome = () => {
                         setSelectedCase(null);
                         setDescription('');
                       }}
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                     >
                       Close
                     </button>

@@ -63,21 +63,21 @@ const ProsecutorHomePage = () => {
       alert("Failed to delete case");
     }
   };
+  
   const handleLogout = () => {
-    localStorage.removeItem("prosecutor"); // Clear saved prosecutor session
-    navigate("/login/prosecutor"); // Redirect to login page
+    localStorage.removeItem("prosecutor");
+    navigate("/login/prosecutor");
   };
+  
   const handleProsecutorAction = async (action) => {
     try {
       let url;
 
       if (selectedCase.caseId) {
-        // ✅ It's an appeal
         url = `http://localhost:8080/api/appeals/${selectedCase.id}/${action}`;
         if (action === "reject") url += `?reason=No+reason`;
         if (action === "approve") url += `?description=Approved`;
       } else {
-        // ✅ Normal case
         url = `http://localhost:8080/api/prosecutor/${action}/${selectedCase.id}`;
         if (action === "reject") url += `?reason=No+reason`;
         if (action === "approve") url += `?description=Approved`;
@@ -88,21 +88,17 @@ const ProsecutorHomePage = () => {
 
       alert(`Case ${action}d successfully`);
 
-      // ✅ Remove from UI
       setCases(prev => prev.filter(c =>
         c.id !== selectedCase.id && c.id !== selectedCase.caseId
       ));
       setAppealedCases(prev => prev.filter(c => c.id !== selectedCase.id));
 
-      // ✅ Navigate to judge form if approved
       if (action === "approve") {
         if (selectedCase.caseId) {
-          // ✅ Appeal → use linked caseId
           navigate("/send-to-judge", {
             state: { caseData: { ...selectedCase, id: selectedCase.caseId } }
           });
         } else {
-          // ✅ Normal case
           navigate("/send-to-judge", { state: { caseData: selectedCase } });
         }
       } else {
@@ -161,31 +157,33 @@ const ProsecutorHomePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-         <motion.h1
-    className="text-2xl sm:text-3xl font-bold text-blue-700"
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    {prosecutor ? `Welcome, Prosecutor ${prosecutor.name}` : "Prosecutor Dashboard"}
-  </motion.h1>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <motion.h1
+            className="text-2xl sm:text-3xl font-bold text-blue-700"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {prosecutor ? `Welcome, Prosecutor ${prosecutor.name}` : "Prosecutor Dashboard"}
+          </motion.h1>
 
-  {/* Logout button on the right */}
-  <button
-    onClick={handleLogout}
-    className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded-lg shadow font-semibold transition"
-  >
-    Logout
-  </button>
+          <button
+            onClick={handleLogout}
+            className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded font-semibold transition text-sm sm:text-base"
+          >
+            Logout
+          </button>
         </div>
+
+        {/* Search */}
         <div className="mb-6">
           <input
             type="text"
             placeholder="Search by name, type, description, or ID..."
-            className="w-full max-w-md p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+            className="w-full max-w-md p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -194,7 +192,7 @@ const ProsecutorHomePage = () => {
         {/* Submitted Cases */}
         <h2 className="text-xl font-bold mb-4 text-gray-800">Submitted Cases</h2>
         {filteredCases.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
             {filteredCases.map(c => (
               <motion.div
                 key={c.id}
@@ -203,17 +201,16 @@ const ProsecutorHomePage = () => {
                 onClick={() => setSelectedCase(c)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-lg font-semibold truncate">{c.fullName}</h2>
+                  <h2 className="text-base sm:text-lg font-semibold truncate">{c.fullName}</h2>
                   <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || "bg-gray-100 text-gray-800"}`}>
                     {c.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mt-1">{c.caseType}</p>
-                {/* ✅ Null-safe date rendering */}
+                <p className="text-gray-600 text-xs sm:text-sm mt-1">{c.caseType}</p>
                 <p className="text-xs text-gray-500 mt-2">
                   {c.submittedAt ? new Date(c.submittedAt).toLocaleDateString() : "—"}
                 </p>
-                <p className="mt-3 text-sm text-gray-700 line-clamp-2">{c.caseDescription}</p>
+                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">{c.caseDescription}</p>
               </motion.div>
             ))}
           </div>
@@ -224,7 +221,7 @@ const ProsecutorHomePage = () => {
         {/* Appealed Cases */}
         <h2 className="text-xl font-bold mb-4 text-gray-800">Appealed Cases</h2>
         {filteredAppealedCases.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredAppealedCases.map(appeal => (
               <motion.div
                 key={appeal.id}
@@ -233,17 +230,16 @@ const ProsecutorHomePage = () => {
                 onClick={() => setSelectedCase(appeal)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-lg font-semibold truncate">{appeal.userName}</h2>
+                  <h2 className="text-base sm:text-lg font-semibold truncate">{appeal.userName}</h2>
                   <span className={`text-xs px-2 py-1 rounded-full ${statusColors[appeal.status] || "bg-gray-100 text-gray-800"}`}>
                     {appeal.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm mt-1">Appealed Case ID: {appeal.caseId}</p>
-                {/* ✅ Null-safe date rendering for appeals */}
+                <p className="text-gray-600 text-xs sm:text-sm mt-1">Appealed Case ID: {appeal.caseId}</p>
                 <p className="text-xs text-gray-500 mt-2">
                   {appeal.submittedAt ? new Date(appeal.submittedAt).toLocaleDateString() : "—"}
                 </p>
-                <p className="mt-3 text-sm text-gray-700 line-clamp-2">{appeal.reason}</p>
+                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">{appeal.reason}</p>
               </motion.div>
             ))}
           </div>
@@ -261,7 +257,7 @@ const ProsecutorHomePage = () => {
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="bg-white p-6 rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                className="bg-white p-4 sm:p-6 rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
@@ -270,31 +266,31 @@ const ProsecutorHomePage = () => {
                 <p className="text-sm text-gray-600 mb-2">{selectedCase.caseType || `Appealed Case ID: ${selectedCase.caseId}`}</p>
                 <p className="text-sm text-gray-700 mb-4">{selectedCase.caseDescription || selectedCase.reason}</p>
 
-                <div className="mt-4 flex flex-wrap gap-2 justify-between">
-                  <div className="flex gap-2">
+                <div className="mt-4 flex flex-col sm:flex-row flex-wrap gap-2 justify-between">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => handleProsecutorAction("approve")}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                     >
                       Approve & Forward
                     </button>
                     <button
                       onClick={() => handleProsecutorAction("reject")}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                     >
                       Reject
                     </button>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => setSelectedCase(null)}
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                     >
                       Close
                     </button>
                     <button
                       onClick={() => deleteCase(selectedCase.id)}
-                      className="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded font-semibold transition"
+                      className="bg-red-700 hover:bg-red-800 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded font-semibold transition text-xs sm:text-sm"
                     >
                       Delete
                     </button>

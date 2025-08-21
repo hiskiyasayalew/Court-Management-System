@@ -164,13 +164,13 @@ const HomePage = () => {
           <div className="hidden md:flex items-center gap-3 lg:gap-4">
             <button 
               onClick={() => navigate('/mycases')} 
-              className="bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+              className="bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md hover:bg-gray-200 transition-colors text-sm"
             >
               {t.myCases || 'My Cases'}
             </button>
             <button 
               onClick={() => navigate('/appeal')} 
-              className="bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+              className="bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md hover:bg-gray-200 transition-colors text-sm"
             >
               {t.appeal || 'Appeal'}
             </button>
@@ -182,7 +182,7 @@ const HomePage = () => {
                   navigate('/login');
                 }
               }} 
-              className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-medium px-4 py-1.5 rounded-lg transition-colors text-sm"
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-medium px-4 py-1.5 rounded-md transition-colors text-sm"
             >
               {t.logout || 'Logout'}
             </button>
@@ -198,7 +198,7 @@ const HomePage = () => {
                   navigate('/mycases');
                   setIsMobileMenuOpen(false);
                 }} 
-                className="w-full text-left bg-gray-100 text-gray-800 font-medium px-4 py-2.5 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                className="w-full text-left bg-gray-100 text-gray-800 font-medium px-4 py-2.5 rounded-md hover:bg-gray-200 transition-colors text-sm"
               >
                 {t.myCases || 'My Cases'}
               </button>
@@ -207,7 +207,7 @@ const HomePage = () => {
                   navigate('/appeal');
                   setIsMobileMenuOpen(false);
                 }} 
-                className="w-full text-left bg-gray-100 text-gray-800 font-medium px-4 py-2.5 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                className="w-full text-left bg-gray-100 text-gray-800 font-medium px-4 py-2.5 rounded-md hover:bg-gray-200 transition-colors text-sm"
               >
                 {t.appeal || 'Appeal'}
               </button>
@@ -220,7 +220,7 @@ const HomePage = () => {
                       navigate('/login');
                     }
                   }} 
-                  className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-medium px-4 py-1.5 rounded-lg transition-colors text-sm"
+                  className="bg-[#f25c05] hover:bg-[#d14e00] text-white font-medium px-4 py-1.5 rounded-md transition-colors text-sm"
                 >
                   {t.logout || 'Logout'}
                 </button>

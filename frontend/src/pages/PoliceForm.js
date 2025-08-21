@@ -138,14 +138,16 @@ const PoliceForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-          <div className="bg-blue-700 px-6 py-4">
-            <h2 className="text-2xl font-bold text-white">Forward Case to Prosecutor</h2>
+          <div className="bg-blue-700 px-4 py-4 sm:px-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
+              Forward Case to Prosecutor
+            </h2>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Case ID */}
             <div>
               <label htmlFor="caseId" className="block text-sm font-medium text-gray-700">
@@ -158,7 +160,7 @@ const PoliceForm = () => {
                 value={formData.caseId}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -173,7 +175,7 @@ const PoliceForm = () => {
                 value={formData.prosecutorId}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 <option value="">-- Select Prosecutor --</option>
                 {prosecutors.map((p) => (
@@ -196,7 +198,7 @@ const PoliceForm = () => {
                 value={formData.details}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Provide detailed information about the case..."
               />
             </div>
@@ -213,7 +215,7 @@ const PoliceForm = () => {
                 value={formData.evidence}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Describe the evidence collected..."
               />
             </div>
@@ -230,20 +232,20 @@ const PoliceForm = () => {
                 value={formData.witnesses}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="List witnesses and their contact information..."
               />
             </div>
 
             {/* File Uploads */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Case Files (PDF, JPG, PNG)
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div className="mt-1 flex justify-center px-4 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                   <div className="space-y-1 text-center">
-                    <div className="flex text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row text-sm text-gray-600">
                       <label
                         htmlFor="caseFiles"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
@@ -259,7 +261,7 @@ const PoliceForm = () => {
                           accept=".pdf,.jpg,.jpeg,.png"
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-0 sm:pl-1 mt-1 sm:mt-0 text-xs sm:text-sm">or drag and drop</p>
                     </div>
                     <p className="text-xs text-gray-500">
                       Up to 10MB per file
@@ -267,7 +269,7 @@ const PoliceForm = () => {
                   </div>
                 </div>
                 {caseFiles.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-700">
+                  <div className="mt-2 text-sm text-gray-700 truncate">
                     Selected: {caseFiles.map(f => f.name).join(', ')}
                   </div>
                 )}
@@ -277,9 +279,9 @@ const PoliceForm = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Evidence Files (PDF, JPG, PNG)
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div className="mt-1 flex justify-center px-4 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                   <div className="space-y-1 text-center">
-                    <div className="flex text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row text-sm text-gray-600">
                       <label
                         htmlFor="evidenceFiles"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
@@ -295,7 +297,7 @@ const PoliceForm = () => {
                           accept=".pdf,.jpg,.jpeg,.png"
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-0 sm:pl-1 mt-1 sm:mt-0 text-xs sm:text-sm">or drag and drop</p>
                     </div>
                     <p className="text-xs text-gray-500">
                       Up to 10MB per file
@@ -303,7 +305,7 @@ const PoliceForm = () => {
                   </div>
                 </div>
                 {evidenceFiles.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-700">
+                  <div className="mt-2 text-sm text-gray-700 truncate">
                     Selected: {evidenceFiles.map(f => f.name).join(', ')}
                   </div>
                 )}
@@ -327,23 +329,23 @@ const PoliceForm = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
                 disabled={isLoading}
-                className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 mt-3 sm:mt-0"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f25c05] hover:bg-[#d14e00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f25c05] hover:bg-[#d14e00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -355,7 +357,7 @@ const PoliceForm = () => {
 
             {/* Status Message */}
             {message.text && (
-              <div className={`mt-4 p-4 border rounded ${messageClasses[message.type] || messageClasses.info}`}>
+              <div className={`mt-4 p-3 sm:p-4 border rounded ${messageClasses[message.type] || messageClasses.info}`}>
                 {message.text}
               </div>
             )}

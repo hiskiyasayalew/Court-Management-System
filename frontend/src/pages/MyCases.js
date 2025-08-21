@@ -144,7 +144,7 @@ const MyCases = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800">
           {t.submittedCasesTitle || "Your Submitted Cases"}
@@ -171,15 +171,15 @@ const MyCases = () => {
                     onClick={() => handleCaseClick(c)}
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-lg text-gray-800">{c.fullName}</h3>
-                          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                          <h3 className="font-semibold text-lg text-gray-800 truncate">{c.fullName}</h3>
+                          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 whitespace-nowrap">
                             {c.caseType}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">{new Date(c.submittedAt).toLocaleString()}</p>
-                        <p className={`mt-2 text-sm font-medium ${c.status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-600'}`}>
+                        <p className="text-sm text-gray-500 mb-2">{new Date(c.submittedAt).toLocaleString()}</p>
+                        <p className={`text-sm font-medium ${c.status === (t.submittedToProcess || 'Submitted to Process') ? 'text-orange-600' : 'text-green-600'}`}>
                           {c.status}
                         </p>
                         {c.caseDescription && (
@@ -188,13 +188,13 @@ const MyCases = () => {
                           </p>
                         )}
                       </div>
-                      <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex flex-row sm:flex-col gap-2 sm:self-start">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             deleteCase(c.id);
                           }}
-                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold transition"
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold transition whitespace-nowrap"
                         >
                           {t.delete || 'Delete'}
                         </button>
@@ -213,94 +213,98 @@ const MyCases = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 30 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white rounded-xl shadow-lg p-8 mb-8 max-w-4xl mx-auto"
+                  className="bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 mb-8 max-w-4xl mx-auto"
                 >
-                  <h3 className="text-2xl font-bold mb-6 text-gray-900">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">
                     {t.caseDetails || "Case Details"} - {selectedCase.fullName}
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 text-sm">
-                    <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-gray-700 text-sm">
+                    <div className="space-y-2 sm:space-y-3">
                       <p><strong>{t.caseId || "Case ID"}:</strong> {selectedCase.id}</p>
                       <p><strong>{t.caseType || "Case Type"}:</strong> {selectedCase.caseType}</p>
                       <p><strong>{t.submittedAt || "Submitted At"}:</strong> {new Date(selectedCase.submittedAt).toLocaleString()}</p>
                       <p><strong>{t.status || "Status"}:</strong> {selectedCase.status}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2 sm:space-y-3">
                       {selectedCase.caseDescription && (
-                        <>
+                        <div>
                           <p><strong>{t.caseDescription || "Description"}:</strong></p>
-                          <p className="whitespace-pre-wrap">{selectedCase.caseDescription}</p>
-                        </>
+                          <p className="whitespace-pre-wrap mt-1">{selectedCase.caseDescription}</p>
+                        </div>
                       )}
                       {selectedCase.evidenceSummary && (
-                        <>
-                          <p className="mt-4"><strong>{t.evidenceSummary || "Evidence Summary"}:</strong></p>
-                          <p className="whitespace-pre-wrap">{selectedCase.evidenceSummary}</p>
-                        </>
+                        <div>
+                          <p className="mt-2 sm:mt-4"><strong>{t.evidenceSummary || "Evidence Summary"}:</strong></p>
+                          <p className="whitespace-pre-wrap mt-1">{selectedCase.evidenceSummary}</p>
+                        </div>
                       )}
                       {selectedCase.witnesses && (
-                        <>
-                          <p className="mt-4"><strong>{t.witnesses || "Witnesses"}:</strong></p>
-                          <p className="whitespace-pre-wrap">{selectedCase.witnesses}</p>
-                        </>
+                        <div>
+                          <p className="mt-2 sm:mt-4"><strong>{t.witnesses || "Witnesses"}:</strong></p>
+                          <p className="whitespace-pre-wrap mt-1">{selectedCase.witnesses}</p>
+                        </div>
                       )}
                     </div>
                   </div>
 
                   {judgeDecision && (
-                    <div className="mt-8 border-t pt-6">
-                      <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                    <div className="mt-6 sm:mt-8 border-t pt-4 sm:pt-6">
+                      <h4 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
                         {t.judgeDecision || "Judge Decision"}
                       </h4>
-                      <p><strong>{t.assignedCourt || "Assigned Court"}:</strong> {judgeDecision.assignedCourt}</p>
-                      <p><strong>{t.hearingDate || "Hearing Date"}:</strong> {new Date(judgeDecision.hearingDate).toLocaleString()}</p>
-                      <p><strong>{t.status || "Status"}:</strong> {judgeDecision.status}</p>
-                      {judgeDecision.assignedJudges && judgeDecision.assignedJudges.length > 0 && (
-                        <>
-                          <p><strong>{t.assignedJudges || "Assigned Judges"}:</strong></p>
-                          <ul className="list-disc list-inside text-sm text-gray-700">
-                            {judgeDecision.assignedJudges.map((judge, index) => (
-                              <li key={index}>{judge}</li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
+                      <div className="space-y-2 text-sm">
+                        <p><strong>{t.assignedCourt || "Assigned Court"}:</strong> {judgeDecision.assignedCourt}</p>
+                        <p><strong>{t.hearingDate || "Hearing Date"}:</strong> {new Date(judgeDecision.hearingDate).toLocaleString()}</p>
+                        <p><strong>{t.status || "Status"}:</strong> {judgeDecision.status}</p>
+                        {judgeDecision.assignedJudges && judgeDecision.assignedJudges.length > 0 && (
+                          <div>
+                            <p><strong>{t.assignedJudges || "Assigned Judges"}:</strong></p>
+                            <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
+                              {judgeDecision.assignedJudges.map((judge, index) => (
+                                <li key={index}>{judge}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
                   {verdict && verdict.verdictText && (
-                    <div className="mt-8 border-t pt-6">
-                      <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                    <div className="mt-6 sm:mt-8 border-t pt-4 sm:pt-6">
+                      <h4 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
                         {t.verdict || "Final Verdict"}
                       </h4>
-                      <p><strong>{t.verdictText || "Verdict Text"}:</strong></p>
-                      <p className="whitespace-pre-wrap text-gray-700">{verdict.verdictText}</p>
-                      {verdict.verdictDate && (
-                        <p className="text-sm text-gray-500 mt-2">
-                          {t.verdictDate || "Date"}: {new Date(verdict.verdictDate).toLocaleString()}
-                        </p>
-                      )}
-                      <button
-                        onClick={() => handleAppeal(selectedCase.id)}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm"
-                      >
-                        {t.appeal || 'Appeal'}
-                      </button>
+                      <div className="space-y-2 text-sm">
+                        <p><strong>{t.verdictText || "Verdict Text"}:</strong></p>
+                        <p className="whitespace-pre-wrap text-gray-700">{verdict.verdictText}</p>
+                        {verdict.verdictDate && (
+                          <p className="text-sm text-gray-500 mt-2">
+                            {t.verdictDate || "Date"}: {new Date(verdict.verdictDate).toLocaleString()}
+                          </p>
+                        )}
+                        <button
+                          onClick={() => handleAppeal(selectedCase.id)}
+                          className="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm"
+                        >
+                          {t.appeal || 'Appeal'}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
               <button
                 onClick={clearAllCases}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded transition text-sm sm:text-base"
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded transition text-sm sm:text-base order-2 sm:order-1"
               >
                 {t.clearAll || 'Clear All Cases'}
               </button>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 order-1 sm:order-2">
                 <button
                   onClick={() => navigate('/submit-case')}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded transition text-sm sm:text-base"

@@ -11,7 +11,7 @@ const ProsecutorToJudgeForm = () => {
   const [formData, setFormData] = useState({
     caseId: '',
     judgeId: '',
-    court: '',             // <-- Added court field here
+    court: '',
     details: '',
     evidenceSummary: '',
     witnesses: ''
@@ -24,7 +24,6 @@ const ProsecutorToJudgeForm = () => {
   const [loading, setLoading] = useState(false);
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
 
-  // Hardcoded courts for dropdown
   const courtList = [
     "Addis Ababa First Instance Court",
     "Addis Ababa High Court",
@@ -120,7 +119,6 @@ const ProsecutorToJudgeForm = () => {
         type: 'success' 
       });
       
-      // Redirect after 2 seconds
       setTimeout(() => navigate('/prosecutor/home'), 2000);
     } catch (err) {
       console.error("Error sending form:", err.response || err);
@@ -141,7 +139,7 @@ const ProsecutorToJudgeForm = () => {
 
   return (
     <motion.div 
-      className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -153,11 +151,13 @@ const ProsecutorToJudgeForm = () => {
           animate={{ y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="bg-blue-700 px-6 py-4">
-            <h2 className="text-2xl font-bold text-white">Send Case to Judge</h2>
+          <div className="bg-blue-700 px-4 py-4 sm:px-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
+              Send Case to Judge
+            </h2>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Case ID */}
             <div>
               <label htmlFor="caseId" className="block text-sm font-medium text-gray-700">
@@ -170,7 +170,7 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.caseId}
                 onChange={handleChange}
                 readOnly
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
               />
             </div>
 
@@ -185,7 +185,7 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.court}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
               >
                 <option value="">-- Select Court --</option>
                 {courtList.map((court, idx) => (
@@ -205,7 +205,7 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.judgeId}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
               >
                 <option value="">-- Select Judge --</option>
                 {judges.map(j => (
@@ -228,7 +228,7 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.details}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                 placeholder="Provide detailed information about the case..."
               />
             </div>
@@ -245,7 +245,7 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.evidenceSummary}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                 placeholder="Describe the evidence collected..."
               />
             </div>
@@ -262,20 +262,20 @@ const ProsecutorToJudgeForm = () => {
                 value={formData.witnesses}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                 placeholder="List witnesses and their contact information..."
               />
             </div>
 
             {/* File Uploads */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Case Files (PDF, JPG, PNG)
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div className="mt-1 flex justify-center px-4 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                   <div className="space-y-1 text-center">
-                    <div className="flex text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row text-sm text-gray-600">
                       <label
                         htmlFor="caseFiles"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
@@ -291,7 +291,7 @@ const ProsecutorToJudgeForm = () => {
                           accept=".pdf,.jpg,.jpeg,.png"
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-0 sm:pl-1 mt-1 sm:mt-0 text-xs sm:text-sm">or drag and drop</p>
                     </div>
                     <p className="text-xs text-gray-500">
                       Up to 10MB per file
@@ -299,7 +299,7 @@ const ProsecutorToJudgeForm = () => {
                   </div>
                 </div>
                 {caseFiles.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-700">
+                  <div className="mt-2 text-sm text-gray-700 truncate">
                     Selected: {caseFiles.map(f => f.name).join(', ')}
                   </div>
                 )}
@@ -309,9 +309,9 @@ const ProsecutorToJudgeForm = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Evidence Files (PDF, JPG, PNG)
                 </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div className="mt-1 flex justify-center px-4 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                   <div className="space-y-1 text-center">
-                    <div className="flex text-sm text-gray-600">
+                    <div className="flex flex-col sm:flex-row text-sm text-gray-600">
                       <label
                         htmlFor="evidenceFiles"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
@@ -327,7 +327,7 @@ const ProsecutorToJudgeForm = () => {
                           accept=".pdf,.jpg,.jpeg,.png"
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-0 sm:pl-1 mt-1 sm:mt-0 text-xs sm:text-sm">or drag and drop</p>
                     </div>
                     <p className="text-xs text-gray-500">
                       Up to 10MB per file
@@ -335,7 +335,7 @@ const ProsecutorToJudgeForm = () => {
                   </div>
                 </div>
                 {evidenceFiles.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-700">
+                  <div className="mt-2 text-sm text-gray-700 truncate">
                     Selected: {evidenceFiles.map(f => f.name).join(', ')}
                   </div>
                 )}
@@ -359,23 +359,23 @@ const ProsecutorToJudgeForm = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
                 disabled={loading}
-                className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 mt-3 sm:mt-0"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f25c05] hover:bg-[#d14e00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f25c05] hover:bg-[#d14e00] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
                 {loading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -387,7 +387,7 @@ const ProsecutorToJudgeForm = () => {
 
             {/* Status Message */}
             {message.text && (
-              <div className={`mt-4 p-4 border rounded ${messageClasses[message.type] || 'bg-blue-100 border-blue-400 text-blue-700'}`}>
+              <div className={`mt-4 p-3 sm:p-4 border rounded ${messageClasses[message.type] || 'bg-blue-100 border-blue-400 text-blue-700'}`}>
                 {message.text}
               </div>
             )}
