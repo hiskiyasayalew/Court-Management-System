@@ -47,16 +47,16 @@ const JudgeLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-8">
+    <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8">
       <motion.div 
-        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16"
+        className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Left side - Image */}
+        {/* Left side - Image - Visible on all screens */}
         <motion.section 
-          className="flex-shrink-0 max-w-md lg:max-w-xl"
+          className="flex-shrink-0 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -64,7 +64,7 @@ const JudgeLogin = () => {
           <motion.img 
             src={loginImage} 
             alt="Judge illustration" 
-            className="w-3/4 h-auto rounded-lg" // Removed shadow-lg for more visibility
+            className="w-full max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[400px] mx-auto h-auto rounded-lg"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           />
@@ -72,21 +72,21 @@ const JudgeLogin = () => {
 
         {/* Right side - Login Form */}
         <motion.section 
-          className="w-full max-w-md bg-white p-8 rounded-xl shadow-md"
+          className="w-full max-w-xs sm:max-w-sm md:max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-xl shadow-md"
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
               Judge Login
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Access your judicial dashboard
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                 Username
@@ -98,12 +98,12 @@ const JudgeLogin = () => {
                   type="text"
                   value={formData.username}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="Enter your username"
                   required
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                   </svg>
                 </div>
@@ -121,7 +121,7 @@ const JudgeLogin = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="Enter your password"
                   required
                 />
@@ -131,7 +131,7 @@ const JudgeLogin = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   <svg 
-                    className="h-5 w-5 text-gray-400 hover:text-gray-500" 
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-500" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -151,37 +151,17 @@ const JudgeLogin = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <Link to="#" className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-
             <div>
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                className={`w-full flex justify-center items-center py-2 sm:py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm sm:text-base ${
                   loading ? 'bg-orange-400' : 'bg-[#f25c05] hover:bg-[#d14e00]'
                 }`}
               >
                 {loading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -194,7 +174,7 @@ const JudgeLogin = () => {
 
           {error && (
             <motion.div 
-              className="mt-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm"
+              className="mt-4 sm:mt-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-xs sm:text-sm"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -202,7 +182,7 @@ const JudgeLogin = () => {
             </motion.div>
           )}
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-500">
             No account?{' '}
             <Link 
               to="/applyform" 
