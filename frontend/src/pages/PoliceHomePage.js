@@ -140,7 +140,7 @@ const PoliceHome = () => {
             </button>
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold transition text-sm sm:text-base"
+              className="bg-[#f25c05] hover:bg-[#d14e00] text-white px-4 py-2 rounded-lg shadow font-semibold transition"
             >
               Logout
             </button>

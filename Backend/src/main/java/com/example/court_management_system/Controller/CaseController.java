@@ -7,6 +7,8 @@ import com.example.court_management_system.Service.CaseService;
 import com.example.court_management_system.Service.VerdictService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -96,10 +98,14 @@ public class CaseController {
     }
 
     // ✅ NEW: Get Verdict for a Case
-    @GetMapping("/verdict")
-    public VerdictEntity getVerdictForCase(@RequestParam Long caseId) {
-        return verdictService.findByCaseId(caseId);
+   @GetMapping("/verdict")
+public ResponseEntity<?> getVerdictForCase(@RequestParam Long caseId) {
+    VerdictEntity verdict = verdictService.findByCaseId(caseId);
+    if (verdict == null) {
+        return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.ok(verdict);
+}
 
     
 }

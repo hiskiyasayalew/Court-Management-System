@@ -1,52 +1,59 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useTable } from 'react-table';
-
-const roleApiMap = {
-  User: 'users',
-  Police: 'police',
-  Prosecutor: 'prosecutor',
-  Judge: 'judge',
-  Applications: 'applications',
-};
-
-const initialFormData = {
-  id: '',
-  username: '',
-  password: '',
-  confirmPassword: '',
-  email: '',
-  phoneNumber: '',
-  firstName: '',
-  lastName: '',
-  city: '',
-  subCity: '',
-  officerName: '',
-  position: '',
-  name: '',
-  status: 'ACTIVE',
-};
-
-const roleIcons = {
-  User: '👤',
-  Police: '👮',
-  Prosecutor: '⚖️',
-  Judge: '👨‍⚖️',
-  Applications: '📩',
-};
+import { useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    id: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    email: '',
+    phoneNumber: '',
+    firstName: '',
+    lastName: '',
+    city: '',
+    subCity: '',
+    officerName: '',
+    position: '',
+    name: '',
+    status: 'ACTIVE',
+  });
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const roleApiMap = {
+    User: 'users',
+    Police: 'police',
+    Prosecutor: 'prosecutor',
+    Judge: 'judge',
+    Applications: 'applications',
+  };
+
+  const roleIcons = {
+    User: '👤',
+    Police: '👮',
+    Prosecutor: '⚖️',
+    Judge: '👨‍⚖️',
+    Applications: '📩',
+  };
+
+  // Check if admin is logged in
+useEffect(() => {
+  setMessage('✅ Welcome, Admin! You are logged in.');
+}, []);
+
+
+  // Fetch users when role changes
   useEffect(() => {
     if (selectedRole) {
       fetchUsers(selectedRole);
-      setFormData(initialFormData);
+      setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }));
       setError('');
     }
   }, [selectedRole]);
@@ -58,7 +65,7 @@ const AdminPage = () => {
       setUsers(res.data);
       setError('');
     } catch {
-      setError("Failed to fetch users");
+      setError('Failed to fetch users');
       setUsers([]);
     }
   };
@@ -96,10 +103,25 @@ const AdminPage = () => {
         await axios.post(url, payload);
       }
       fetchUsers(selectedRole);
-      setFormData(initialFormData);
+      setFormData({
+        id: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        phoneNumber: '',
+        firstName: '',
+        lastName: '',
+        city: '',
+        subCity: '',
+        officerName: '',
+        position: '',
+        name: '',
+        status: 'ACTIVE',
+      });
       setError('');
     } catch {
-      setError("Failed to save user");
+      setError('Failed to save user');
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +130,7 @@ const AdminPage = () => {
   const handleEdit = (user) => {
     switch (selectedRole) {
       case 'User':
-        return setFormData({
+        setFormData({
           id: user.id,
           username: user.userName,
           firstName: user.firstName,
@@ -120,8 +142,9 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
+        break;
       case 'Police':
-        return setFormData({
+        setFormData({
           id: user.id,
           officerName: user.officerName,
           position: user.position,
@@ -131,9 +154,10 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
+        break;
       case 'Prosecutor':
       case 'Judge':
-        return setFormData({
+        setFormData({
           id: user.id,
           name: user.name,
           username: user.username,
@@ -143,18 +167,34 @@ const AdminPage = () => {
           password: '',
           confirmPassword: '',
         });
+        break;
       default:
-        return setFormData(initialFormData);
+        setFormData({
+          id: '',
+          username: '',
+          password: '',
+          confirmPassword: '',
+          email: '',
+          phoneNumber: '',
+          firstName: '',
+          lastName: '',
+          city: '',
+          subCity: '',
+          officerName: '',
+          position: '',
+          name: '',
+          status: 'ACTIVE',
+        });
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
+    if (!window.confirm('Are you sure?')) return;
     try {
       await axios.delete(`http://localhost:8080/api/admin/${roleApiMap[selectedRole]}/${id}`);
       setUsers((prev) => prev.filter((u) => u.id !== id));
     } catch {
-      setError("Failed to delete user");
+      setError('Failed to delete user');
     }
   };
 
@@ -211,9 +251,13 @@ const AdminPage = () => {
       baseColumns.push({
         Header: 'Actions',
         Cell: ({ row }) => (
-          <div className="flex flex-col xs:flex-row gap-1 xs:gap-2">
-            <button onClick={() => handleEdit(row.original)} className="text-blue-500 hover:underline text-xs sm:text-sm">Edit</button>
-            <button onClick={() => handleDelete(row.original.id)} className="text-red-500 hover:underline text-xs sm:text-sm">Delete</button>
+          <div className="flex gap-2">
+            <button onClick={() => handleEdit(row.original)} className="text-blue-500 hover:underline">
+              Edit
+            </button>
+            <button onClick={() => handleDelete(row.original.id)} className="text-red-500 hover:underline">
+              Delete
+            </button>
           </div>
         ),
       });
@@ -223,7 +267,7 @@ const AdminPage = () => {
   }, [users, selectedRole]);
 
   const renderForm = () => {
-    const inputClass = "w-full border p-2 rounded text-sm sm:text-base";
+    const inputClass = 'w-full border p-2 rounded';
     const fields = {
       User: (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -293,8 +337,17 @@ const AdminPage = () => {
       </div>
 
       {/* Sidebar */}
-      <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-64 bg-white shadow-md p-4 md:relative fixed md:static inset-0 z-10 overflow-y-auto`}>
-        <h2 className="text-xl font-bold mb-4 hidden md:block">Admin Panel</h2>
+      <div className="w-64 bg-white shadow-md p-4">
+        <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
+        <button
+          onClick={() => {
+            localStorage.removeItem('token');
+            navigate('/adminlogin');
+          }}
+          className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+        >
+          Logout
+        </button>
         <div className="space-y-2">
           {Object.keys(roleApiMap).map((role) => (
             <button
@@ -319,10 +372,9 @@ const AdminPage = () => {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 p-4 md:p-6">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4">{selectedRole ? `Manage ${selectedRole}` : 'Select a Role'}</h1>
-
-        {error && <p className="text-red-600 mb-4 p-2 bg-red-50 rounded">{error}</p>}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-4">{selectedRole ? `Manage ${selectedRole}` : 'Select a Role'}</h1>
+        {error && <p className="text-red-600 mb-4">{error}</p>}
 
         {selectedRole && selectedRole !== 'Applications' && (
           <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow space-y-4 mb-6">
@@ -359,7 +411,7 @@ const AdminPage = () => {
   );
 };
 
-function DataTable({ columns, data }) {
+const DataTable = ({ columns, data }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
   return (
@@ -369,7 +421,9 @@ function DataTable({ columns, data }) {
           {headerGroups.map((hg, i) => (
             <tr {...hg.getHeaderGroupProps()} key={i}>
               {hg.headers.map((col, j) => (
-                <th {...col.getHeaderProps()} key={j} className="p-2 border text-left text-xs sm:text-sm font-semibold">{col.render('Header')}</th>
+                <th {...col.getHeaderProps()} key={j} className="p-2 border">
+                  {col.render('Header')}
+                </th>
               ))}
             </tr>
           ))}
@@ -391,6 +445,6 @@ function DataTable({ columns, data }) {
       </table>
     </div>
   );
-}
+};
 
 export default AdminPage;

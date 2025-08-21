@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const MyCases = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,74 +14,70 @@ const MyCases = () => {
   const [judgeDecision, setJudgeDecision] = useState(null);
   const [verdict, setVerdict] = useState(null);
 
-  useEffect(() => {
-    const fetchUserCases = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user || !user.userName) {
-        setError(t.userNotAuthenticated || "User not authenticated");
-        setLoading(false);
-        return;
-      }
+  const fetchUserCases = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?.userName) {
+      setError(t.userNotAuthenticated || 'User not authenticated');
+      setLoading(false);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const response = await fetch(`http://localhost:8080/api/cases/by-user?userName=${user.userName}`);
-        if (!response.ok) throw new Error(t.fetchCasesFailed || "Failed to fetch user cases");
-        const userCases = await response.json();
-        setCases(userCases?.filter(Boolean) || []);
-      } catch (error) {
-        console.error("Error loading cases:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8080/api/cases/by-user?userName=${user.userName}`);
+      if (!response.ok) throw new Error(t.fetchCasesFailed || 'Failed to fetch user cases');
+      const userCases = await response.json();
+      setCases(userCases?.filter(Boolean) || []);
+    } catch (err) {
+      console.error('Error loading cases:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUserCases();
   }, [t]);
 
   const deleteCase = async (caseId) => {
-    if (!window.confirm(t.confirmDeleteCase || "Are you sure you want to delete this case?")) return;
+    if (!window.confirm(t.confirmDeleteCase || 'Are you sure you want to delete this case?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/cases/${caseId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error(t.deleteCaseFailed || "Failed to delete case");
+      const response = await fetch(`http://localhost:8080/api/cases/${caseId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error(t.deleteCaseFailed || 'Failed to delete case');
       setCases(cases.filter(c => c?.id !== caseId));
       if (selectedCase?.id === caseId) {
         setSelectedCase(null);
         setJudgeDecision(null);
         setVerdict(null);
       }
-    } catch (error) {
-      console.error("Error deleting case:", error);
-      alert(error.message);
+    } catch (err) {
+      console.error('Error deleting case:', err);
+      alert(err.message);
     }
   };
 
   const clearAllCases = async () => {
-    if (!window.confirm(t.confirmClearAllCases || "Are you sure you want to delete ALL your cases?")) return;
-
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user.userName) return;
+    if (!window.confirm(t.confirmClearAllCases || 'Are you sure you want to delete ALL your cases?')) return;
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?.userName) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/cases/clear?userName=${user.userName}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error(t.clearCasesFailed || "Failed to clear cases");
+      const response = await fetch(`http://localhost:8080/api/cases/clear?userName=${user.userName}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error(t.clearCasesFailed || 'Failed to clear cases');
       setCases([]);
       setSelectedCase(null);
       setJudgeDecision(null);
       setVerdict(null);
-    } catch (error) {
-      console.error("Error clearing cases:", error);
-      alert(error.message);
+    } catch (err) {
+      console.error('Error clearing cases:', err);
+      alert(err.message);
     }
   };
 
   const handleCaseClick = async (caseData) => {
-    if (selectedCase && selectedCase.id === caseData.id) {
+    if (selectedCase?.id === caseData.id) {
       setSelectedCase(null);
       setJudgeDecision(null);
       setVerdict(null);
@@ -88,33 +85,35 @@ const MyCases = () => {
     }
 
     setSelectedCase(caseData);
+
+    // Fetch Judge Decision
     try {
       const response = await fetch(`http://localhost:8080/api/judge/decision?caseId=${caseData.id}`);
       const decisions = response.ok ? await response.json() : [];
       setJudgeDecision(decisions?.[0] || null);
     } catch (err) {
-      console.error("Failed to fetch judge decision:", err);
+      console.error('Failed to fetch judge decision:', err);
       setJudgeDecision(null);
     }
 
+    // Fetch Verdict
     try {
       const response = await fetch(`http://localhost:8080/api/cases/verdict?caseId=${caseData.id}`);
-      if (response.ok) {
-        const verdictData = await response.json();
-        setVerdict(verdictData);
-      } else {
+      if (!response.ok) {
         setVerdict(null);
+        return;
       }
+      const verdictData = await response.json();
+      setVerdict(verdictData && (verdictData.verdictText || verdictData.verdictDate) ? verdictData : null);
     } catch (err) {
-      console.error("Failed to fetch verdict:", err);
+      console.error('Failed to fetch verdict:', err);
       setVerdict(null);
     }
   };
 
   const handleAppeal = (caseId) => {
-  navigate(`/appeal-form/${caseId}`);
-};
-
+    navigate(`/appeal-form/${caseId}`);
+  };
 
   if (loading) {
     return (
@@ -270,24 +269,24 @@ const MyCases = () => {
                     </div>
                   )}
 
-                  {verdict && (
+                  {verdict && verdict.verdictText && (
                     <div className="mt-8 border-t pt-6">
                       <h4 className="text-xl font-semibold text-gray-800 mb-4">
                         {t.verdict || "Final Verdict"}
                       </h4>
                       <p><strong>{t.verdictText || "Verdict Text"}:</strong></p>
                       <p className="whitespace-pre-wrap text-gray-700">{verdict.verdictText}</p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        {t.verdictDate || "Date"}: {new Date(verdict.verdictDate).toLocaleString()}
-                      </p>
-
-                    <button
-                    onClick={() => handleAppeal(selectedCase.id)}
-                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm"
-                  >
-                    {t.appeal || 'Appeal'}
-                  </button>
-
+                      {verdict.verdictDate && (
+                        <p className="text-sm text-gray-500 mt-2">
+                          {t.verdictDate || "Date"}: {new Date(verdict.verdictDate).toLocaleString()}
+                        </p>
+                      )}
+                      <button
+                        onClick={() => handleAppeal(selectedCase.id)}
+                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition text-sm"
+                      >
+                        {t.appeal || 'Appeal'}
+                      </button>
                     </div>
                   )}
                 </motion.div>

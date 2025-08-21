@@ -151,6 +151,17 @@ const JudgeLogin = () => {
               </div>
             </div>
 
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+               
+              
+              </div>
+
+              <div className="text-sm">
+                
+              </div>
+            </div>
+
             <div>
               <button
                 type="submit"
