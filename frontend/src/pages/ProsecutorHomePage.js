@@ -23,17 +23,24 @@ const ProsecutorHomePage = () => {
     const fetchCases = async () => {
       try {
         const [casesRes, appealsRes] = await Promise.all([
-          fetch(`http://localhost:8080/api/prosecutor/prosecutor-cases?username=${prosecutor.username}`),
-          fetch(`http://localhost:8080/api/prosecutor/appeals?username=${prosecutor.username}`)
+          fetch(
+            `http://localhost:8080/api/prosecutor/prosecutor-cases?username=${prosecutor.username}`
+          ),
+          fetch(
+            `http://localhost:8080/api/prosecutor/appeals?username=${prosecutor.username}`
+          ),
         ]);
 
         const caseData = await casesRes.json();
         const appealData = await appealsRes.json();
 
-        if (!casesRes.ok || !appealsRes.ok) throw new Error("Error loading data");
+        if (!casesRes.ok || !appealsRes.ok)
+          throw new Error("Error loading data");
 
         const normalCases = caseData.filter(
-          c => c.status === "SUBMITTED_TO_PROCESS" || c.status === "SENT_TO_PROSECUTOR"
+          (c) =>
+            c.status === "SUBMITTED_TO_PROCESS" ||
+            c.status === "SENT_TO_PROSECUTOR"
         );
 
         setCases(normalCases);
@@ -53,22 +60,24 @@ const ProsecutorHomePage = () => {
     if (!window.confirm("Are you sure you want to delete this case?")) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/api/cases/${caseId}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:8080/api/cases/${caseId}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete case");
 
-      setCases(prev => prev.filter(c => c.id !== caseId));
-      setAppealedCases(prev => prev.filter(c => c.id !== caseId));
+      setCases((prev) => prev.filter((c) => c.id !== caseId));
+      setAppealedCases((prev) => prev.filter((c) => c.id !== caseId));
       setSelectedCase(null);
     } catch (err) {
       alert("Failed to delete case");
     }
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem("prosecutor");
     navigate("/login/prosecutor");
   };
-  
+
   const handleProsecutorAction = async (action) => {
     try {
       let url;
@@ -88,15 +97,15 @@ const ProsecutorHomePage = () => {
 
       alert(`Case ${action}d successfully`);
 
-      setCases(prev => prev.filter(c =>
-        c.id !== selectedCase.id && c.id !== selectedCase.caseId
-      ));
-      setAppealedCases(prev => prev.filter(c => c.id !== selectedCase.id));
+      setCases((prev) =>
+        prev.filter((c) => c.id !== selectedCase.id && c.id !== selectedCase.caseId)
+      );
+      setAppealedCases((prev) => prev.filter((c) => c.id !== selectedCase.id));
 
       if (action === "approve") {
         if (selectedCase.caseId) {
           navigate("/send-to-judge", {
-            state: { caseData: { ...selectedCase, id: selectedCase.caseId } }
+            state: { caseData: { ...selectedCase, id: selectedCase.caseId } },
           });
         } else {
           navigate("/send-to-judge", { state: { caseData: selectedCase } });
@@ -104,28 +113,29 @@ const ProsecutorHomePage = () => {
       } else {
         setSelectedCase(null);
       }
-
     } catch (err) {
       alert(err.message);
     }
   };
 
-  const filteredCases = cases.filter(c =>
-    c.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.caseDescription?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCases = cases.filter(
+    (c) =>
+      c.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.caseType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.caseDescription?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredAppealedCases = appealedCases.filter(a =>
-    a.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (a.caseId + "").includes(searchTerm)
+  const filteredAppealedCases = appealedCases.filter(
+    (a) =>
+      a.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (a.caseId + "").includes(searchTerm)
   );
 
   const statusColors = {
     Approved: "bg-green-100 text-green-800",
     Rejected: "bg-red-100 text-red-800",
-    SENT_TO_PROSECUTOR: "bg-yellow-100 text-yellow-800"
+    SENT_TO_PROSECUTOR: "bg-yellow-100 text-yellow-800",
   };
 
   if (loading) {
@@ -167,7 +177,9 @@ const ProsecutorHomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {prosecutor ? `Welcome, Prosecutor ${prosecutor.name}` : "Prosecutor Dashboard"}
+            {prosecutor
+              ? `Welcome, Prosecutor ${prosecutor.name}`
+              : "Prosecutor Dashboard"}
           </motion.h1>
 
           <button
@@ -193,7 +205,7 @@ const ProsecutorHomePage = () => {
         <h2 className="text-xl font-bold mb-4 text-gray-800">Submitted Cases</h2>
         {filteredCases.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-            {filteredCases.map(c => (
+            {filteredCases.map((c) => (
               <motion.div
                 key={c.id}
                 className="bg-white p-4 rounded-lg shadow hover:shadow-lg cursor-pointer border border-gray-200"
@@ -201,28 +213,43 @@ const ProsecutorHomePage = () => {
                 onClick={() => setSelectedCase(c)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-base sm:text-lg font-semibold truncate">{c.fullName}</h2>
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[c.status] || "bg-gray-100 text-gray-800"}`}>
+                  <h2 className="text-base sm:text-lg font-semibold truncate">
+                    {c.fullName}
+                  </h2>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      statusColors[c.status] ||
+                      "bg-gray-100 text-gray-800"
+                    }`}
+                  >
                     {c.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-xs sm:text-sm mt-1">{c.caseType}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {c.submittedAt ? new Date(c.submittedAt).toLocaleDateString() : "—"}
+                <p className="text-gray-600 text-xs sm:text-sm mt-1">
+                  {c.caseType}
                 </p>
-                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">{c.caseDescription}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {c.submittedAt
+                    ? new Date(c.submittedAt).toLocaleDateString()
+                    : "—"}
+                </p>
+                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">
+                  {c.caseDescription}
+                </p>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="text-center text-gray-500 italic mb-10">No submitted cases found</div>
+          <div className="text-center text-gray-500 italic mb-10">
+            No submitted cases found
+          </div>
         )}
 
         {/* Appealed Cases */}
         <h2 className="text-xl font-bold mb-4 text-gray-800">Appealed Cases</h2>
         {filteredAppealedCases.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredAppealedCases.map(appeal => (
+            {filteredAppealedCases.map((appeal) => (
               <motion.div
                 key={appeal.id}
                 className="bg-white p-4 rounded-lg shadow hover:shadow-lg cursor-pointer border border-yellow-300"
@@ -230,21 +257,36 @@ const ProsecutorHomePage = () => {
                 onClick={() => setSelectedCase(appeal)}
               >
                 <div className="flex justify-between items-start">
-                  <h2 className="text-base sm:text-lg font-semibold truncate">{appeal.userName}</h2>
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[appeal.status] || "bg-gray-100 text-gray-800"}`}>
+                  <h2 className="text-base sm:text-lg font-semibold truncate">
+                    {appeal.userName}
+                  </h2>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      statusColors[appeal.status] ||
+                      "bg-gray-100 text-gray-800"
+                    }`}
+                  >
                     {appeal.status}
                   </span>
                 </div>
-                <p className="text-gray-600 text-xs sm:text-sm mt-1">Appealed Case ID: {appeal.caseId}</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {appeal.submittedAt ? new Date(appeal.submittedAt).toLocaleDateString() : "—"}
+                <p className="text-gray-600 text-xs sm:text-sm mt-1">
+                  Appealed Case ID: {appeal.caseId}
                 </p>
-                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">{appeal.reason}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {appeal.submittedAt
+                    ? new Date(appeal.submittedAt).toLocaleDateString()
+                    : "—"}
+                </p>
+                <p className="mt-3 text-xs sm:text-sm text-gray-700 line-clamp-2">
+                  {appeal.reason}
+                </p>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="text-center text-gray-500 italic">No appealed cases found</div>
+          <div className="text-center text-gray-500 italic">
+            No appealed cases found
+          </div>
         )}
 
         {/* Modal */}
@@ -262,11 +304,109 @@ const ProsecutorHomePage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
               >
-                <h2 className="text-xl font-bold mb-2">{selectedCase.fullName || selectedCase.userName}</h2>
-                <p className="text-sm text-gray-600 mb-2">{selectedCase.caseType || `Appealed Case ID: ${selectedCase.caseId}`}</p>
-                <p className="text-sm text-gray-700 mb-4">{selectedCase.caseDescription || selectedCase.reason}</p>
+                {/* Title */}
+                <h2 className="text-xl font-bold mb-2">
+                  {selectedCase.fullName || selectedCase.userName}
+                </h2>
+                <p className="text-sm text-gray-600 mb-2">
+                  {selectedCase.caseType ||
+                    `Appealed Case ID: ${selectedCase.caseId}`}
+                </p>
 
-                <div className="mt-4 flex flex-col sm:flex-row flex-wrap gap-2 justify-between">
+                {/* Case Details */}
+                {selectedCase.caseDescription && (
+                  <div className="mb-4">
+                    <p className="font-semibold text-gray-800 mb-1">Case Details:</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                      {selectedCase.caseDescription}
+                    </p>
+                  </div>
+                )}
+
+                {/* Police Notes */}
+                {selectedCase.policeNotes && (
+                  <div className="mb-4">
+                    <p className="font-semibold text-gray-800 mb-1">Police Notes:</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                      {selectedCase.policeNotes}
+                    </p>
+                  </div>
+                )}
+
+                {/* Attachments */}
+                {(selectedCase.idCardUploadName ||
+                  selectedCase.additionalFileNames?.length > 0) && (
+                  <div className="mt-4">
+                    <p className="text-gray-500 mb-2 text-xs sm:text-sm">
+                      Attachments
+                    </p>
+                    <div className="space-y-2">
+                      {selectedCase.idCardUploadName && (
+                        <div className="flex items-center p-2 bg-gray-50 rounded">
+                          <svg
+                            className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M7 21h10a2 2 0 002-2V9.414l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <a
+                            href={`http://localhost:8080/uploads/${encodeURIComponent(
+                              selectedCase.idCardUploadName
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline truncate text-xs sm:text-sm"
+                          >
+                            {selectedCase.idCardUploadName}
+                          </a>
+                        </div>
+                      )}
+
+                      {selectedCase.additionalFileNames?.map(
+                        (file, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center p-2 bg-gray-50 rounded"
+                          >
+                            <svg
+                              className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 21h10a2 2 0 002-2V9.414l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                              />
+                            </svg>
+                            <a
+                              href={`http://localhost:8080/uploads/${encodeURIComponent(
+                                file
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline truncate text-xs sm:text-sm"
+                            >
+                              {file}
+                            </a>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-2 justify-between">
                   <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => handleProsecutorAction("approve")}
